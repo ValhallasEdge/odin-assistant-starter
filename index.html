@@ -126,9 +126,19 @@
           chat.innerHTML += `<div class="msg odin">Odin: (No response from Valhalla...)</div>`;
         }
       } catch (err) {
-        console.error(err);
-        chat.innerHTML += `<div class="msg odin">Odin: There was an error reaching the gods.</div>`;
-      }
+  console.error(err);
+  // Try to show the backend error message if available
+  let msg = "There was an error reaching the gods.";
+  if (err?.response) {
+    err.response.json().then(d => {
+      msg = d.error || msg;
+      chat.innerHTML += `<div class="msg odin">Odin: ${msg}</div>`;
+    });
+  } else {
+    chat.innerHTML += `<div class="msg odin">Odin: ${msg}</div>`;
+  }
+}
+
 
       chat.scrollTop = chat.scrollHeight;
     }
