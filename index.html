@@ -93,37 +93,39 @@
       <button onclick="sendMessage()">SEND</button>
     </div>
   </div>
-
   <script>
-    async function sendMessage() {
-      const input = document.getElementById('user-input');
-      const chat = document.getElementById('chat');
-      const userText = input.value.trim();
-      if (!userText) return;
+    <script>
+  async function sendMessage() {
+    const input = document.getElementById('user-input');
+    const chat = document.getElementById('chat');
+    const userText = input.value.trim();
+    if (!userText) return;
 
-      chat.innerHTML += `<div class="msg user">You: ${userText}</div>`;
-      input.value = '';
-      chat.scrollTop = chat.scrollHeight;
+    chat.innerHTML += `<div class="msg user">You: ${userText}</div>`;
+    input.value = '';
+    chat.scrollTop = chat.scrollHeight;
 
-      try {
-        const response = await fetch('/api/chat', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ message: userText })
-        });
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ message: userText })
+      });
 
-        const data = await response.json();
+      const data = await response.json();
 
+      if (data.reply) {
         chat.innerHTML += `<div class="msg odin">Odin: ${data.reply}</div>`;
-        chat.scrollTop = chat.scrollHeight;
-      } catch (err) {
-        console.error(err);
-        chat.innerHTML += `<div class="msg odin">Odin: There was an error reaching the gods.</div>`;
-        chat.scrollTop = chat.scrollHeight;
+      } else {
+        chat.innerHTML += `<div class="msg odin">Odin: (No response from Valhalla...)</div>`;
       }
+    } catch (err) {
+      console.error(err);
+      chat.innerHTML += `<div class="msg odin">Odin: There was an error reaching the gods.</div>`;
     }
-  </script>
-</body>
-</html>
+
+    chat.scrollTop = chat.scrollHeight;
+  }
+</script>
