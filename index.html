@@ -89,42 +89,49 @@
     <h1>Ask Odin</h1>
     <div id="chat" class="chat-box"></div>
     <div class="input-area">
-      <input id="user-input" type="text" placeholder="Ask your question..." />
+      <input id="user-input" type="text" placeholder="Ask your question..." onkeydown="if(event.key==='Enter'){sendMessage()}" />
       <button onclick="sendMessage()">SEND</button>
     </div>
   </div>
- <script>
-  async function sendMessage() {
-    const input = document.getElementById('user-input');
-    const chat = document.getElementById('chat');
-    const userText = input.value.trim();
-    if (!userText) return;
+  <script>
+    let threadId = null;
 
-    chat.innerHTML += `<div class="msg user">You: ${userText}</div>`;
-    input.value = '';
-    chat.scrollTop = chat.scrollHeight;
+    async function sendMessage() {
+      const input = document.getElementById('user-input');
+      const chat = document.getElementById('chat');
+      const userText = input.value.trim();
+      if (!userText) return;
 
-    try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ message: userText })
-      });
+      chat.innerHTML += `<div class="msg user">You: ${userText}</div>`;
+      input.value = '';
+      chat.scrollTop = chat.scrollHeight;
 
-      const data = await response.json();
+      try {
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ message: userText, threadId })
+        });
 
-      if (data.reply) {
-        chat.innerHTML += `<div class="msg odin">Odin: ${data.reply}</div>`;
-      } else {
-        chat.innerHTML += `<div class="msg odin">Odin: (No response from Valhalla...)</div>`;
+        const data = await response.json();
+
+        // Store threadId for continuity
+        if (data.threadId) threadId = data.threadId;
+
+        if (data.reply) {
+          chat.innerHTML += `<div class="msg odin">Odin: ${data.reply}</div>`;
+        } else {
+          chat.innerHTML += `<div class="msg odin">Odin: (No response from Valhalla...)</div>`;
+        }
+      } catch (err) {
+        console.error(err);
+        chat.innerHTML += `<div class="msg odin">Odin: There was an error reaching the gods.</div>`;
       }
-    } catch (err) {
-      console.error(err);
-      chat.innerHTML += `<div class="msg odin">Odin: There was an error reaching the gods.</div>`;
-    }
 
-    chat.scrollTop = chat.scrollHeight;
-  }
-</script>
+      chat.scrollTop = chat.scrollHeight;
+    }
+  </script>
+</body>
+</html>
