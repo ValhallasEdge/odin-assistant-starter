@@ -93,55 +93,46 @@
       <button onclick="sendMessage()">SEND</button>
     </div>
   </div>
-  <script>
-    let threadId = null;
+ <script>
+  let threadId = null;
 
-    async function sendMessage() {
-      const input = document.getElementById('user-input');
-      const chat = document.getElementById('chat');
-      const userText = input.value.trim();
-      if (!userText) return;
+  async function sendMessage() {
+    const input = document.getElementById('user-input');
+    const chat = document.getElementById('chat');
+    const userText = input.value.trim();
+    if (!userText) return;
 
-      chat.innerHTML += `<div class="msg user">You: ${userText}</div>`;
-      input.value = '';
-      chat.scrollTop = chat.scrollHeight;
+    chat.innerHTML += `<div class="msg user">You: ${userText}</div>`;
+    input.value = '';
+    chat.scrollTop = chat.scrollHeight;
 
-      try {
-        const response = await fetch('/api/chat', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ message: userText, threadId })
-        });
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ message: userText, threadId })
+      });
 
-        const data = await response.json();
+      // Try to parse the backend error message
+      const data = await response.json();
 
-        // Store threadId for continuity
-        if (data.threadId) threadId = data.threadId;
+      // Save threadId for continuity
+      if (data.threadId) threadId = data.threadId;
 
-        if (data.reply) {
-          chat.innerHTML += `<div class="msg odin">Odin: ${data.reply}</div>`;
-        } else {
-          chat.innerHTML += `<div class="msg odin">Odin: (No response from Valhalla...)</div>`;
-        }
-      } catch (err) {
-  console.error(err);
-  // Try to show the backend error message if available
-  let msg = "There was an error reaching the gods.";
-  if (err?.response) {
-    err.response.json().then(d => {
-      msg = d.error || msg;
-      chat.innerHTML += `<div class="msg odin">Odin: ${msg}</div>`;
-    });
-  } else {
-    chat.innerHTML += `<div class="msg odin">Odin: ${msg}</div>`;
-  }
-}
-
-
-      chat.scrollTop = chat.scrollHeight;
+      if (data.reply) {
+        chat.innerHTML += `<div class="msg odin">Odin: ${data.reply}</div>`;
+      } else if (data.error) {
+        chat.innerHTML += `<div class="msg odin">Odin: ERROR - ${data.error}</div>`;
+      } else {
+        chat.innerHTML += `<div class="msg odin">Odin: (No response from Valhalla...)</div>`;
+      }
+    } catch (err) {
+      console.error(err);
+      chat.innerHTML += `<div class="msg odin">Odin: (NETWORK ERROR: ${err.message})</div>`;
     }
-  </script>
-</body>
-</html>
+
+    chat.scrollTop = chat.scrollHeight;
+  }
+</script>
