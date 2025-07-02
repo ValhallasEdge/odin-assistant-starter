@@ -87,7 +87,11 @@ export default async function handler(req, res) {
     return res.status(200).json({ reply, threadId: currentThreadId });
 
   } catch (err) {
-  console.error("ODIN ERROR:", err);
-  return res.status(500).json({ error: err.message || String(err) });
+  // Send the actual error message to the frontend for debugging!
+  const errorMessage = typeof err === 'object' && err !== null
+    ? (err.message || JSON.stringify(err))
+    : String(err);
+  console.error("ODIN BACKEND ERROR:", errorMessage, err);
+  return res.status(500).json({ error: errorMessage });
 }
 
