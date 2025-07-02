@@ -4,21 +4,16 @@ export default async function handler(req, res) {
   }
 
   try {
-    const buffers = [];
-    for await (const chunk of req) {
-      buffers.push(chunk);
-    }
-
-    const data = JSON.parse(Buffer.concat(buffers).toString());
-    const { message } = data;
+    const { message } = req.body;
 
     if (!message) {
       return res.status(400).json({ error: 'Missing message in request body' });
     }
 
+    // TEMP: Echo back the message to test basic functionality
     return res.status(200).json({ reply: `Odin hears: ${message}` });
   } catch (err) {
-    console.error('Server error:', err);
+    console.error(err);
     return res.status(500).json({ error: 'Server Error' });
   }
 }
