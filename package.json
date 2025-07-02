@@ -1,0 +1,8 @@
+{
+  "name": "odin-assistant-starter",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vercel dev",
+    "start": "vercel dev"
+  }
+}
