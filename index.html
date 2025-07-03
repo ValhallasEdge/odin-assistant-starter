@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -471,7 +471,7 @@
 
     // Utility: Add Odin/user message
     function addMsg(content, type = 'odin') {
-      let html = <div class="msg ${type}">${content}</div>;
+      let html = `<div class="msg ${type}">${content}</div>`;
       chatBox.innerHTML += html;
       chatBox.scrollTop = chatBox.scrollHeight;
     }
@@ -517,15 +517,15 @@
         showLoader(false);
         if (data.reply) {
           let html = parseOdin(data.reply);
-          addMsg(Odin: ${html}, 'odin');
+          addMsg(`Odin: ${html}`, 'odin');
         } else if (data.error) {
-          addMsg(<span class="odin-pop">Odin: ERROR - ${data.error}</span>, "odin");
+          addMsg(`<span class="odin-pop">Odin: ERROR - ${data.error}</span>`, "odin");
         } else {
           addMsg("<span class='odin-pop'>Odin: (No response from Valhalla...)</span>", "odin");
         }
       } catch (err) {
         showLoader(false);
-        addMsg(<span class="odin-pop">Odin: (NETWORK ERROR: ${err.message})</span>, "odin");
+        addMsg(`<span class="odin-pop">Odin: (NETWORK ERROR: ${err.message})</span>`, "odin");
       }
     }
 
