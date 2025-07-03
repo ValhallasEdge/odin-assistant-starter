@@ -2,285 +2,212 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Ask Odin | Valhalla AI</title>
+  <title>Ask Odin | Valhalla's Edge</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="description" content="Valhalla's Edge Odin AI: Norse wisdom and cinematic advice. Ask Odin your question." />
-  <!-- Modern + Norse fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <meta name="description" content="Ask Odin, the Norse AI, for wisdom, fitness, and legacy advice—powered by Valhalla's Edge." />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=UnifrakturCook:wght@700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary-charcoal: #181b1e;
-      --secondary-charcoal: #32343a;
-      --heading-blue: #395885;
-      --heading-burgundy: #87252c;
+      --charcoal: #1c1e21;
+      --charcoal-light: #32343a;
       --mist-bg: #f7f8fa;
-      --faint-white: #fcfdff;
-      --soft-gray: #dee2ea;
+      --soft-gray: #eceef2;
+      --rune-blue: #425174;
+      --norse-red: #972821;
       --body-gray: #44464c;
-      --rune-opacity: 0.08;
+      --input-focus: #425174;
+      --gold: #c1a355;
+      --box-radius: 2.4em;
     }
     html, body {
-      background: linear-gradient(132deg, var(--faint-white) 65%, #e9ebf2 100%);
       min-height: 100vh;
-      margin: 0;
-      padding: 0;
-      font-family: 'Montserrat', 'Georgia', serif;
-      color: var(--primary-charcoal);
+      margin: 0; padding: 0;
+      font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, var(--mist-bg) 70%, #e2e5ed 100%);
+      color: var(--charcoal);
     }
     body::before {
       content: "";
-      position: fixed;
-      left: 0; top: 0; right: 0; bottom: 0;
-      background: url('https://www.transparenttextures.com/patterns/clouds.png'), linear-gradient(120deg, #eaecef 70%, #d3d8e2 100%);
-      opacity: 0.12;
-      filter: blur(1px);
-      pointer-events: none;
-      z-index: 0;
+      position: fixed; inset: 0;
+      background: url('https://www.transparenttextures.com/patterns/clouds.png'), linear-gradient(115deg, #f3f4f7 70%, #e6e8f0 100%);
+      opacity: 0.14; filter: blur(1px);
+      pointer-events: none; z-index: 0;
     }
     .chat-wrapper {
-      max-width: 750px;
-      margin: 70px auto 40px auto;
-      background: rgba(255,255,255,0.96);
-      border-radius: 2.3em;
-      box-shadow: 0 12px 48px 0 #232b3718, 0 2px 22px #3b3f4540;
-      padding: 2.4em 2em 2em 2em;
-      border: 1.5px solid #eceef4;
-      backdrop-filter: blur(4.5px) saturate(1.11);
-      position: relative;
-      z-index: 1;
+      max-width: 730px;
+      margin: 60px auto 36px auto;
+      background: rgba(255,255,255,0.97);
+      border-radius: var(--box-radius);
+      box-shadow: 0 12px 44px #2a314214, 0 2px 12px #d9b77d33;
+      padding: 2.5em 2.3em 2em 2.3em;
+      border: 1.6px solid var(--soft-gray);
+      position: relative; z-index: 1;
     }
+    /* LOGO & HEADER */
     .valhalla-header {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      display: flex; flex-direction: column; align-items: center;
       margin-bottom: 0.6em;
+      position: relative;
     }
     .odin-logo {
-      width: 72px;
-      height: 72px;
-      background: #16171b;
+      width: 64px; height: 64px;
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 18px #181b1e20, 0 2px 6px #bfa76844;
-      margin-bottom: 12px;
-      border: 3.5px solid #d8bf78;
-      z-index: 2;
-      position: relative;
+      background: #18191a;
+      box-shadow: 0 3px 18px #ad8f42aa, 0 2px 8px #bfa76844;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 11px; border: 3.2px solid var(--gold);
       overflow: hidden;
+      z-index: 2;
+      transition: box-shadow 0.25s;
     }
     .odin-logo img {
-      width: 94%;
-      height: 94%;
+      width: 98%; height: 98%;
       object-fit: contain;
       border-radius: 50%;
       display: block;
     }
     .runes-bg {
       position: absolute;
-      top: 35px; left: 50%;
+      top: 36px; left: 50%;
       transform: translateX(-50%);
       font-family: 'UnifrakturCook', serif;
-      color: #2c2f34;
-      font-size: 2.4em;
+      color: var(--rune-blue);
+      font-size: 2.18em;
       letter-spacing: 0.45em;
-      opacity: var(--rune-opacity);
+      opacity: 0.08;
       pointer-events: none;
-      z-index: 1;
-      user-select: none;
-      white-space: nowrap;
+      user-select: none; white-space: nowrap; z-index: 1;
     }
     .header-title {
-      position: relative;
-      z-index: 2;
-      text-align: center;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 2.4em;
+      font-size: 2.48em;
       font-weight: 700;
       letter-spacing: 1.1px;
-      color: var(--primary-charcoal);
-      margin: 0 0 0.19em 0;
-      text-shadow: 0 1px 10px #d6d7dd44;
+      color: var(--charcoal);
+      margin: 0 0 0.18em 0; z-index: 2;
+      text-shadow: 0 1px 12px #d3d7dc19;
+      position: relative; text-align: center;
     }
     .norse-underline {
-      width: 76px;
-      height: 4px;
-      margin: -12px auto 24px auto;
-      background: linear-gradient(90deg, var(--secondary-charcoal), var(--mist-bg) 95%);
-      border-radius: 2px;
-      opacity: 0.22;
-      box-shadow: 0 0 12px #a7bbce17;
+      width: 66px; height: 4px;
+      margin: -12px auto 27px auto;
+      background: linear-gradient(90deg, var(--norse-red) 20%, #f8e5c1 80%);
+      border-radius: 2px; opacity: 0.17;
+      box-shadow: 0 0 13px #a7bbce15;
     }
-    /* Loader */
-    #loader {
-      display: none;
-      text-align: center;
-      margin: 1em 0 1.13em 0;
-      color: var(--secondary-charcoal);
-      font-style: italic;
-      font-size: 1.07em;
-      font-family: 'Montserrat', serif;
-      transition: opacity 0.33s;
-    }
+    /* LOADER */
+    #loader { display:none; text-align:center; margin:1.1em 0 1em 0; color: var(--rune-blue); font-size:1.09em;}
     .loader-rune {
-      display: inline-block;
-      font-family: 'UnifrakturCook', serif;
-      font-size: 2em;
-      color: var(--heading-blue);
-      margin-right: 10px;
-      vertical-align: middle;
-      filter: drop-shadow(0 0 8px #bfc5da55);
-      animation: runespin 2.1s linear infinite;
+      display:inline-block; font-family:'UnifrakturCook',serif;
+      font-size:2em; color:var(--norse-red); margin-right:9px;
+      filter: drop-shadow(0 0 6px #ad8f4299);
+      animation:runespin 2.1s linear infinite;
     }
-    @keyframes runespin {
-      0% { transform: rotateY(0);}
-      100% { transform: rotateY(360deg);}
-    }
-    .loader-dots::after {
-      content: '';
-      display: inline-block;
-      width: 1em;
-      text-align: left;
-      animation: ellipsis steps(4,end) 1.13s infinite;
-    }
+    @keyframes runespin {0%{transform:rotateY(0);}100%{transform:rotateY(360deg);}}
+    .loader-dots::after {content:'';display:inline-block;width:1em;text-align:left;animation:ellipsis steps(4,end) 1.17s infinite;}
     @keyframes ellipsis { to { width: 4em; } }
-    /* CHAT */
+    /* CHAT BOX */
     .chat-box {
-      height: 420px;
-      overflow-y: auto;
-      border-radius: 1.4em;
-      padding: 1.28em 1.88em 1.2em 1.15em;
+      height: 410px; overflow-y:auto;
+      border-radius: 1.4em; padding:1.18em 1.88em 1.1em 1.12em;
       background: var(--mist-bg);
-      margin-bottom: 1.5em;
-      box-shadow: 0 0 12px #c9ccd411;
-      border: 1.2px solid #eceef4;
-      position: relative;
-      font-size: 1.07em;
-      scroll-behavior: smooth;
+      margin-bottom: 1.35em; box-shadow: 0 0 12px #c9ccd415;
+      border: 1.2px solid var(--soft-gray);
+      position: relative; font-size:1.11em; scroll-behavior:smooth;
       transition: box-shadow 0.38s;
     }
-    .msg { opacity: 0; animation: fadeIn 0.48s forwards; margin-bottom: 1.13em; line-height: 1.66;}
-    @keyframes fadeIn { from { opacity: 0;} to { opacity: 1;}}
+    .msg {opacity:0;animation:fadeIn 0.47s forwards; margin-bottom:1.03em;line-height:1.65;}
+    @keyframes fadeIn {from{opacity:0;}to{opacity:1;}}
     .msg.user {
-      color: var(--primary-charcoal);
-      background: linear-gradient(97deg, #f7f7f7 80%, #e3e7ee 100%);
-      border-radius: 10px 21px 16px 10px;
-      padding: 0.8em 1.25em 0.95em 1.2em;
-      font-weight: 700;
-      margin: 0.75em 0 0.7em 40%;
-      border-left: 2.2px solid var(--heading-blue);
-      box-shadow: 1px 2px 10px #bfc5da11;
-      word-break: break-word;
+      color: var(--charcoal);
+      background: linear-gradient(97deg,#f7f7f7 80%,#e3e7ee 100%);
+      border-radius: 11px 21px 16px 10px;
+      padding: 0.75em 1.17em 0.95em 1.1em;
+      font-weight: 700; margin:0.7em 0 0.7em 38%;
+      border-left: 2.5px solid var(--rune-blue);
+      box-shadow: 1px 2px 10px #ad8f4217;
+      word-break:break-word;
     }
     .msg.odin {
       color: var(--body-gray);
-      background: linear-gradient(100deg, #fcfcfe 95%, #e9ebf2 100%);
-      border-left: 4px solid var(--heading-blue);
-      padding: 1.18em 1.28em 1.05em 1.32em;
-      margin: 0.7em 28% 0.7em 0;
-      border-radius: 18px 11px 11px 24px;
-      box-shadow: 2px 4px 18px #bfc5da1a;
-      word-break: break-word;
-      font-size: 1.13em;
-      font-family: 'Montserrat', serif;
-      position: relative;
-      overflow: visible;
-      transition: box-shadow 0.5s;
+      background: linear-gradient(100deg, #fcfcfe 95%, #f1f3f6 100%);
+      border-left: 4px solid var(--norse-red);
+      padding: 1.12em 1.15em 1.07em 1.15em;
+      margin: 0.7em 26% 0.7em 0;
+      border-radius: 19px 11px 12px 24px;
+      box-shadow: 2px 4px 18px #bfa76817;
+      font-size: 1.14em; font-family: 'Montserrat', serif;
+      position: relative; overflow:visible; transition:box-shadow 0.48s;
     }
-    /* Odin headings (pop color every so often) */
-    .msg.odin h1, .msg.odin h2, .msg.odin h3, .msg.odin h4, .msg.odin h5, .msg.odin h6, .msg.odin strong.section-title {
-      font-family: 'Montserrat', serif;
-      font-weight: 700;
-      letter-spacing: 0.2px;
-      margin: 0.9em 0 0.5em 0;
-      line-height: 1.22;
-      color: var(--secondary-charcoal);
-      text-shadow: 0 0 6px #d2d5db11;
+    /* Odin headings */
+    .msg.odin h1, .msg.odin h2, .msg.odin h3, .msg.odin strong.section-title {
+      font-family: 'Montserrat', serif; font-weight:700;
+      margin:0.82em 0 0.45em 0; line-height:1.2;
+      color: var(--charcoal-light); text-shadow:0 0 5px #d2d5db12;
     }
-    /* Pop color for headings that have certain words */
-    .msg.odin h1, .msg.odin h2, .msg.odin h3 {
-      color: var(--heading-blue);
+    /* Occasional pop color for headings */
+    .msg.odin h1.section-pop, .msg.odin h2.section-pop, .msg.odin h3.section-pop {
+      color: var(--norse-red) !important;
+      letter-spacing: 0.1em;
     }
-    .msg.odin h1.section-burgundy, .msg.odin h2.section-burgundy, .msg.odin h3.section-burgundy {
-      color: var(--heading-burgundy) !important;
-    }
-    .msg.odin h4, .msg.odin h5, .msg.odin h6 { color: var(--secondary-charcoal);}
-    .msg.odin ul, .msg.odin ol { margin: 0.82em 0 0.82em 2em;}
-    .msg.odin strong { color: var(--primary-charcoal); font-weight: 700;}
-    .msg.odin em { color: var(--heading-burgundy); font-style: italic;}
+    .msg.odin h4, .msg.odin h5, .msg.odin h6 { color: var(--rune-blue);}
+    .msg.odin ul, .msg.odin ol {margin:0.79em 0 0.79em 2em;}
+    .msg.odin strong { color: var(--charcoal); font-weight:700;}
+    .msg.odin em { color: var(--norse-red); font-style:italic;}
     .msg.odin code {
-      font-family: monospace; background: #ededf5; padding: 2px 6px; border-radius: 4px; color: var(--heading-blue); font-size: 1em;
+      font-family:monospace;background:#ededf5;padding:2px 6px;
+      border-radius:4px;color:var(--rune-blue);font-size:1em;
     }
-    .msg.odin hr { border: none; border-top: 1.2px solid #bfc5da44; margin: 1em 0;}
-    .msg.odin a { color: var(--heading-blue); text-decoration: underline dotted;}
-    .msg.odin a:hover { color: var(--heading-burgundy);}
-    /* Subtle fog effect (desktop only, Odin reply) */
+    .msg.odin hr { border:none;border-top:1.2px solid #bfc5da3a;margin:1em 0;}
+    .msg.odin a { color: var(--rune-blue); text-decoration: underline dotted;}
+    .msg.odin a:hover { color: var(--norse-red);}
+    /* Odin fog hover effect */
     .msg.odin:hover::before {
       content: '';
       pointer-events: none;
-      position: absolute;
-      left: -7%; right: -7%; top: -11%; bottom: -10%;
+      position: absolute; left:-8%; right:-8%; top:-11%; bottom:-10%;
       z-index: 2;
-      background: radial-gradient(circle at 56% 60%, #bfc5da23 42%, #f7fafb0a 92%);
-      opacity: 0.56;
-      animation: fog-move 2.2s linear infinite alternate;
-      filter: blur(9px) brightness(1.08);
+      background: radial-gradient(circle at 58% 54%, #bfc5da25 42%, #fcfdfe0a 98%);
+      opacity: 0.50;
+      animation: fog-move 2.1s linear infinite alternate;
+      filter: blur(7px) brightness(1.09);
     }
-    @keyframes fog-move {
-      from { background-position: 52% 56%;}
-      to   { background-position: 48% 44%;}
-    }
+    @keyframes fog-move {from{background-position:52% 54%;}to{background-position:48% 44%;}}
+    /* INPUT */
     .input-area {
-      display: flex;
-      gap: 1em;
-      margin-top: 1.1em;
-      align-items: center;
+      display: flex; gap: 1em; margin-top: 1.1em; align-items: center;
     }
     .input-area input {
-      flex: 1;
-      padding: 1.15em;
-      font-size: 1.13em;
-      border: 2.1px solid #bfc5da;
-      border-radius: 14px;
-      background: #f6f8fa;
-      outline: none;
-      transition: border 0.23s, box-shadow 0.3s;
-      color: var(--secondary-charcoal);
-      font-weight: 400;
+      flex: 1; padding: 1.15em; font-size:1.13em;
+      border: 2.2px solid #c1a355; border-radius: 14px;
+      background: #f8f8fb; outline: none;
+      color: var(--charcoal-light); font-weight: 400;
+      transition: border 0.19s, box-shadow 0.23s;
+      box-shadow: 0 1.5px 7px #ad8f4220;
     }
     .input-area input:focus {
-      border: 2.8px solid var(--heading-blue);
-      box-shadow: 0 0 7px #adadc7;
+      border: 2.8px solid var(--input-focus);
+      box-shadow: 0 0 8px #bfa76829;
     }
     .input-area button {
-      padding: 1.08em 2.18em;
-      font-size: 1.14em;
-      background: linear-gradient(to right, var(--secondary-charcoal), #bfc5da);
-      color: #fff;
-      border: none;
-      border-radius: 14px;
-      cursor: pointer;
-      font-weight: bold;
-      box-shadow: 0 1.5px 10px #bfc5da19;
-      letter-spacing: 0.09em;
-      transition: background 0.3s, box-shadow 0.3s;
-      font-family: inherit;
+      padding: 1.05em 2.1em; font-size:1.14em;
+      background: linear-gradient(to right, var(--rune-blue), #c1a355);
+      color: #fff; border: none; border-radius: 14px;
+      cursor: pointer; font-weight: bold; font-family: inherit;
+      box-shadow: 0 2px 12px #bfa76815;
+      letter-spacing: 0.09em; transition: background 0.3s, box-shadow 0.3s;
     }
     .input-area button:hover {
       background: linear-gradient(to right, #363b47, #e5e6e8 100%);
       box-shadow: 0 6px 16px #adadc7a1;
-      color: var(--primary-charcoal);
+      color: var(--charcoal);
     }
     @media (max-width: 700px) {
-      .chat-wrapper { padding: 0.6em 0.5vw;}
-      .chat-box { height: 240px;}
-      .header-title { font-size: 1.32em;}
-      .norse-underline { width: 43px;}
-      .runes-bg { font-size: 1.18em; top: 13px;}
-      .input-area input, .input-area button { font-size: 0.98em; padding: 1em;}
-      .odin-logo { width: 44px; height: 44px;}
+      .chat-wrapper {padding:0.7em 1vw;}
+      .chat-box {height:240px;}
+      .header-title {font-size:1.27em;}
+      .norse-underline {width:35px;}
+      .runes-bg {font-size:1.05em;top:9px;}
+      .odin-logo {width:38px;height:38px;}
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -289,8 +216,7 @@
   <div class="chat-wrapper">
     <div class="valhalla-header">
       <span class="odin-logo">
-        <!-- Swap the src to your actual logo URL -->
-        <img src="https://valhallasedge.com/cdn/shop/files/Odin_logo_gold.png" alt="Odin Medallion" loading="lazy" />
+        <img src="https://cdn.shopify.com/s/files/1/0620/9958/7203/files/ChatGPT_Image_Jun_27_2025_02_47_18_PM.png?v=1751060934" alt="Odin Medallion" loading="lazy" />
       </span>
       <div class="runes-bg">ᚨᚱᚢᛟ ᚨᛁ</div>
       <span class="header-title">Ask Odin</span>
@@ -314,15 +240,12 @@
     const userText = input.value.trim();
     if (!userText) return;
 
-    // Always use a new thread (no memory)
     let threadId = null;
-    localStorage.removeItem('odinThreadId'); // just in case
+    localStorage.removeItem('odinThreadId');
 
     chat.innerHTML += `<div class="msg user">You: ${escapeHTML(userText)}</div>`;
     input.value = '';
     chat.scrollTop = chat.scrollHeight;
-
-    // Show loader
     loader.style.display = 'block';
 
     try {
@@ -331,16 +254,14 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: userText, threadId })
       });
-
       const data = await response.json();
-
       loader.style.display = 'none';
 
       if (data.reply) {
-        // Color some headings (H1/H2/H3) with blue or burgundy based on their content
         let html = marked.parse(data.reply);
-        html = html.replace(/(<h[1-3]>)(.*Z.*?)(<\/h[1-3]>)/gi, function(_, open, mid, close) {
-          return open.replace(">", ' class="section-burgundy">') + mid + close;
+        // Occasionally pop color for headings with special Norse or Odin terms:
+        html = html.replace(/(<h[1-3]>)(.*\b(MYTH|MOVE|ODIN|LEGACY|SAGA|Z|ANCESTRY|VISION)\b.*?)(<\/h[1-3]>)/gi, function(_, open, mid, close) {
+          return open.replace(">", ' class="section-pop">') + mid + close;
         });
         chat.innerHTML += `<div class="msg odin">${html}</div>`;
       } else if (data.error) {
@@ -348,4 +269,17 @@
       } else {
         chat.innerHTML += `<div class="msg odin">Odin: (No response from Valhalla...)</div>`;
       }
-    } catch
+    } catch (err) {
+      loader.style.display = 'none';
+      chat.innerHTML += `<div class="msg odin">Odin: (NETWORK ERROR: ${escapeHTML(err.message)})</div>`;
+    }
+    chat.scrollTop = chat.scrollHeight;
+  }
+  function escapeHTML(str) {
+    return (str || '').replace(/[&<>"']/g, function(m) {
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];
+    });
+  }
+</script>
+</body>
+</html>
