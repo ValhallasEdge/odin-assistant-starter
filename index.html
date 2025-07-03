@@ -2,437 +2,415 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>OdinAI - Ask Odin</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Google Fonts: Inter + optional custom runic font -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+  <title>Odin AI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Fonts: Modern & Subtle Norse Touch -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;400&family=EB+Garamond:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
   <style>
     :root {
-      --main-bg: #f7f9fd;
+      --bg-grad1: #f5f7fa;
+      --bg-grad2: #e5e9f2;
       --card-bg: #fff;
-      --navy: #232a35;
-      --charcoal: #181c22;
-      --blue: #294579;
-      --gold: #b39c4d;
-      --rune-fade: #d7dce7;
-      --input-bg: #f6f7fa;
-      --highlight: #305082;
-      --button-grad: linear-gradient(90deg, #4d5f85 0%, #24324a 100%);
-      --send-grad: linear-gradient(90deg, #294579 0%, #b39c4d 100%);
-      --shadow: 0 8px 38px 0 rgba(60,80,130,0.14), 0 1.5px 12px 0 rgba(40,45,65,0.05);
-      --chat-shadow: 0 2px 16px 0 rgba(40,40,60,0.11);
-      --border-gold: 1.5px solid var(--gold);
-      --border-blue: 2px solid var(--blue);
-    }
-    html, body {
-      background: var(--main-bg);
-      margin: 0; padding: 0;
-      font-family: 'Inter', Arial, sans-serif;
-      color: var(--charcoal);
-      min-height: 100vh;
+      --card-border: #eee;
+      --shadow: 0 8px 40px 0 #6e83a221, 0 1.5px 20px #26282a0a;
+      --brand-gold: #b39c4d;
+      --brand-blue: #29354d;
+      --brand-gray: #e8ebf3;
+      --msg-gold-bg: #fffcee;
+      --msg-gold-border: #b39c4d88;
+      --text-main: #15161a;
+      --text-soft: #3b3e47;
+      --rune-fade: #cad0e3;
     }
     body {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      justify-content: flex-start;
+      background: radial-gradient(circle, var(--bg-grad1) 0%, var(--bg-grad2) 100%);
       min-height: 100vh;
+      margin: 0;
+      font-family: 'Montserrat', 'EB Garamond', serif;
+      color: var(--text-main);
+      overflow-x: hidden;
     }
-    .odin-main-container {
-      width: 100vw;
+    .odin-root {
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-top: 32px;
+      min-height: 100vh;
+      width: 100vw;
+      justify-content: flex-start;
     }
-    /* LOGO */
-    .odin-logo-wrap {
-      position: relative;
-      width: 104px;
-      height: 104px;
-      z-index: 20;
-      margin: 0 auto;
-      margin-bottom: -38px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      filter: drop-shadow(0 6px 16px #191c2144);
-      background: transparent;
-    }
-    .odin-logo-img {
-      width: 104px; height: 104px;
-      border-radius: 100%;
-      background: #fff;
-      box-shadow: 0 0 0 7px #eceef5;
-      object-fit: contain;
-    }
-    /* CARD */
+    /* Main Card */
     .odin-card {
       position: relative;
+      margin: 54px 0 42px 0;
       background: var(--card-bg);
+      border-radius: 26px;
       box-shadow: var(--shadow);
-      border-radius: 28px;
-      margin: 0 auto;
-      padding: 0 0 28px 0;
-      width: 480px;
-      max-width: 98vw;
+      border: 1.5px solid var(--card-border);
+      max-width: 440px;
+      width: 95vw;
+      min-width: 300px;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      margin-bottom: 32px;
-      min-height: 640px;
+      align-items: stretch;
+      padding: 0 0 22px 0;
       z-index: 10;
-      /* Soft animated border gradient */
-      border: 2.5px solid transparent;
-      background-clip: padding-box;
-      animation: cardBorderAnim 9s linear infinite;
+      overflow: visible;
+      transition: box-shadow .25s;
     }
-    @keyframes cardBorderAnim {
-      0% { border-color: #dee2ef; }
-      40% { border-color: #c5cee0; }
-      60% { border-color: #b39c4d; }
-      100% { border-color: #dee2ef; }
-    }
-    /* RUNE ROW */
-    .odin-rune-row {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 0 auto 4px auto;
-      letter-spacing: 1.3em;
-      color: var(--rune-fade);
-      font-size: 2.05em;
-      user-select: none;
-      width: 100%;
-      font-family: 'Inter', Arial, sans-serif;
-      /* Animate shimmer */
-      background: linear-gradient(90deg, #f7f9fd 60%, #c6d2e8 80%, #f7f9fd 100%);
-      background-size: 220% auto;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: runeShimmer 3.5s linear infinite;
-    }
-    @keyframes runeShimmer {
-      to {
-        background-position-x: -220%;
+    @media (min-width: 700px) {
+      .odin-card {
+        max-width: 590px;
       }
     }
-    /* HEADER + ARROW UNDERLINE */
-    .odin-title-wrap {
+    /* Logo */
+    .odin-logo-wrap {
+      position: absolute;
+      top: -58px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 12;
+    }
+    .odin-logo-img {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: #1b1b1b;
+      box-shadow: 0 6px 22px #b39c4d33, 0 1px 0 #b39c4d55;
+      border: 4px solid #fff;
+      object-fit: contain;
+      transition: box-shadow .22s, filter .22s;
+      cursor: pointer;
+    }
+    .odin-logo-img:hover {
+      box-shadow: 0 2px 40px 0 #b39c4dcc, 0 1px 0 #b39c4d88;
+      filter: brightness(1.12) drop-shadow(0 0 16px #b39c4d66);
+    }
+    /* Music player vertical */
+    .odin-music-float {
+      position: absolute;
+      top: 12px;
+      right: 26px;
+      z-index: 13;
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-top: 0;
-      margin-bottom: 10px;
-      width: 100%;
-    }
-    .odin-title {
-      font-size: 2.65rem;
-      font-weight: 900;
-      letter-spacing: 0.04em;
-      color: var(--charcoal);
-      margin-bottom: 0px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-transform: uppercase;
-      position: relative;
-      line-height: 1.1;
-      user-select: none;
-      font-family: 'Inter', Arial, sans-serif;
-    }
-    .odin-title .odin-o {
-      transition: color 0.2s;
-      color: var(--blue);
-      position: relative;
-      cursor: pointer;
-    }
-    .odin-title .odin-o.rune-hover::after {
-      content: "ᛟ";
-      position: absolute;
-      left: 48%;
-      bottom: 80%;
-      transform: translateX(-48%) scale(1.2);
-      background: #fff;
-      color: var(--gold);
-      font-size: 2.3em;
-      font-family: 'Inter', Arial, sans-serif;
-      font-weight: 700;
-      opacity: 0.99;
-      pointer-events: none;
-      padding: 0 8px;
-      border-radius: 7px;
-      box-shadow: 0 2px 6px #0001;
-    }
-    .odin-underline-arrow {
-      display: flex;
-      align-items: center;
-      width: 240px;
-      height: 18px;
-      margin: 4px auto 0 auto;
-      position: relative;
-      justify-content: center;
-    }
-    .odin-underline-arrow svg {
-      width: 220px; height: 16px;
-      display: block;
-    }
-    /* TAGLINE */
-    .odin-tagline {
-      font-size: 1.09rem;
-      margin-top: 0;
-      margin-bottom: 24px;
-      color: #7b8194;
-      text-align: center;
-      font-family: 'Inter', Arial, sans-serif;
-      letter-spacing: 0.01em;
-    }
-    /* MUSIC PLAYER */
-    .odin-music {
-      position: absolute;
-      top: 26px; right: 38px;
-      display: flex;
-      align-items: center;
-      z-index: 5;
-      gap: 8px;
+      gap: 7px;
     }
     .odin-music-btn {
       background: none;
       border: none;
-      font-size: 1.7em;
-      color: var(--gold);
+      font-size: 1.6em;
       cursor: pointer;
-      transition: color 0.2s, transform 0.15s;
+      transition: color .15s;
+      color: var(--brand-gold);
+      margin-bottom: 2px;
       outline: none;
-      padding: 0 6px;
-      margin-right: 2px;
     }
-    .odin-music-btn.active, .odin-music-btn:hover {
-      color: var(--blue);
-      transform: scale(1.18) rotate(-8deg);
+    .odin-music-btn.active, .odin-music-btn:focus {
+      color: #29354d;
+      text-shadow: 0 0 6px #b39c4d88;
     }
     .odin-music-slider {
-      accent-color: var(--gold);
-      margin-left: 2px;
-    }
-    /* LOADER */
-    .odin-loader-wrap {
-      width: 48px; height: 48px;
+      writing-mode: bt-lr; /* vertical */
+      width: 6px;
+      height: 64px;
+      accent-color: var(--brand-gold);
+      border-radius: 8px;
+      background: var(--brand-gold);
       margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      z-index: 11;
     }
-    .odin-loader-rune {
-      font-size: 2.1em;
-      color: var(--gold);
-      animation: runeSpin 0.9s linear infinite;
-      font-family: 'Inter', Arial, sans-serif;
-      transition: color 0.3s;
-    }
-    @keyframes runeSpin {
-      100% { transform: rotate(1turn); }
-    }
-    .odin-loader-text {
-      color: #8793b8;
-      font-size: 1.02em;
-      margin-top: 4px;
+    /* Runes + header */
+    .odin-header-runes {
       text-align: center;
+      font-family: 'EB Garamond', serif;
+      font-size: 2.05em;
+      letter-spacing: 0.7em;
+      color: var(--rune-fade);
+      font-weight: 600;
+      padding-top: 44px;
+      padding-bottom: 6px;
+      user-select: none;
+      pointer-events: none;
+      width: 100%;
     }
-    /* CHAT BOX */
-    .odin-chat-wrap {
-      width: 97%;
-      margin: 0 auto 0 auto;
-      padding: 0;
-      background: #f5f6f9;
-      border-radius: 17px;
-      box-shadow: var(--chat-shadow);
-      border: 1.2px solid #e2e3eb;
-      min-height: 340px;
-      max-height: 350px;
+    /* ASK ODIN Title */
+    .odin-title-wrap {
+      text-align: center;
+      margin-top: 46px;
+    }
+    .odin-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 2.35em;
+      font-weight: 900;
+      letter-spacing: .09em;
+      color: var(--brand-blue);
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 2px;
+      margin-bottom: 7px;
+      user-select: none;
+    }
+    .odin-title .odin-o {
+      transition: color .22s;
+      color: var(--brand-gold);
+      font-family: 'Montserrat', 'EB Garamond', serif;
+      font-size: 1.13em;
+      margin: 0 0.11em 0 0.11em;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      font-weight: 900;
+      position: relative;
+    }
+    .odin-title .odin-o.rune-hover::after {
+      content: "ᛟ";
+      position: absolute;
+      left: 0; right: 0; top: -2px; bottom: 0;
+      color: var(--brand-gold);
+      font-size: 1.12em;
+      font-family: 'EB Garamond', serif;
+      opacity: 0.98;
+      font-weight: 900;
+      animation: runeSpin .6s linear;
+      z-index: 1;
+    }
+    .odin-title .odin-o.rune-hover { color: transparent;}
+    @keyframes runeSpin {
+      0% { transform: rotateY(0);}
+      60% { transform: rotateY(180deg);}
+      100%{ transform: rotateY(360deg);}
+    }
+    .odin-underline-arrow {
+      width: 220px;
+      margin: 0 auto 3px auto;
+      height: 24px;
+    }
+    .odin-tagline {
+      font-family: 'EB Garamond', serif;
+      color: #6d7180;
+      font-size: 1.13em;
+      font-weight: 400;
+      margin-bottom: 10px;
+      margin-top: 4px;
+      letter-spacing: .03em;
+      user-select: none;
+    }
+    /* Chat Loader */
+    .odin-loader-outer {
+      margin: 16px 0 10px 0;
       display: flex;
       flex-direction: column;
+      align-items: center;
+      animation: fadeIn .6s;
+    }
+    @keyframes fadeIn { from {opacity:0;} to {opacity:1;}}
+    .odin-loader-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      padding: 4px 0;
+      min-height: 44px;
+    }
+    .odin-loader-rune {
+      font-size: 2.8em;
+      color: var(--brand-gold);
+      text-shadow: 0 1.5px 0 #fff, 0 0 11px #b39c4d33;
+      font-family: 'EB Garamond', serif;
+      font-weight: 900;
+      letter-spacing: .03em;
+      margin: 0 1.5px 0 0;
+      opacity: 0.97;
+      animation: runeGlow .9s infinite alternate;
+      transition: color .2s;
+      user-select: none;
+    }
+    @keyframes runeGlow {
+      from {text-shadow: 0 1.5px 0 #fff, 0 0 4px #b39c4d77;}
+      to {text-shadow: 0 4px 0 #fff, 0 0 22px #b39c4dcc;}
+    }
+    .odin-loader-text {
+      color: #6d7180;
+      font-family: 'Montserrat', serif;
+      font-size: 1.04em;
+      margin-left: 8px;
+      letter-spacing: .01em;
+      opacity: 0.94;
+      font-weight: 600;
+    }
+    /* Chat */
+    .odin-chat-wrap {
+      max-height: 310px;
+      min-height: 80px;
       overflow-y: auto;
-      font-size: 1.08rem;
-      margin-bottom: 18px;
-      position: relative;
-      scrollbar-width: thin;
-    }
-    /* Custom scrollbars */
-    .odin-chat-wrap::-webkit-scrollbar {
-      width: 9px;
-      background: #ececf0;
-      border-radius: 7px;
-    }
-    .odin-chat-wrap::-webkit-scrollbar-thumb {
-      background: #d3d5e0;
-      border-radius: 7px;
-    }
-    .odin-msg {
-      margin: 12px 20px 8px 20px;
-      padding: 0;
+      background: #f8f8f7;
+      border-radius: 14px;
+      box-shadow: 0 1px 7px #b39c4d08;
+      margin: 7px 24px 0 24px;
+      padding: 12px 19px 15px 17px;
+      border: 1.5px solid #e4e4e2;
+      font-size: 1.09em;
+      font-family: 'EB Garamond', serif;
+      color: var(--text-soft);
+      transition: box-shadow .22s;
+      min-width: 220px;
       word-break: break-word;
+      overflow-wrap: anywhere;
     }
+    @media (min-width: 500px) {
+      .odin-chat-wrap { max-height: 440px; font-size: 1.17em; }
+    }
+    @media (min-width: 900px) {
+      .odin-chat-wrap { max-width: 650px; min-width: 340px; font-size: 1.23em;}
+      .odin-card { max-width: 700px;}
+    }
+    /* Chat message styles */
     .odin-msg.user {
+      font-family: 'Montserrat', sans-serif;
       font-weight: 700;
-      color: var(--blue);
-      background: linear-gradient(90deg, #e8edfa 60%, #f2f4fc 100%);
-      border-radius: 8px;
-      padding: 8px 16px;
-      margin-bottom: 0;
-      font-size: 1.08em;
-      margin-top: 14px;
-      box-shadow: 0 1px 4px #dbe3fa66;
-      border-left: 4px solid var(--gold);
+      color: var(--brand-blue);
+      background: linear-gradient(90deg,#e9ecfa 50%,#fafbfc 100%);
+      border-left: 4px solid var(--brand-blue);
+      border-radius: 6px;
+      margin: 13px 0 7px 0;
+      padding: 5px 0 5px 9px;
+      font-size: 1.04em;
     }
     .odin-msg.odin {
-      font-weight: 400;
-      background: #fdfaf2;
-      color: var(--charcoal);
-      border-left: 4px solid var(--gold);
+      margin: 6px 0 13px 0;
+      padding: 10px 7px 10px 12px;
+      font-family: 'EB Garamond', serif;
+      background: var(--msg-gold-bg);
+      border-left: 4px solid var(--msg-gold-border);
       border-radius: 8px;
-      margin-top: 10px;
-      margin-bottom: 0;
-      padding: 10px 22px 10px 18px;
+      color: var(--text-main);
       font-size: 1.09em;
-      line-height: 1.7;
-      /* Prose styling (highlights) */
+      box-shadow: 0 2px 11px #e5ce7e13;
+      line-height: 1.52;
     }
-    /* Odin response: bolded, blue, or gold for keywords */
-    .odin-msg.odin strong { color: var(--blue); font-weight: 700; }
-    .odin-msg.odin em { color: var(--gold); font-style: italic; }
-    .odin-msg.odin .gold { color: var(--gold); font-weight: 700; }
-    .odin-msg.odin .blue { color: var(--blue); font-weight: 700; }
-    .odin-msg.odin ul, .odin-msg.odin ol {
-      padding-left: 1.4em;
-      margin: 12px 0;
+    .odin-msg strong {
+      color: var(--brand-blue);
+      font-weight: 900;
+      letter-spacing: .03em;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1.01em;
     }
-    .odin-msg.odin li {
-      margin-bottom: 6px;
+    .odin-msg em {
+      color: var(--brand-gold);
+      font-style: normal;
+      font-weight: 700;
+    }
+    .odin-msg .gold, .odin-msg .gold-bold {
+      color: var(--brand-gold);
+      font-family: 'Montserrat',sans-serif;
+      font-weight: 900;
+      letter-spacing: .02em;
+    }
+    .odin-msg .blue {
+      color: #3e51b8;
+      font-family: 'Montserrat',sans-serif;
+      font-weight: 800;
+    }
+    .odin-msg ul {
+      margin-left: 0;
+      padding-left: 20px;
+    }
+    .odin-msg li {
+      margin-bottom: 4px;
+      padding-left: 0;
+      color: #393b43;
       font-size: 1em;
     }
-    /* INPUT + BUTTON */
+    /* Input row */
     .odin-input-row {
       display: flex;
       align-items: center;
-      width: 98%;
-      margin: 10px auto 0 auto;
-      gap: 9px;
-      position: relative;
+      margin: 16px 24px 2px 24px;
+      gap: 10px;
     }
     .odin-input-box {
-      width: 100%;
-      font-size: 1.1em;
-      border-radius: 11px;
-      border: 1.3px solid #d2d5dd;
-      background: var(--input-bg);
-      padding: 16px 18px;
-      font-family: inherit;
-      font-weight: 500;
+      flex: 1;
+      font-size: 1.11em;
+      border-radius: 10px;
+      border: 1.5px solid #c5c5ce;
+      padding: 10px 15px 10px 13px;
+      font-family: 'Montserrat',sans-serif;
+      color: var(--text-main);
+      background: #fff;
+      font-weight: 400;
       outline: none;
-      transition: border 0.2s;
-      box-sizing: border-box;
-      margin-right: 0;
-      color: var(--charcoal);
+      transition: border-color .18s;
     }
     .odin-input-box:focus {
-      border-color: var(--blue);
+      border-color: var(--brand-gold);
+      background: #fefbe3;
     }
     .odin-send-btn {
-      background: var(--button-grad);
+      background: linear-gradient(135deg, #253559 65%, #788ab9 100%);
       color: #fff;
-      font-size: 1.19em;
-      font-family: inherit;
-      font-weight: 900;
       border: none;
-      border-radius: 11px;
-      padding: 15px 33px;
+      border-radius: 9px;
+      font-family: 'Montserrat',sans-serif;
+      font-weight: 800;
+      letter-spacing: .03em;
+      font-size: 1.03em;
+      padding: 11px 27px;
+      box-shadow: 0 3px 13px #25355929;
       cursor: pointer;
-      box-shadow: 0 2px 12px #e0eafc77;
-      letter-spacing: 0.04em;
-      margin-left: 0;
       display: flex;
       align-items: center;
-      justify-content: center;
-      transition: background 0.18s, transform 0.14s;
+      gap: 6px;
+      transition: background .18s;
     }
     .odin-send-btn:hover {
-      background: var(--send-grad);
-      transform: translateY(-2px) scale(1.07);
-    }
-    .odin-send-btn svg {
-      margin-right: 9px;
-      margin-left: -3px;
-      font-size: 1.22em;
+      background: linear-gradient(120deg, #384770 60%, #9ba2c7 100%);
     }
     /* Powered by */
     .odin-powered {
       text-align: center;
-      margin-top: 16px;
-      color: #b0b6c7;
-      font-size: 1em;
-      font-weight: 500;
-      letter-spacing: 0.01em;
+      font-size: 1.04em;
+      color: #b9bbbe;
+      margin: 13px auto 0 auto;
+      font-family: 'Montserrat',sans-serif;
+      font-weight: 600;
+      letter-spacing: .02em;
     }
     .odin-powered span {
-      background: #fcf6e0;
-      color: var(--gold);
-      padding: 4px 13px 4px 13px;
-      font-weight: 900;
-      font-size: 1.01em;
-      border-radius: 7px;
-      margin-left: 8px;
-      box-shadow: 0 1px 7px #f5eed188;
+      color: #fff;
+      background: linear-gradient(90deg,#b39c4d 20%,#dfc87e 80%);
+      padding: 0 11px 1.5px 11px;
+      border-radius: 9px;
+      font-weight: 700;
+      font-size: 1.04em;
+      margin-left: 7px;
+      box-shadow: 0 2px 6px #b39c4d21;
     }
-    /* Loader position */
-    .odin-loader-outer {
-      margin: 22px auto 14px auto;
-      text-align: center;
-      width: 100%;
-    }
-    /* MEDIA QUERIES */
-    @media (max-width: 900px) {
-      .odin-card { width: 99vw; max-width: 99vw; min-width: 0; }
-      .odin-logo-img { width: 84px; height: 84px; }
-      .odin-logo-wrap { width: 84px; height: 84px; margin-bottom: -32px; }
-    }
-    @media (max-width: 600px) {
-      .odin-card { width: 99vw; max-width: 99vw; padding: 0 0 21px 0; border-radius: 14px; }
-      .odin-logo-img, .odin-logo-wrap { width: 66px; height: 66px; margin-bottom: -19px; }
-      .odin-title { font-size: 2.1em; }
-      .odin-underline-arrow { width: 140px; }
-      .odin-music { right: 14px; top: 13px; }
-      .odin-chat-wrap { min-height: 200px; max-height: 240px; font-size: 1em; }
-      .odin-input-box { padding: 12px 11px; font-size: 1em; }
-      .odin-send-btn { padding: 12px 12px; font-size: 1em; }
-      .odin-powered { font-size: 0.98em; }
-    }
-    /* Accessibility focus */
-    .odin-send-btn:focus, .odin-music-btn:focus {
-      outline: 2px solid var(--gold);
-      outline-offset: 2px;
+    /* Mobile tweaks */
+    @media (max-width: 520px) {
+      .odin-card { max-width: 97vw; }
+      .odin-chat-wrap, .odin-input-row { margin-left: 8px; margin-right: 8px;}
+      .odin-logo-img { width: 64px; height: 64px;}
+      .odin-title { font-size: 1.37em;}
     }
   </style>
 </head>
 <body>
-<div class="odin-main-container">
-  <!-- Logo floating above -->
-  <div class="odin-logo-wrap">
-    <img src="https://cdn.shopify.com/s/files/1/0620/9958/7203/files/ChatGPT_Image_Jun_27_2025_02_47_18_PM.png?v=1751060934"
-         class="odin-logo-img" alt="Odin's gold logo" />
-  </div>
+<div class="odin-root">
   <div class="odin-card">
-    <!-- Rune row with animation -->
-    <div class="odin-rune-row" aria-hidden="true">ᛈ ᚱ ᛏ ᚺ ᚠ ᚾ ᛃ ᛟ ᚲ ᚾ ᛉ</div>
-    <!-- Music player & controls -->
-    <div class="odin-music">
-      <button class="odin-music-btn" id="odinMusicPlay" title="Play / Pause Meditation Music" aria-label="Play music">
+    <!-- Odin Logo, centered, glowing on hover -->
+    <div class="odin-logo-wrap">
+      <img src="https://cdn.shopify.com/s/files/1/0620/9958/7203/files/55cc97d6-4989-41cc-aa0c-67b94a56f29f.png?v=1751060831" class="odin-logo-img" id="odinLogo" alt="Odin logo" />
+    </div>
+    <!-- Vertical music player, floating upper right -->
+    <div class="odin-music-float">
+      <button class="odin-music-btn" id="odinMusicPlay" aria-label="Play/pause meditation music">
         <span id="odin-music-icon">🎵</span>
       </button>
-      <input type="range" min="0" max="1" step="0.01" value="0.26" class="odin-music-slider" id="odinMusicVolume"
+      <input type="range" min="0" max="1" step="0.01" value="0.22" class="odin-music-slider" id="odinMusicVolume"
         aria-label="Volume"/>
+    </div>
+    <!-- Runes Header -->
+    <div class="odin-header-runes">
+      ᛈ ᚱ ᛏ ᚺ ᚠ ᚱ ᚺ ᛗ ᚲ ᛉ ᚱ ᛟ ᛗ ᚾ ᛟ ᚱ
     </div>
     <!-- Header -->
     <div class="odin-title-wrap">
@@ -440,155 +418,143 @@
         ASK <span class="odin-o" id="odinO">O</span>DIN
       </div>
       <div class="odin-underline-arrow">
-        <!-- Golden arrow SVG underline -->
         <svg viewBox="0 0 220 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 8h196" stroke="#b39c4d" stroke-width="3" stroke-linecap="round"/>
-          <polygon points="208,8 220,16 208,8 220,0" fill="#b39c4d"/>
+          <path d="M12 8h196" stroke="#b39c4d" stroke-width="3.5" stroke-linecap="round"/>
+          <polygon points="206,8 220,8 212,2 212,14" fill="#b39c4d"/>
         </svg>
       </div>
-      <div class="odin-tagline">Wisdom, legacy, and Norse myth for the modern world</div>
-    </div>
-    <!-- Chat loader (hidden by default) -->
-    <div class="odin-loader-outer" id="odinLoaderOuter" style="display:none;">
-      <div class="odin-loader-wrap">
-        <span class="odin-loader-rune" id="odinLoaderRune">ᚨ</span>
+      <div class="odin-tagline">
+        Wisdom, legacy, and Norse myth for the modern world
       </div>
-      <div class="odin-loader-text" id="odinLoaderText">Odin is accessing the Well of Wisdom...</div>
     </div>
-    <!-- Chat history/messages -->
+    <!-- Chat loader (animated runes + text), hidden until loading -->
+    <div class="odin-loader-outer" id="odinLoader" style="display: none;">
+      <div class="odin-loader-wrap">
+        <span class="odin-loader-rune" id="odinRune">ᛗ</span>
+        <span class="odin-loader-text" id="odinLoaderText">Accessing the Well of Wisdom…</span>
+      </div>
+    </div>
+    <!-- Chat area -->
     <div class="odin-chat-wrap" id="odinChat"></div>
     <!-- Input row -->
-    <form class="odin-input-row" id="odinInputRow" autocomplete="off" onsubmit="event.preventDefault(); sendOdinMessage();">
-      <input id="odinInput" class="odin-input-box" type="text" maxlength="280" placeholder="Ask your question..." autocomplete="off" aria-label="Ask Odin"/>
-      <button type="submit" class="odin-send-btn" aria-label="Send to Odin">
-        <svg width="22" height="22" viewBox="0 0 20 20"><path fill="#fff" d="M2.92 9.62l12.08-3.78c1.15-.36 2.12.61 1.76 1.76l-3.78 12.08c-.36 1.15-1.74 1.23-2.2.11L7.39 14.6a.93.93 0 0 0-.76-.56l-3.49-.46c-1.13-.15-1.25-1.68-.11-2.2z"></path></svg>
+    <div class="odin-input-row">
+      <input id="odinInput" type="text" class="odin-input-box" placeholder="Ask your question…" autocomplete="off"
+        onkeydown="if(event.key==='Enter'){sendOdinMsg();}" />
+      <button class="odin-send-btn" onclick="sendOdinMsg()" id="odinSendBtn">
+        <svg width="21" height="21" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 10.5h12M10.5 3l8 7.5-8 7.5" stroke="#fff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
         SEND
       </button>
-    </form>
-    <!-- Powered by -->
-    <div class="odin-powered">
-      Powered by <span>Valhalla’s Edge</span>
     </div>
+    <!-- Powered by -->
+    <div class="odin-powered">Powered by <span>Valhalla’s Edge</span></div>
   </div>
 </div>
-<!-- Audio (meditation music, royalty free—replace with your own if preferred) -->
-<audio id="odinAudio" src="https://cdn.pixabay.com/audio/2022/10/16/audio_125b985df9.mp3" preload="auto" loop></audio>
+<!-- Meditation music (royalty free) -->
+<audio id="odinMusic" loop preload="auto">
+  <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_115b9e2c82.mp3" type="audio/mpeg">
+  <!-- Optionally add your own source! -->
+</audio>
 <script>
-  // ========== INTERACTIVE ELEMENTS ==========
-  // O in Odin hover = rune
+  // O hover: turn to rune
   const odinO = document.getElementById('odinO');
   odinO.addEventListener('mouseenter', () => odinO.classList.add('rune-hover'));
   odinO.addEventListener('mouseleave', () => odinO.classList.remove('rune-hover'));
-  odinO.title = "Odin's rune: ᛟ";
+  // Odin logo hover: gold-glow
+  document.getElementById('odinLogo').addEventListener('mouseenter', function() {
+    this.style.boxShadow = "0 2px 44px 0 #b39c4dcc, 0 1px 0 #b39c4d88";
+    this.style.filter = "brightness(1.11) drop-shadow(0 0 22px #b39c4d66)";
+  });
+  document.getElementById('odinLogo').addEventListener('mouseleave', function() {
+    this.style.boxShadow = "0 6px 22px #b39c4d33, 0 1px 0 #b39c4d55";
+    this.style.filter = "";
+  });
 
-  // ========== MUSIC PLAYER ==========
-  const musicBtn = document.getElementById('odinMusicPlay');
-  const musicIcon = document.getElementById('odin-music-icon');
-  const musicVolume = document.getElementById('odinMusicVolume');
-  const audio = document.getElementById('odinAudio');
-  let musicPlaying = false;
-  // Start muted by default
-  audio.volume = parseFloat(musicVolume.value);
-  audio.muted = true;
-
-  musicBtn.addEventListener('click', () => {
-    if (!musicPlaying) {
-      audio.muted = false;
-      audio.play();
-      musicPlaying = true;
-      musicIcon.textContent = '🔊';
-      musicBtn.classList.add('active');
+  // Music controls
+  const odinMusic = document.getElementById('odinMusic');
+  const odinMusicPlay = document.getElementById('odinMusicPlay');
+  const odinMusicIcon = document.getElementById('odin-music-icon');
+  const odinMusicVolume = document.getElementById('odinMusicVolume');
+  let odinMusicPlaying = false;
+  odinMusicPlay.addEventListener('click', function() {
+    if (!odinMusicPlaying) {
+      odinMusic.volume = odinMusicVolume.value;
+      odinMusic.play();
+      odinMusicPlaying = true;
+      odinMusicIcon.textContent = "🔊";
+      odinMusicPlay.classList.add("active");
     } else {
-      audio.pause();
-      musicPlaying = false;
-      musicIcon.textContent = '🎵';
-      musicBtn.classList.remove('active');
+      odinMusic.pause();
+      odinMusicPlaying = false;
+      odinMusicIcon.textContent = "🎵";
+      odinMusicPlay.classList.remove("active");
     }
   });
-  musicVolume.addEventListener('input', (e) => {
-    audio.volume = parseFloat(e.target.value);
+  odinMusicVolume.addEventListener('input', function() {
+    odinMusic.volume = this.value;
   });
-  // ========== CHAT / BACKEND ==========
-  const chatEl = document.getElementById('odinChat');
-  const inputEl = document.getElementById('odinInput');
-  const loaderOuter = document.getElementById('odinLoaderOuter');
-  const loaderRune = document.getElementById('odinLoaderRune');
-  const loaderText = document.getElementById('odinLoaderText');
 
-  const runes = ['ᚨ','ᛟ','ᛞ','ᛗ','ᛉ','ᚲ','ᛝ','ᚹ','ᚱ','ᚺ','ᛏ','ᚠ','ᛃ','ᚾ','ᚺ'];
-  let runeIdx = 0;
+  // Loader (Well of Wisdom animated runes)
+  const runes = ['ᛗ','ᚱ','ᛟ','ᚺ','ᛉ','ᛈ','ᚹ','ᚺ','ᚲ','ᛏ','ᛞ'];
+  let runeIndex = 0;
   let loaderInterval = null;
-
-  function showLoader() {
-    loaderOuter.style.display = '';
-    loaderText.textContent = "Odin is accessing the Well of Wisdom...";
-    loaderRune.textContent = runes[runeIdx];
-    loaderInterval = setInterval(() => {
-      runeIdx = (runeIdx + 1) % runes.length;
-      loaderRune.textContent = runes[runeIdx];
-    }, 180);
-  }
-  function hideLoader() {
-    loaderOuter.style.display = 'none';
-    clearInterval(loaderInterval);
-  }
-  // Odin message HTML formatter (bolds, bullets, etc)
-  function formatOdin(text) {
-    // Richen the markdown style with HTML
-    return text
-      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\*(.+?)\*/g, '<em>$1</em>')
-      .replace(/\n\s*[-•]\s+/g, '<ul><li>')      // bullets
-      .replace(/\n{2,}/g, '</li></ul><br>')     // end bullet lists
-      .replace(/(\bTHE MYTH\b)/g, '<span class="gold">$1</span>')
-      .replace(/(\bTHE MESSAGE\b)/g, '<span class="gold">$1</span>')
-      .replace(/(\bTHE MOVE\b)/g, '<span class="gold">$1</span>')
-      .replace(/(\blegacy echo\b)/ig, '<span class="blue">$1</span>');
-  }
-
-  // ========== SEND MESSAGE ==========
-  function sendOdinMessage() {
-    const userText = inputEl.value.trim();
-    if (!userText) return;
-    chatEl.innerHTML += `<div class="odin-msg user">You: ${userText}</div>`;
-    inputEl.value = '';
-    chatEl.scrollTop = chatEl.scrollHeight;
-    showLoader();
-
-    // --- No thread memory, always fresh for this premium build ---
-    fetch('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: userText, threadId: null })
-    })
-    .then(res => res.json())
-    .then(data => {
-      hideLoader();
-      if (data.reply) {
-        chatEl.innerHTML += `<div class="odin-msg odin">${formatOdin(data.reply)}</div>`;
-      } else if (data.error) {
-        chatEl.innerHTML += `<div class="odin-msg odin">Odin: <span class="gold">ERROR -</span> ${data.error}</div>`;
-      } else {
-        chatEl.innerHTML += `<div class="odin-msg odin">Odin: <span class="gold">No response from Valhalla…</span></div>`;
-      }
-      chatEl.scrollTop = chatEl.scrollHeight;
-    })
-    .catch(err => {
-      hideLoader();
-      chatEl.innerHTML += `<div class="odin-msg odin">Odin: <span class="gold">NETWORK ERROR:</span> ${err.message}</div>`;
-      chatEl.scrollTop = chatEl.scrollHeight;
-    });
-  }
-
-  // ENTER sends
-  inputEl.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') {
-      sendOdinMessage();
+  function showLoader(show=true, text="Accessing the Well of Wisdom…") {
+    const loader = document.getElementById('odinLoader');
+    const rune = document.getElementById('odinRune');
+    const loaderText = document.getElementById('odinLoaderText');
+    if (show) {
+      loader.style.display = 'flex';
+      loaderText.textContent = text;
+      loaderInterval = setInterval(()=>{
+        runeIndex = (runeIndex+1)%runes.length;
+        rune.textContent = runes[runeIndex];
+      }, 370);
+    } else {
+      loader.style.display = 'none';
+      if (loaderInterval) clearInterval(loaderInterval);
     }
-  });
-
-  // Autofocus input on card load
-  window.onload = () => { setTimeout(()=>{inputEl.focus()}, 450);}
+  }
+  // Chat memory
+  let lastMsg = "", isLoading=false;
+  function addMsg(content, who='odin') {
+    const chat = document.getElementById('odinChat');
+    let html = '';
+    if (who === 'user') {
+      html = `<div class="odin-msg user">You: ${content}</div>`;
+    } else if (who === 'odin') {
+      html = `<div class="odin-msg odin">${content}</div>`;
+    }
+    chat.innerHTML += html;
+    chat.scrollTop = chat.scrollHeight;
+  }
+  // Send message (frontend/backend logic)
+  async function sendOdinMsg() {
+    const input = document.getElementById('odinInput');
+    const txt = input.value.trim();
+    if (!txt || isLoading) return;
+    addMsg(txt, 'user');
+    input.value = "";
+    isLoading = true;
+    showLoader(true);
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({message: txt, threadId: null})
+      });
+      const data = await res.json();
+      showLoader(false);
+      if (data.reply) addMsg(data.reply, 'odin');
+      else addMsg("Odin is silent.", 'odin');
+    } catch (e) {
+      showLoader(false);
+      addMsg("(Network error: "+e.message+")",'odin');
+    }
+    isLoading = false;
+  }
+  // Autofocus input on load
+  window.onload = function() {
+    document.getElementById('odinInput').focus();
+  };
 </script>
 </body>
 </html>
