@@ -6,6 +6,13 @@ module.exports = async function (req, res) {
   const apiKey = process.env.OPENAI_API_KEY; // Put this in your Vercel Project settings
   const assistantId = process.env.ODIN_ASSISTANT_ID; // Ditto: your custom Assistant's ID
 
+  // Convenience for headers: always include the Beta header!
+  const openaiHeaders = {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${apiKey}`,
+    'OpenAI-Beta': 'assistants=v2'
+  };
+
   try {
     const { message, threadId } = req.body;
     if (!message) {
@@ -15,13 +22,9 @@ module.exports = async function (req, res) {
     // 1. If there's no thread, create one (for conversational memory)
     let currentThreadId = threadId;
     if (!currentThreadId) {
-      // Create a new thread
       const threadResp = await fetch('https://api.openai.com/v1/threads', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`,
-        },
+        headers: openaiHeaders,
         body: JSON.stringify({}),
       });
       const threadData = await threadResp.json();
@@ -31,10 +34,7 @@ module.exports = async function (req, res) {
     // 2. Post user message to the thread
     await fetch(`https://api.openai.com/v1/threads/${currentThreadId}/messages`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-      },
+      headers: openaiHeaders,
       body: JSON.stringify({
         role: "user",
         content: message,
@@ -44,10 +44,7 @@ module.exports = async function (req, res) {
     // 3. Run the assistant on the thread
     const runResp = await fetch(`https://api.openai.com/v1/threads/${currentThreadId}/runs`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-      },
+      headers: openaiHeaders,
       body: JSON.stringify({
         assistant_id: assistantId,
       }),
@@ -58,29 +55,25 @@ module.exports = async function (req, res) {
     let status = runData.status;
     let finalRunData = runData;
     for (let i = 0; i < 20 && status !== 'completed'; i++) {
-  await new Promise(res => setTimeout(res, 1000));
-  const pollResp = await fetch(`https://api.openai.com/v1/threads/${currentThreadId}/runs/${runData.id}`, {
-    headers: {
-      'Authorization': `Bearer ${apiKey}`,
-    },
-  });
-  finalRunData = await pollResp.json();
-  status = finalRunData.status;
-  console.log(`[ODIN POLL] Status: ${status} | Details: ${JSON.stringify(finalRunData)}`);
-  if (status === 'completed') break;
-}
-    if (status !== 'completed') {
-  return res.status(500).json({ 
-    error: `Odin run status: ${status} - ${finalRunData?.last_error?.message || JSON.stringify(finalRunData)}` 
-  });
-}
+      await new Promise(res => setTimeout(res, 1000));
+      const pollResp = await fetch(`https://api.openai.com/v1/threads/${currentThreadId}/runs/${runData.id}`, {
+        headers: openaiHeaders,
+      });
+      finalRunData = await pollResp.json();
+      status = finalRunData.status;
+      console.log(`[ODIN POLL] Status: ${status} | Details: ${JSON.stringify(finalRunData)}`);
+      if (status === 'completed') break;
+    }
 
+    if (status !== 'completed') {
+      return res.status(500).json({ 
+        error: `Odin run status: ${status} - ${finalRunData?.last_error?.message || JSON.stringify(finalRunData)}` 
+      });
+    }
 
     // 5. Retrieve the latest assistant message
     const msgResp = await fetch(`https://api.openai.com/v1/threads/${currentThreadId}/messages`, {
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-      },
+      headers: openaiHeaders,
     });
     const msgs = await msgResp.json();
     // Get the last message from 'assistant'
@@ -90,11 +83,11 @@ module.exports = async function (req, res) {
     return res.status(200).json({ reply, threadId: currentThreadId });
 
   } catch (err) {
-  // Send the actual error message to the frontend for debugging!
-  const errorMessage = typeof err === 'object' && err !== null
-    ? (err.message || JSON.stringify(err))
-    : String(err);
-  console.error("ODIN BACKEND ERROR:", errorMessage, err);
-  return res.status(500).json({ error: errorMessage });
-}
+    // Send the actual error message to the frontend for debugging!
+    const errorMessage = typeof err === 'object' && err !== null
+      ? (err.message || JSON.stringify(err))
+      : String(err);
+    console.error("ODIN BACKEND ERROR:", errorMessage, err);
+    return res.status(500).json({ error: errorMessage });
+  }
 }
