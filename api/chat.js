@@ -4,7 +4,12 @@ module.exports = async function (req, res) {
   }
 
   const apiKey = process.env.OPENAI_API_KEY;
-  const assistantId = process.env.ODIN_ASSISTANT_ID;
+  // Instead of hardcoding Odin, take from POST body
+  const assistantId = req.body.assistantId;
+
+  if (!assistantId) {
+    return res.status(400).json({ error: 'Missing assistantId in request body' });
+  }
 
   const openaiHeaders = {
     'Content-Type': 'application/json',
@@ -29,7 +34,7 @@ module.exports = async function (req, res) {
       currentThreadId = threadData.id;
     }
 
-    // --- ALWAYS: Add user message to thread
+    // Add user message to thread
     const userMsgResp = await fetch(`https://api.openai.com/v1/threads/${currentThreadId}/messages`, {
       method: 'POST',
       headers: openaiHeaders,
@@ -43,7 +48,7 @@ module.exports = async function (req, res) {
       return res.status(500).json({ error: "Failed to post user message: " + (userMsgData?.error?.message || "Unknown error") });
     }
 
-    // --- Only after the above, start the run
+    // Start the run
     const runResp = await fetch(`https://api.openai.com/v1/threads/${currentThreadId}/runs`, {
       method: 'POST',
       headers: openaiHeaders,
@@ -67,7 +72,7 @@ module.exports = async function (req, res) {
 
     if (status !== 'completed') {
       return res.status(500).json({ 
-        error: `Odin run status: ${status} - ${finalRunData?.last_error?.message || JSON.stringify(finalRunData)}` 
+        error: `Run status: ${status} - ${finalRunData?.last_error?.message || JSON.stringify(finalRunData)}` 
       });
     }
 
@@ -77,7 +82,7 @@ module.exports = async function (req, res) {
     });
     const msgs = await msgResp.json();
     const assistantMsg = msgs.data.reverse().find(m => m.role === 'assistant');
-    const reply = assistantMsg?.content?.[0]?.text?.value || "Odin is silent.";
+    const reply = assistantMsg?.content?.[0]?.text?.value || "This god is silent.";
 
     return res.status(200).json({ reply, threadId: currentThreadId });
 
@@ -85,9 +90,7 @@ module.exports = async function (req, res) {
     const errorMessage = typeof err === 'object' && err !== null
       ? (err.message || JSON.stringify(err))
       : String(err);
-    console.error("ODIN BACKEND ERROR:", errorMessage, err);
+    console.error("BACKEND ERROR:", errorMessage, err);
     return res.status(500).json({ error: errorMessage });
   }
 }
-
-
