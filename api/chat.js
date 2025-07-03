@@ -58,20 +58,23 @@ module.exports = async function (req, res) {
     let status = runData.status;
     let finalRunData = runData;
     for (let i = 0; i < 20 && status !== 'completed'; i++) {
-      await new Promise(res => setTimeout(res, 1000));
-      const pollResp = await fetch(`https://api.openai.com/v1/threads/${currentThreadId}/runs/${runData.id}`, {
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-        },
-      });
-      finalRunData = await pollResp.json();
-      status = finalRunData.status;
-      if (status === 'completed') break;
-    }
-
+  await new Promise(res => setTimeout(res, 1000));
+  const pollResp = await fetch(`https://api.openai.com/v1/threads/${currentThreadId}/runs/${runData.id}`, {
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+    },
+  });
+  finalRunData = await pollResp.json();
+  status = finalRunData.status;
+  console.log(`[ODIN POLL] Status: ${status} | Details: ${JSON.stringify(finalRunData)}`);
+  if (status === 'completed') break;
+}
     if (status !== 'completed') {
-      return res.status(500).json({ error: 'Odin is thinking too long...' });
-    }
+  return res.status(500).json({ 
+    error: `Odin run status: ${status} - ${finalRunData?.last_error?.message || JSON.stringify(finalRunData)}` 
+  });
+}
+
 
     // 5. Retrieve the latest assistant message
     const msgResp = await fetch(`https://api.openai.com/v1/threads/${currentThreadId}/messages`, {
