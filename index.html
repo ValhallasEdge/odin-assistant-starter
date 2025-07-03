@@ -2,581 +2,514 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>OdinAI — Wisdom, Legacy, and Norse Myth for the Modern World</title>
+  <title>Odin AI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="description" content="Ask Odin: a cinematic, modern Norse wisdom assistant for legacy, motivation, and mythic guidance."/>
-  <link rel="icon" type="image/png" href="https://cdn.shopify.com/s/files/1/0620/9958/7203/files/6efec50e-7164-40e4-9957-a95c6e0b487c.png?v=1751061405"/>
-  <!-- Fonts: Modern geometric, with runic accent -->
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+  <meta name="description" content="OdinAI: Wisdom, legacy, and Norse myth for the modern world"/>
+  <link rel="icon" href="https://cdn.shopify.com/s/files/1/0620/9958/7203/files/ChatGPT_Image_Jun_27_2025_02_47_18_PM.png?v=1751060934">
+  <!-- Inter, Montserrat for modern/clean + Norse touch -->
+  <link href="https://fonts.googleapis.com/css?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style>
-    :root {
-      --primary: #181a20;
-      --navy: #232a3b;
-      --blue: #3a4d6a;
-      --rune: #38537a;
-      --accent: #a38424;
-      --gold: #c9ab67;
-      --runebg: #f8fafd;
-      --ai-bg: #fcfcfa;
-      --bubble: #f6f7fa;
-      --shadow: 0 8px 40px 0 rgba(41,55,78,0.10);
-      --highlight: #eaeaea;
-      --send-bg: linear-gradient(90deg,#4b6584 30%, #a5aabf 100%);
-      --send-bg-hover: linear-gradient(90deg,#38537a 10%, #b4b9d7 100%);
-      --br: 22px;
-      --transition: 0.28s cubic-bezier(.8,.4,.3,1);
-      --mobile-p: 16px;
-      --chat-w: 670px;
-      --logo: 112px;
-    }
     html, body {
-      min-height: 100%;
-      background: radial-gradient(ellipse 70% 70% at 50% 15%, #f7fafd 80%, #e5eaf3 100%);
-      font-family: 'Outfit', 'Segoe UI', Arial, sans-serif;
-      color: var(--primary);
-      margin: 0; padding: 0;
-      -webkit-font-smoothing: antialiased;
-    }
-    body {
-      padding: 0;
-      margin: 0;
-    }
-    .valhalla-main {
+      background: radial-gradient(ellipse at center 30vh, #f8fafe 55%, #e6eaf3 100%);
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      padding: 40px 0 32px 0;
+      font-family: 'Inter', 'Montserrat', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #1b1c21;
     }
-    .odin-card {
+    body { overflow-x: hidden; }
+    .odin-main {
+      max-width: 540px;
+      margin: 64px auto 0 auto;
       background: #fff;
-      border-radius: var(--br);
-      box-shadow: var(--shadow);
-      width: min(96vw, var(--chat-w));
-      max-width: 100%;
-      padding: 0 0 32px 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      position: relative;
-      margin-top: 0;
-    }
-    .odin-logo {
-      width: var(--logo);
-      height: var(--logo);
-      object-fit: contain;
-      display: block;
-      margin: 0 auto -22px auto;
-      z-index: 3;
-      border-radius: 50%;
-      box-shadow: 0 6px 24px 0 rgba(0,0,0,0.07);
-      background: #fff;
-      border: 3px solid #fff;
-      position: relative;
-      top: 34px;
-      transition: transform .32s cubic-bezier(.7,.3,.1,1);
-    }
-    .odin-logo:hover, .odin-logo:focus {
-      transform: scale(1.08) rotate(-2deg);
-      box-shadow: 0 12px 42px 0 rgba(170,170,130,0.13);
-    }
-    .rune-banner {
-      display: flex;
-      justify-content: center;
-      gap: 22px;
-      opacity: 0.12;
-      font-size: 2.2em;
-      letter-spacing: .36em;
-      margin: 0 0 -8px 0;
-      user-select: none;
-      width: 100%;
-      font-family: 'Outfit', monospace;
-      color: var(--navy);
-    }
-    .odin-header {
-      margin-top: 36px;
-      margin-bottom: 0;
-      text-align: center;
-      font-size: 2.7em;
-      font-weight: 800;
-      letter-spacing: 0.07em;
+      border-radius: 38px;
+      box-shadow: 0 16px 64px #12204022, 0 1.5px 0 #e3d6b3 inset;
       position: relative;
       z-index: 2;
+      padding: 48px 0 34px 0;
+      animation: floatIn 1.2s cubic-bezier(.26,.87,.42,1.05);
+    }
+    @keyframes floatIn {
+      0% { transform:translateY(60px) scale(.97); opacity:0; }
+      80% { opacity:1; }
+      100% { transform:translateY(0) scale(1); opacity:1; }
+    }
+    .odin-logo-wrap {
+      text-align: center;
+      margin-top: -88px;
+      margin-bottom: 6px;
+    }
+    .odin-logo {
+      width: 112px; height: 112px;
+      border-radius: 50%;
+      box-shadow: 0 3px 32px #0006;
+      background: #18120e;
+      border: 4px solid #d5ba7c;
+      transition: box-shadow .3s;
+      position: relative;
+      z-index: 3;
+      margin-bottom: 2px;
+    }
+    .odin-logo:hover {
+      box-shadow: 0 8px 36px #000c, 0 0 28px #dbc07866;
+      transition: box-shadow .19s;
+    }
+    .rune-bg {
+      font-family: 'Montserrat', 'Inter', Arial, sans-serif;
+      text-align: center;
+      color: #dbe0e6;
+      font-size: 2.2rem;
+      letter-spacing: 1.9rem;
+      opacity: 0.19;
+      font-weight: 900;
+      margin-top: -24px;
+      margin-bottom: 0;
+      user-select:none;
+      pointer-events:none;
+      line-height: 2.5rem;
+    }
+    /* OdinAI Title */
+    .odin-title {
+      text-align: center;
+      margin: 16px 0 0 0;
+      font-family: 'Montserrat', 'Inter', Arial, sans-serif;
+      font-weight: 900;
+      font-size: 3.2rem;
+      letter-spacing: .14em;
+      color: #18181b;
       display: flex;
+      align-items: center;
       justify-content: center;
-      align-items: flex-end;
-      gap: 0.07em;
-      line-height: 1.02em;
-      background: none;
+      gap: 8px;
+      position: relative;
       text-transform: uppercase;
     }
     .odin-o {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
+      display: inline-block;
+      transition: color .24s;
+      font-size: 2.99rem;
+      font-family: 'Montserrat', 'Inter', Arial, sans-serif;
+      color: #27397b;
       position: relative;
-      margin: 0 -2px 0 -2px;
-      transition: letter-spacing var(--transition);
       cursor: pointer;
-      width: 1.1em;
-      height: 1.1em;
-      font-family: 'Outfit', Arial, sans-serif;
-    }
-    .odin-o-base {
-      color: var(--blue);
-      font-weight: 900;
-      opacity: 1;
-      transition: opacity 0.18s;
-      font-size: 1.03em;
-    }
-    .odin-o-rune {
-      position: absolute;
-      left: 0; top: 0; width: 100%; height: 100%;
-      font-family: 'Noto Sans Runic', 'Outfit', Arial, sans-serif;
-      color: var(--accent);
-      opacity: 0;
-      font-size: 1em;
-      font-weight: 700;
-      transition: opacity 0.18s;
-      pointer-events: none;
-    }
-    .odin-o:hover .odin-o-base,
-    .odin-o:focus .odin-o-base {
-      opacity: 0;
-    }
-    .odin-o:hover .odin-o-rune,
-    .odin-o:focus .odin-o-rune {
-      opacity: 1;
-    }
-    .odin-underline {
-      margin: 0.05em auto 0.11em auto;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 236px;
-      max-width: 92vw;
-      height: 15px;
-      position: relative;
-    }
-    .odin-arrow {
-      width: 100%;
-      height: 12px;
-      position: absolute;
-      left: 0; top: 0;
-    }
-    .odin-arrow path {
-      stroke: var(--gold);
-      stroke-width: 3.2;
-      fill: none;
-    }
-    .odin-subtitle {
-      font-size: 1.16em;
-      font-weight: 400;
-      color: var(--navy);
-      margin: 0 0 24px 0;
-      letter-spacing: .02em;
-      opacity: 0.88;
+      width: 1.15em;
       text-align: center;
-      text-shadow: 0 1px 0 #fff8;
+      user-select: none;
     }
-    .odin-chat-shell {
-      background: var(--bubble);
-      width: 92%;
-      max-width: 640px;
-      margin: 0 auto 0 auto;
+    .odin-o .odin-o-rune {
+      position: absolute; left:0; top:0;
+      width:100%; height:100%;
+      font-family: inherit;
+      font-size: inherit;
+      color: #b8a05d;
+      opacity:0; pointer-events:none;
+      transition: opacity .23s;
+      text-shadow: 0 3px 10px #0005;
+      letter-spacing: 0;
+    }
+    .odin-o:hover .odin-o-rune, .odin-o:focus .odin-o-rune { opacity:1; }
+    .odin-o:hover .odin-o-base, .odin-o:focus .odin-o-base { opacity:0; }
+    .odin-o .odin-o-base { opacity:1; transition: opacity .22s; }
+    .odin-title-underline {
+      margin: 0 auto 13px auto;
+      display: block;
+      width: 290px; height: 22px;
+    }
+    .odin-tagline {
+      text-align: center;
+      margin: 0 auto 30px auto;
+      color: #787d85;
+      font-size: 1.14rem;
+      font-weight: 400;
+      letter-spacing: .04em;
+      font-family: 'Inter', Arial, sans-serif;
+    }
+    /* Chat container */
+    .odin-chat-frame {
+      width: 97%;
+      margin: 0 auto;
+      background: #f8fafdcc;
       border-radius: 18px;
-      box-shadow: 0 4px 28px 0 rgba(41,55,78,0.06);
-      padding: 0 0 24px 0;
-      min-height: 320px;
-      display: flex;
-      flex-direction: column;
+      box-shadow: 0 2px 18px #adc7e213;
+      border: 2.5px solid #e8e9ee;
       position: relative;
+      padding: 0;
+      margin-bottom: 28px;
+      min-height: 200px;
+      max-height: 410px;
+      overflow-y: auto;
+      transition: box-shadow .18s;
+    }
+    .odin-chat-frame:focus-within, .odin-chat-frame:hover {
+      box-shadow: 0 8px 38px #27397b15;
+      border-color: #aebbe2;
     }
     .odin-user-bubble {
-      color: var(--navy);
+      font-family: 'Montserrat', 'Inter', Arial, sans-serif;
       font-weight: 700;
-      background: linear-gradient(90deg, #eef0f4 80%, #e8eefa 100%);
-      border-radius: 13px 13px 0 13px;
-      padding: 10px 18px 10px 18px;
-      margin: 18px 24px 10px 24px;
-      align-self: flex-end;
-      box-shadow: 0 2px 9px 0 #eaeef6;
-      font-size: 1.11em;
-      max-width: 80%;
-      word-break: break-word;
-      border-left: 3px solid var(--blue);
-      transition: all .22s cubic-bezier(.9,.2,.2,1);
+      color: #27397b;
+      background: #f6f9fc;
+      border-left: 5px solid #769ad4;
+      padding: 15px 20px 11px 18px;
+      margin: 19px 0 6px 0;
+      border-radius: 13px 18px 14px 17px;
+      font-size: 1.18rem;
+      max-width: 95%;
+      box-shadow: 0 1px 7px #bbcee820;
     }
     .odin-ai-bubble {
-      background: #fcfaf4;
-      border-radius: 14px 14px 14px 0;
-      color: #222;
-      font-size: 1.07em;
-      padding: 18px 22px 14px 22px;
-      margin: 10px 24px 10px 24px;
-      max-width: 92%;
-      align-self: flex-start;
-      box-shadow: 0 2px 12px 0 #f0e5c3a0;
-      border-left: 3.3px solid var(--accent);
-      font-family: 'Outfit', 'Segoe UI', Arial, sans-serif;
-      line-height: 1.55;
-      font-weight: 430;
-      transition: all .22s cubic-bezier(.6,.2,.2,1);
+      font-family: 'Georgia', 'serif';
+      font-size: 1.1rem;
+      background: #fafdff;
+      color: #25231e;
+      border-left: 5px solid #b8a05d;
+      padding: 15px 24px 16px 22px;
+      border-radius: 15px 16px 17px 16px;
+      margin: 2px 0 22px 0;
+      box-shadow: 0 2px 6px #e9e2be14;
+      max-width: 99%;
+      line-height: 1.64;
       word-break: break-word;
-    }
-    .odin-ai-bubble strong {
-      color: var(--navy);
-      font-weight: 800;
-      letter-spacing: .02em;
-    }
-    .odin-ai-bubble em {
-      color: var(--blue);
-      font-style: normal;
-      font-weight: 700;
-    }
-    .odin-highlight {
-      color: var(--accent);
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: .04em;
-      font-size: 1.09em;
-      margin: 12px 0 6px 0;
-      display: inline-block;
-    }
-    .odin-legacy {
-      color: var(--rune);
-      font-weight: 700;
-      letter-spacing: .03em;
-    }
-    .odin-pop {
-      color: var(--gold);
-      font-weight: 600;
+      transition: box-shadow .14s;
+      font-variant-ligatures: common-ligatures;
       letter-spacing: .01em;
     }
-    .odin-ai-bubble blockquote {
-      border-left: 4px solid var(--rune);
-      color: var(--blue);
-      margin: 14px 0 12px 0;
-      padding: 2px 0 2px 18px;
+    .odin-ai-bubble strong,
+    .odin-ai-bubble .odin-heading {
+      color: #314072;
+      font-weight: bold;
+      font-family: 'Montserrat', 'Inter', Arial, sans-serif;
+      letter-spacing: .01em;
+    }
+    .odin-ai-bubble .odin-highlight {
+      color: #314072;
+      font-family: 'Montserrat', 'Inter', Arial, sans-serif;
+      font-weight: 800;
+      letter-spacing: .03em;
+      font-size: 1.07em;
+      text-transform: uppercase;
+    }
+    .odin-ai-bubble em, .odin-ai-bubble .odin-pop {
+      color: #7e8ec2;
       font-style: italic;
-      background: #f7fafd;
-      border-radius: 6px;
-      font-size: 0.97em;
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Inter', Arial, sans-serif;
+      font-size: 1.02em;
     }
-    .odin-ai-bubble ul, .odin-ai-bubble ol {
-      margin: 12px 0 12px 24px;
-      padding: 0;
-      font-size: 1em;
-    }
-    .odin-ai-bubble li {
-      margin-bottom: 4px;
-      color: #353535;
+    .odin-ai-bubble .odin-legacy {
+      color: #b8a05d;
+      font-weight: bold;
     }
     .odin-ai-bubble .odin-rune {
-      font-family: 'Noto Sans Runic', 'Outfit', Arial, sans-serif;
-      color: var(--rune);
-      font-size: 1.2em;
-      font-weight: 500;
-      margin: 0 2px;
-      letter-spacing: .18em;
-    }
-    /* Loader */
-    #odin-loader {
-      display: none;
-      justify-content: center;
-      align-items: center;
-      position: absolute;
-      left: 0; right: 0;
-      top: 38%;
-      margin: 0 auto;
-      width: 82px;
-      height: 48px;
-      z-index: 6;
-      background: none;
-    }
-    .loader-spinner {
-      width: 46px; height: 46px;
-      border-radius: 50%;
-      border: 3.3px solid #ede6d2;
-      border-top: 3.3px solid var(--rune);
-      animation: spin 1.1s linear infinite;
-      margin-right: 12px;
-    }
-    .rune-spin {
-      font-family: 'Noto Sans Runic', 'Outfit', Arial, sans-serif;
-      font-size: 1.7em;
-      color: var(--accent);
-      letter-spacing: .08em;
-      margin-left: 2px;
-      animation: rune-blink 1.2s linear infinite alternate;
-    }
-    @keyframes spin { 100% { transform: rotate(360deg); } }
-    @keyframes rune-blink { 0%{opacity:.7;} 100%{opacity:1;} }
-    /* Input/form */
-    .odin-chat-form {
-      display: flex;
-      align-items: stretch;
-      gap: 12px;
-      margin: 18px auto 0 auto;
-      width: 96%;
-      max-width: 650px;
-      position: relative;
-      z-index: 4;
-    }
-    .odin-input {
-      flex: 1 1 auto;
-      font-size: 1.14em;
-      padding: 16px 22px;
-      border-radius: 11px;
-      border: 1.5px solid #e1e1e8;
-      font-family: 'Outfit', Arial, sans-serif;
-      color: var(--primary);
-      background: #fff;
-      outline: none;
-      box-shadow: 0 1px 5px 0 #eaeaea0a;
-      margin: 0;
-      transition: border .16s;
-    }
-    .odin-input:focus {
-      border: 1.5px solid var(--rune);
-      box-shadow: 0 2px 9px 0 #c4d8fd1c;
-    }
-    .odin-send-btn {
-      font-family: 'Outfit', Arial, sans-serif;
-      font-size: 1.18em;
-      font-weight: 700;
-      letter-spacing: .07em;
-      background: var(--send-bg);
-      color: #fff;
-      border: none;
-      border-radius: 11px;
-      padding: 0 38px;
-      cursor: pointer;
-      transition: background var(--transition), transform .13s;
-      box-shadow: 0 2px 12px 0 #e5e9fa22;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 112px;
-      min-height: 52px;
-      position: relative;
-      outline: none;
-    }
-    .odin-send-btn:hover,
-    .odin-send-btn:focus {
-      background: var(--send-bg-hover);
-      transform: translateY(-2px) scale(1.04);
-      color: #fff;
-      box-shadow: 0 4px 26px 0 #d2def2;
-    }
-    .odin-send-btn svg {
-      margin-right: 8px;
+      font-family: 'Montserrat', Arial, sans-serif;
+      letter-spacing: 0.13em;
+      color: #adc;
       font-size: 1.09em;
     }
-    /* Audio controls */
-    .audio-controls {
+    /* Loader */
+    .odin-loader {
       display: flex;
       align-items: center;
-      gap: 12px;
-      position: absolute;
-      right: 16px;
-      top: 54px;
-      z-index: 8;
-      user-select: none;
-      opacity: 0.90;
+      justify-content: center;
+      font-family: 'Montserrat', 'Inter', Arial, sans-serif;
+      color: #b8a05d;
+      font-size: 1.14rem;
+      margin: 16px 0 8px 0;
+      font-weight: bold;
+      min-height: 32px;
+      letter-spacing: .04em;
+      user-select:none;
+      gap: 8px;
+      opacity: .96;
     }
-    .audio-btn {
+    .rune-spin {
+      animation: spin 1.7s linear infinite;
+      font-size: 1.68em;
+      margin-right: 7px;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    /* Input area */
+    .input-area {
+      width: 95%;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .input-area input[type="text"] {
+      flex: 1;
+      padding: 1.17em 1em 1.17em 1.14em;
+      border: 2px solid #d5d9e6;
+      border-radius: 13px;
+      font-size: 1.17rem;
+      font-family: 'Inter', Arial, sans-serif;
+      outline: none;
+      transition: border .17s, box-shadow .12s;
+      background: #fafdff;
+      color: #1a1a1c;
+      box-shadow: 0 1px 6px #c7d0e544 inset;
+    }
+    .input-area input[type="text"]:focus {
+      border-color: #7e8ec2;
+      box-shadow: 0 2px 14px #adc7e216;
+    }
+    .input-area button {
+      background: linear-gradient(90deg, #5373ad 5%, #e6eaf3 97%);
+      color: #fff;
+      border: none;
+      border-radius: 13px;
+      font-family: 'Montserrat', 'Inter', Arial, sans-serif;
+      font-weight: bold;
+      font-size: 1.18rem;
+      padding: 1em 2.35em;
+      box-shadow: 0 2px 12px #adc7e235;
+      cursor: pointer;
+      transition: box-shadow .18s, background .17s;
+      letter-spacing: .07em;
+      outline: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      position: relative;
+    }
+    .input-area button:hover {
+      background: linear-gradient(90deg, #e6eaf3 0%, #5373ad 90%);
+      box-shadow: 0 7px 18px #31407219;
+    }
+    .audio-toggle {
       background: none;
       border: none;
+      color: #314072;
+      font-size: 1.9em;
+      margin-left: 8px;
       cursor: pointer;
-      color: var(--gold);
-      font-size: 1.58em;
-      display: flex;
-      align-items: center;
-      transition: color 0.22s;
-      border-radius: 6px;
-      padding: 2px 8px;
+      opacity: 0.73;
+      transition: opacity .18s, color .18s;
+      outline: none;
+      padding: 0;
+      line-height: 1;
     }
-    .audio-btn:focus {
-      outline: 2px solid var(--accent);
-    }
+    .audio-toggle[aria-pressed="true"] { color: #b8a05d; opacity:1;}
+    .audio-toggle:hover, .audio-toggle:focus { opacity: 1; color: #b8a05d; }
     .volume-slider {
-      width: 90px;
-      accent-color: var(--accent);
+      width: 80px; height: 3px;
+      accent-color: #b8a05d;
       vertical-align: middle;
+      margin-left: 7px;
+      border-radius: 6px;
+      cursor: pointer;
+      background: #e0e4ed;
     }
     /* Footer */
     .valhalla-footer {
-      margin: 24px auto 0 auto;
-      color: #babdc9;
-      font-size: 1.04em;
       text-align: center;
-      opacity: .94;
-      letter-spacing: .01em;
-      padding: 0 6px 0 6px;
+      color: #b8a05d;
+      margin: 33px auto 0 auto;
+      font-size: 1.07rem;
+      letter-spacing: .04em;
+      font-family: 'Montserrat', 'Inter', Arial, sans-serif;
+      opacity: .79;
+      padding-bottom: 18px;
     }
     .valhalla-badge {
-      display: inline-block;
-      background: var(--accent);
-      color: #fff;
-      border-radius: 8px;
-      font-size: 1.08em;
-      font-weight: 600;
+      background: #f4eacb;
+      color: #314072;
+      font-weight: bold;
+      border-radius: 7px;
+      padding: 2px 13px;
       margin-left: 4px;
-      padding: 2px 14px;
-      letter-spacing: .02em;
-      opacity: .94;
+      font-size: 1.05em;
+      letter-spacing: .06em;
+      border: 1.4px solid #dac273;
+      box-shadow: 0 2px 7px #dac27333;
+      vertical-align: middle;
+      display: inline-block;
     }
-    @media (max-width: 800px) {
-      .odin-header { font-size: 2em;}
-      .odin-chat-shell {max-width:96vw;}
-      .odin-card {width:99vw;}
-      .odin-logo { width:77px; height:77px;}
-      .rune-banner {font-size:1.25em;}
-    }
-    @media (max-width: 550px) {
-      .valhalla-main {padding: 14px 0 6vw 0;}
-      .odin-card {padding: 0 0 14px 0;}
-      .odin-chat-shell {width:99vw; min-width:0;}
-      .odin-header {font-size:1.26em;}
-      .odin-subtitle {font-size:0.99em;}
-      .odin-logo {width:59px; height:59px;}
-      .rune-banner {font-size:0.82em;}
-      .audio-controls {top:24px; right:6px;}
-      .odin-send-btn {padding:0 17px; min-width:66px; min-height:41px;}
-      .odin-input {font-size:0.98em; padding: 11px 10px;}
+    @media (max-width: 850px) {
+      .odin-main { max-width:99vw; border-radius:16px; padding-top:28px; }
+      .odin-logo { width: 75px; height: 75px; }
+      .odin-title { font-size: 1.8rem;}
+      .odin-title-underline { width: 110px;}
+      .rune-bg {font-size:1.04rem;}
+      .odin-chat-frame {max-height:220px;}
+      .odin-ai-bubble { font-size:1.01rem;}
+      .odin-user-bubble { font-size:.98rem;}
+      .valhalla-footer { font-size: .92rem;}
     }
   </style>
 </head>
 <body>
-  <main class="valhalla-main">
-    <section class="odin-card" aria-label="Odin AI Chat">
-      <!-- Runes Banner -->
-      <div class="rune-banner" aria-hidden="true">
-         ᚠ ᚱ ᚾ ᚨ ᚺ ᛁ ᛉ ᚱ ᛗ ᛋ ᛞ
-      </div>
-      <!-- Odin Logo -->
-      <img src="https://cdn.shopify.com/s/files/1/0620/9958/7203/files/6efec50e-7164-40e4-9957-a95c6e0b487c.png?v=1751061405" alt="Odin's gold logo" class="odin-logo" />
-      <!-- Ask Odin Heading -->
-      <div class="odin-header">
-        ASK 
-        <span class="odin-o" tabindex="0" aria-label="Odin's rune">
-          <span class="odin-o-base">O</span>
-          <span class="odin-o-rune" aria-hidden="true">&#5792;</span>
-        </span>
-        DIN
-      </div>
-      <div class="odin-underline" aria-hidden="true">
-        <svg class="odin-arrow" width="236" height="14">
-          <line x1="8" y1="12" x2="228" y2="12" stroke="#c9ab67" stroke-width="3" />
-          <polygon points="228,6 236,12 228,18" fill="#c9ab67"/>
-        </svg>
-      </div>
-      <div class="odin-subtitle">Wisdom, legacy, and Norse myth for the modern world</div>
-      <!-- Audio controls -->
-      <div class="audio-controls" aria-label="Meditation audio controls">
-        <button class="audio-btn" id="audio-play-btn" title="Play/Pause meditation music" aria-label="Play or pause meditation music">
-          <span id="audio-icon">&#119136;</span>
-        </button>
-        <input type="range" min="0" max="1" step="0.01" value="0.23" id="audio-volume" class="volume-slider" aria-label="Volume"/>
-      </div>
-      <!-- Chat UI -->
-      <section class="odin-chat-shell" aria-live="polite">
-        <div id="chat"></div>
-        <!-- Loader -->
-        <div id="odin-loader">
-          <div class="loader-spinner"></div>
-          <span class="rune-spin">&#5792; &#5815; &#5807; &#5809;</span>
-        </div>
-      </section>
-      <!-- Chat Input -->
-      <form class="odin-chat-form" id="odin-form" autocomplete="off" onsubmit="event.preventDefault(); sendMessage();">
-        <input id="user-input" class="odin-input" type="text" maxlength="340" placeholder="Ask your question..." autocomplete="off" aria-label="Ask Odin a question" />
-        <button class="odin-send-btn" id="send-btn" type="submit" aria-label="Send question to Odin">
-          <svg width="26" height="26" viewBox="0 0 22 22" fill="none"><path d="M3 11L20 4L13 21L11 13L3 11Z" fill="white"/></svg>
-          SEND
-        </button>
-      </form>
-    </section>
-    <footer class="valhalla-footer" aria-label="Site Footer">
+  <div class="odin-main">
+    <div class="odin-logo-wrap">
+      <img src="https://cdn.shopify.com/s/files/1/0620/9958/7203/files/ChatGPT_Image_Jun_27_2025_02_47_18_PM.png?v=1751060934" class="odin-logo" alt="Odin Norse AI Logo" draggable="false" />
+    </div>
+    <div class="rune-bg" aria-hidden="true">
+      ᚠᚱᚾᛊ ᚠᛁ ᚱᛉᚱ ᛗᚾᛉ
+    </div>
+    <div class="odin-title">
+      ASK
+      <span class="odin-o" tabindex="0">
+        <span class="odin-o-base">O</span>
+        <span class="odin-o-rune" aria-hidden="true">ᛟ</span>
+      </span>
+      DIN
+    </div>
+    <svg class="odin-title-underline" viewBox="0 0 295 20" fill="none">
+      <path d="M12 10 H282" stroke="#b8a05d" stroke-width="4" stroke-linecap="round"/>
+      <polygon points="282,10 271,4 271,16" fill="#b8a05d"/>
+      <circle cx="12" cy="10" r="3.7" fill="#b8a05d"/>
+    </svg>
+    <div class="odin-tagline">Wisdom, legacy, and Norse myth for the modern world</div>
+    <div class="odin-chat-frame" id="chat" aria-live="polite" aria-atomic="false"></div>
+    <div class="odin-loader" id="odin-loader" style="display:none;">
+      <span class="rune-spin">ᚨ</span>
+      Odin is consulting the Well of Wisdom...
+    </div>
+    <form class="input-area" autocomplete="off" onsubmit="sendMessage();return false;">
+      <input id="user-input" type="text" maxlength="600" placeholder="Ask your question..." aria-label="Type your question"/>
+      <button type="submit"><span class="material-icons" style="vertical-align:middle;">send</span> SEND</button>
+      <span id="audioToggle" class="audio-toggle material-icons" title="Toggle ambience" tabindex="0" role="button" aria-pressed="false">volume_up</span>
+      <input type="range" min="0" max="1" step="0.01" id="volumeSlider" class="volume-slider" value="0.3" title="Music volume">
+    </form>
+    <audio id="odinAudio" loop preload="auto" style="display:none">
+      <!-- You can change this to any royalty-free ambience/meditation music you like -->
+      <source src="https://cdn.pixabay.com/audio/2022/10/16/audio_12b7c40106.mp3" type="audio/mp3">
+      Your browser does not support the audio element.
+    </audio>
+    <div class="valhalla-footer">
       Powered by <span class="valhalla-badge">Valhalla’s Edge</span>
-    </footer>
-  </main>
-  <!-- Meditation Music (Royalty-Free from Pixabay, can swap URL) -->
-  <audio id="meditation-audio" preload="auto" loop src="https://cdn.pixabay.com/audio/2023/05/11/audio_146b5b86e2.mp3"></audio>
+    </div>
+  </div>
   <script>
-    // --- Audio controls ---
-    const audio = document.getElementById('meditation-audio');
-    const audioBtn = document.getElementById('audio-play-btn');
-    const audioIcon = document.getElementById('audio-icon');
-    const audioVol = document.getElementById('audio-volume');
-    let audioOn = false;
-    audio.volume = audioVol.value;
-    audioBtn.addEventListener('click', () => {
-      audioOn = !audioOn;
-      if(audioOn) { audio.play(); audioIcon.textContent = '⏸️'; }
-      else { audio.pause(); audioIcon.textContent = '🎵'; }
-    });
-    audioVol.addEventListener('input', () => { audio.volume = audioVol.value; });
-    // --- Chat ---
     const chat = document.getElementById('chat');
+    const input = document.getElementById('user-input');
     const loader = document.getElementById('odin-loader');
-    function showLoader(show=true) { loader.style.display = show ? 'flex' : 'none'; }
-    // --- Chat state ---
-    async function sendMessage() {
-      const input = document.getElementById('user-input');
-      let userText = input.value.trim();
-      if(!userText) return;
-      // Render user bubble
-      chat.innerHTML += `<div class="odin-user-bubble">You: ${userText}</div>`;
-      input.value = '';
+
+    // Utility: scroll to latest
+    function scrollChat() {
       chat.scrollTop = chat.scrollHeight;
-      showLoader(true);
+    }
+
+    // Add chat bubbles
+    function addMsg(msg, who="odin") {
+      let el = document.createElement('div');
+      el.className = (who==="user") ? "odin-user-bubble" : "odin-ai-bubble";
+      el.innerHTML = msg;
+      chat.appendChild(el);
+      scrollChat();
+    }
+
+    // Basic markdown and Norse formatting parser
+    function parseOdin(text) {
+      // Headings/lines: Odin mode
+      text = text.replace(/^\s*(THE MYTH|THE MESSAGE|THE MOVE|THE LEGACY|LEGACY ECHO|THE SAGA)\s*:?/gm,
+        `<span class="odin-highlight">$1</span>`);
+      // Strong
+      text = text.replace(/\*\*(.*?)\*\*/g, `<strong>$1</strong>`);
+      // Pop terms (italic/em)
+      text = text.replace(/\*(.*?)\*/g, `<em class="odin-pop">$1</em>`);
+      // Legacy echo/highlighted words
+      text = text.replace(/\b(legacy|echo|wisdom|truth)\b/gi, `<span class="odin-legacy">$1</span>`);
+      // Runes (between backticks)
+      text = text.replace(/`([ᚠ-ᛟ]{2,})`/g, `<span class="odin-rune">$1</span>`);
+      // Bullets
+      text = text.replace(/^\s*[\-\*] (.+)$/gm, '<li>$1</li>');
+      // Blockquotes
+      text = text.replace(/^\s*\>\s?(.*)$/gm, '<blockquote>$1</blockquote>');
+      // Line breaks
+      text = text.replace(/\n{2,}/g, '<br><br>');
+      return text;
+    }
+
+    // Loader with animated runes
+    const runes = ['ᚠ','ᚢ','ᚦ','ᚨ','ᚱ','ᚲ','ᚷ','ᚹ','ᚺ','ᚾ','ᛁ','ᛃ','ᛇ','ᛈ','ᛉ','ᛋ','ᛏ','ᛒ','ᛖ','ᛗ','ᛚ','ᛜ','ᛞ','ᛟ'];
+    let runeInterval, runeIdx=0;
+    function showLoader() {
+      loader.style.display = "flex";
+      runeIdx=0;
+      loader.querySelector('.rune-spin').textContent = runes[0];
+      runeInterval = setInterval(()=>{
+        runeIdx = (runeIdx+1)%runes.length;
+        loader.querySelector('.rune-spin').textContent = runes[runeIdx];
+      }, 155);
+    }
+    function hideLoader() {
+      loader.style.display = "none";
+      if(runeInterval) clearInterval(runeInterval);
+    }
+
+    // Chat submission
+    async function sendMessage() {
+      const userText = input.value.trim();
+      if (!userText) return;
+      addMsg("You: <b>" + userText + "</b>", "user");
+      input.value = '';
+      showLoader();
       try {
         const response = await fetch('/api/chat', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({ message: userText, threadId: null })
         });
         const data = await response.json();
-        showLoader(false);
-        if(data.reply) {
-          chat.innerHTML += `<div class="odin-ai-bubble">${parseAIText(data.reply)}</div>`;
-        } else if(data.error) {
-          chat.innerHTML += `<div class="odin-ai-bubble">Odin: <em>ERROR</em> — ${data.error}</div>`;
+        hideLoader();
+        if (data.reply) {
+          addMsg("Odin: " + parseOdin(data.reply), "odin");
+        } else if (data.error) {
+          addMsg(`<span style="color:#a21927;">ERROR: ${data.error}</span>`, "odin");
         } else {
-          chat.innerHTML += `<div class="odin-ai-bubble">Odin: <em>(No response from Valhalla...)</em></div>`;
+          addMsg(`<span style="color:#ad4d24;">(No response from Valhalla...)</span>`, "odin");
         }
-      } catch(err) {
-        showLoader(false);
-        chat.innerHTML += `<div class="odin-ai-bubble">Odin: <em>(NETWORK ERROR: ${err.message})</em></div>`;
+      } catch (err) {
+        hideLoader();
+        addMsg(`<span style="color:#ad4d24;">(NETWORK ERROR: ${err.message})</span>`, "odin");
       }
-      chat.scrollTop = chat.scrollHeight;
     }
-    // --- Enter key send
-    document.getElementById('user-input').addEventListener('keydown', (e) => {
-      if(e.key==='Enter'){e.preventDefault(); sendMessage();}
+
+    // Enter key
+    input.addEventListener('keydown', function(e){
+      if (e.key === 'Enter') { e.preventDefault(); sendMessage(); }
     });
-    // --- AI formatting helpers ---
-    function parseAIText(txt) {
-      // Headings (THE MYTH, THE MESSAGE, etc.)
-      txt = txt.replace(/(THE MYTH|THE MESSAGE|THE MOVE|LEGACY ECHO|THE LESSON|THE CHALLENGE|THE CODE|THE RITUAL)/g, '<span class="odin-highlight">$1</span>');
-      // Legacy echo
-      txt = txt.replace(/(echoes?)/gi, '<span class="odin-legacy">$1</span>');
-      // Odin pop (wisdom, courage, vision, etc.)
-      txt = txt.replace(/\b(wisdom|boldness|resilience|adaptability|vision|endurance|focus)\b/gi, '<span class="odin-pop">$1</span>');
-      // Bolded words (BOOK, BRAVE, VIKING)
-      txt = txt.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-      // Italic
-      txt = txt.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-      // Blockquotes ("> " lines)
-      txt = txt.replace(/^&gt; (.*)$/gm, '<blockquote>$1</blockquote>');
-      // Replace `[Rune]` with rune font
-      txt = txt.replace(/\[rune:([^\]]+)\]/g, '<span class="odin-rune">$1</span>');
-      return txt;
-    }
+
+    // Odin O hover rune swap (accessible)
+    document.querySelector('.odin-o').addEventListener('mouseenter',function(){
+      this.querySelector('.odin-o-rune').style.opacity=1;
+      this.querySelector('.odin-o-base').style.opacity=0;
+    });
+    document.querySelector('.odin-o').addEventListener('mouseleave',function(){
+      this.querySelector('.odin-o-rune').style.opacity=0;
+      this.querySelector('.odin-o-base').style.opacity=1;
+    });
+    document.querySelector('.odin-o').addEventListener('focus',function(){
+      this.querySelector('.odin-o-rune').style.opacity=1;
+      this.querySelector('.odin-o-base').style.opacity=0;
+    });
+    document.querySelector('.odin-o').addEventListener('blur',function(){
+      this.querySelector('.odin-o-rune').style.opacity=0;
+      this.querySelector('.odin-o-base').style.opacity=1;
+    });
+
+    // Audio: music/ambience controls
+    const audio = document.getElementById('odinAudio');
+    const audioToggle = document.getElementById('audioToggle');
+    const volumeSlider = document.getElementById('volumeSlider');
+    let audioOn = false;
+    audioToggle.onclick = function(){
+      audioOn = !audioOn;
+      audioToggle.setAttribute('aria-pressed', audioOn ? "true" : "false");
+      if(audioOn) { audio.volume=volumeSlider.value; audio.play(); }
+      else audio.pause();
+    };
+    audioToggle.addEventListener('keydown',function(e){
+      if(e.key==='Enter'||e.key===' '){audioToggle.click();}
+    });
+    volumeSlider.oninput = function() {
+      audio.volume = this.value;
+    };
+
+    // Mobile autofocus hack
+    window.onload = () => { setTimeout(()=>input.focus(),120); };
   </script>
 </body>
 </html>
