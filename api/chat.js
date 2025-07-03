@@ -29,7 +29,7 @@ module.exports = async function (req, res) {
       currentThreadId = threadData.id;
     }
 
-    // --- CRUCIAL: await posting user message and check result
+    // --- ALWAYS: Add user message to thread
     const userMsgResp = await fetch(`https://api.openai.com/v1/threads/${currentThreadId}/messages`, {
       method: 'POST',
       headers: openaiHeaders,
@@ -43,7 +43,7 @@ module.exports = async function (req, res) {
       return res.status(500).json({ error: "Failed to post user message: " + (userMsgData?.error?.message || "Unknown error") });
     }
 
-    // --- Now, start the run
+    // --- Only after the above, start the run
     const runResp = await fetch(`https://api.openai.com/v1/threads/${currentThreadId}/runs`, {
       method: 'POST',
       headers: openaiHeaders,
@@ -89,4 +89,5 @@ module.exports = async function (req, res) {
     return res.status(500).json({ error: errorMessage });
   }
 }
+
 
