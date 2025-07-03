@@ -95,7 +95,24 @@
     .reset-btn:hover {
       background: #aaa;
     }
+    /* Make markdown headings blend nicely */
+    .msg.odin h1, .msg.odin h2, .msg.odin h3, .msg.odin h4, .msg.odin h5, .msg.odin h6 {
+      font-family: 'Georgia', serif;
+      color: #6a492b;
+      margin: 0.5em 0 0.2em 0;
+    }
+    .msg.odin ul, .msg.odin ol {
+      margin: 0.5em 0 0.5em 1.5em;
+    }
+    .msg.odin strong {
+      color: #861010;
+    }
+    .msg.odin em {
+      color: #444;
+    }
   </style>
+  <!-- Marked.js for Markdown rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
   <div class="chat-wrapper">
@@ -105,7 +122,8 @@
       <input id="user-input" type="text" placeholder="Ask your question..." onkeydown="if(event.key==='Enter'){sendMessage()}" />
       <button onclick="sendMessage()">SEND</button>
     </div>
-    <button class="reset-btn" onclick="resetOdin()">Reset Conversation</button>
+    <!-- You can hide/remove the reset button if you want -->
+    <!-- <button class="reset-btn" onclick="resetOdin()">Reset Conversation</button> -->
   </div>
 <script>
   async function sendMessage() {
@@ -114,7 +132,7 @@
     const userText = input.value.trim();
     if (!userText) return;
 
-    // --- Always use a new thread (no memory)
+    // Always use a new thread (no memory)
     let threadId = null;
     localStorage.removeItem('odinThreadId'); // just in case
 
@@ -134,7 +152,7 @@
       const data = await response.json();
 
       if (data.reply) {
-        chat.innerHTML += `<div class="msg odin">Odin: ${data.reply}</div>`;
+        chat.innerHTML += `<div class="msg odin">Odin: ${marked.parse(data.reply)}</div>`;
       } else if (data.error) {
         chat.innerHTML += `<div class="msg odin">Odin: ERROR - ${data.error}</div>`;
       } else {
@@ -147,4 +165,11 @@
 
     chat.scrollTop = chat.scrollHeight;
   }
+  // Optional: If you ever want to add back reset
+  function resetOdin() {
+    localStorage.removeItem('odinThreadId');
+    document.getElementById('chat').innerHTML = '';
+  }
 </script>
+</body>
+</html>
