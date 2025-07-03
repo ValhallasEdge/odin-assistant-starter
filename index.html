@@ -93,7 +93,7 @@
       <button onclick="sendMessage()">SEND</button>
     </div>
   </div>
- <script>
+<script>
   let threadId = null;
 
   async function sendMessage() {
@@ -112,13 +112,12 @@
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ message: userText, threadId })
+        body: JSON.stringify({ message: userText, threadId })  // always send threadId
       });
 
-      // Try to parse the backend error message
       const data = await response.json();
 
-      // Save threadId for continuity
+      // -- CRITICAL: update threadId for next message!
       if (data.threadId) threadId = data.threadId;
 
       if (data.reply) {
