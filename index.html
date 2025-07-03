@@ -2,78 +2,98 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Odin AI – Valhalla Engine</title>
+  <title>Odin AI</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <!-- Montserrat for clean text, UnifrakturCook for Norse accent -->
   <link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Montserrat', 'Georgia', serif;
-      background: linear-gradient(135deg, #ece7e1 0%, #e9e6df 100%);
-      color: #1a1a1a;
-      margin: 0;
+      background: linear-gradient(135deg, #f6f6f6 0%, #e6e7ea 100%);
       min-height: 100vh;
+      margin: 0;
       display: flex;
       flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      /* Subtle clouds using background-image and blur filter */
+      position: relative;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      z-index: 0;
+      left: 0; top: 0; right: 0; bottom: 0;
+      background: url('https://www.transparenttextures.com/patterns/clouds.png'), linear-gradient(135deg, #f7f7f8 70%, #e6e7ea 100%);
+      opacity: 0.28;
+      filter: blur(0.5px);
+      pointer-events: none;
     }
     .chat-wrapper {
-      max-width: 820px;
-      margin: 64px auto 0 auto;
-      background: rgba(255,255,255,0.85);
-      border-radius: 24px;
-      box-shadow: 0 8px 32px #0002, 0 1.5px 12px #a36a2c33;
-      padding: 2.5em 2em 1.8em 2em;
       position: relative;
-      border: 2.5px solid #bfa768;
-      backdrop-filter: blur(3px);
+      z-index: 1;
+      max-width: 820px;
+      width: 98vw;
+      margin: 68px auto 36px auto;
+      background: rgba(255,255,255,0.91);
+      border-radius: 2.2em;
+      box-shadow: 0 12px 48px 0 #2222, 0 1.5px 32px #bac4cd44, 0 2px 24px 0 #0001;
+      padding: 2.2em 2em 2.1em 2em;
+      border: 2.5px solid #d2d5d8;
+      backdrop-filter: blur(6px) saturate(1.18);
+      transition: box-shadow 0.5s cubic-bezier(.17,.67,.83,.67), transform 0.5s cubic-bezier(.12,.57,.88,1.18);
+    }
+    .chat-wrapper:hover, .chat-wrapper:focus-within {
+      box-shadow: 0 24px 68px 0 #57667b38, 0 1.5px 32px #bac4cd66, 0 2px 24px 0 #0002, 0 8px 50px 8px #b3c5d412;
+      transform: translateY(-6px) scale(1.015);
     }
     h1 {
       text-align: center;
-      font-family: 'UnifrakturCook', serif;
-      font-size: 2.8em;
-      letter-spacing: 2px;
-      color: #942b11;
-      margin-bottom: 0.5em;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 2.45em;
+      letter-spacing: 1.6px;
+      color: #1a1a1a;
+      font-weight: 700;
+      margin-bottom: 0.45em;
+      margin-top: 0.15em;
       position: relative;
       z-index: 2;
     }
     .norse-underline {
-      width: 130px;
-      height: 7px;
-      margin: -16px auto 28px auto;
-      background: linear-gradient(to right, #bfa768 40%, #7d3326 100%);
-      border-radius: 4px;
-      filter: blur(0.5px);
-      box-shadow: 0 0 10px #e3d09e99, 0 0 4px #a3601f55;
-      position: relative;
-      animation: glowline 2s linear infinite alternate;
-    }
-    @keyframes glowline {
-      from { filter: blur(1px) brightness(0.95);}
-      to   { filter: blur(3.5px) brightness(1.09);}
+      width: 90px;
+      height: 4.7px;
+      margin: -18px auto 29px auto;
+      background: linear-gradient(to right, #adadc7 0%, #363b47 100%);
+      border-radius: 2.5px;
+      filter: blur(0.4px);
+      box-shadow: 0 0 16px #e5e8ed4b, 0 0 2px #21273320;
+      opacity: 0.62;
     }
     #loader {
       display: none;
       text-align: center;
-      margin: 0.7em 0 0.8em 0;
-      color: #6a492b;
+      margin: 1.2em 0 1.1em 0;
+      color: #545457;
       font-style: italic;
-      font-size: 1.2em;
+      font-size: 1.16em;
       font-family: 'Montserrat', serif;
       letter-spacing: 0.02em;
-      transition: opacity 0.35s;
+      transition: opacity 0.34s;
     }
     .loader-rune {
       display: inline-block;
-      font-size: 2.2em;
-      color: #bfa768;
+      font-family: 'UnifrakturCook', serif;
+      font-size: 2em;
+      color: #adadc7;
       margin-right: 8px;
       vertical-align: middle;
-      filter: drop-shadow(0 0 8px #bfa76888);
-      animation: runespin 2.2s linear infinite;
+      filter: drop-shadow(0 0 8px #d2d6e6cc);
+      animation: runespin 2.1s linear infinite;
     }
     @keyframes runespin {
       0% { transform: rotateY(0);}
-      80% { filter: drop-shadow(0 0 16px #a3601f88);}
+      80% { filter: drop-shadow(0 0 16px #bfc5da66);}
       100% { transform: rotateY(360deg);}
     }
     .loader-dots::after {
@@ -81,7 +101,7 @@
       display: inline-block;
       width: 1em;
       text-align: left;
-      animation: ellipsis steps(4,end) 1.3s infinite;
+      animation: ellipsis steps(4,end) 1.15s infinite;
     }
     @keyframes ellipsis {
       to {
@@ -89,17 +109,17 @@
       }
     }
     .chat-box {
-      height: 420px;
+      height: 410px;
       overflow-y: auto;
-      border-radius: 18px;
-      padding: 1em 1.2em 1em 1.2em;
-      background: rgba(244,243,241,0.86);
-      margin-bottom: 1em;
-      box-shadow: 0 0 24px #bfa76813, 0 0.5px 8px #86101011;
-      white-space: pre-wrap;
-      border: 1.5px solid #d2ba85;
+      border-radius: 1.4em;
+      padding: 1.0em 1.4em 1.2em 1.3em;
+      background: rgba(246,247,250,0.98);
+      margin-bottom: 1.6em;
+      box-shadow: 0 0 14px #c7cde211, 0 0.5px 10px #7a7b8b11;
+      border: 1.5px solid #e0e0ec;
       scroll-behavior: smooth;
       position: relative;
+      transition: box-shadow 0.4s;
     }
     .msg {
       opacity: 0;
@@ -111,85 +131,114 @@
       to   { opacity: 1;}
     }
     .msg.user {
-      color: #3d2718;
-      background: linear-gradient(to right, #ede2d5 90%, #c4ad7a 100%);
-      border-radius: 12px 18px 16px 8px;
-      padding: 0.7em 1.1em 0.7em 1.1em;
+      color: #232528;
+      background: linear-gradient(98deg, #f7f7f7 80%, #d9dde3 100%);
+      border-radius: 10px 20px 16px 10px;
+      padding: 0.75em 1.25em 0.8em 1.1em;
       font-weight: bold;
-      margin: 0.7em 0 0.7em 30%;
-      border-left: 3px solid #bfa768;
-      box-shadow: 1px 2px 12px #ceb37518;
+      margin: 0.7em 0 0.7em 36%;
+      border-left: 3px solid #bfc5da;
+      box-shadow: 1px 2px 14px #bfc5da13;
+      word-break: break-word;
+      font-size: 1.07em;
     }
     .msg.odin {
-      color: #3b2f1e;
-      background: linear-gradient(to right, #f4efe8 90%, #f8e5b6 100%);
+      color: #222;
+      background: linear-gradient(99deg, #f9fafc 93%, #ececf1 100%);
       font-style: italic;
-      border-left: 4px solid #861010;
-      padding: 0.9em 1.2em 0.9em 1.2em;
-      margin: 0.7em 30% 0.7em 0;
-      border-radius: 16px 12px 12px 20px;
-      box-shadow: 2px 5px 20px #bfa76813;
+      border-left: 4px solid #222940;
+      padding: 1em 1.15em 1em 1.24em;
+      margin: 0.7em 32% 0.7em 0;
+      border-radius: 18px 13px 13px 21px;
+      box-shadow: 2px 4px 24px #bfc5da1a;
+      word-break: break-word;
+      transition: box-shadow 0.6s;
+      position: relative;
+      font-size: 1.08em;
+      /* For fog animation overlay */
+      overflow: visible;
+    }
+    /* Odin fog (desktop only, on hover) */
+    .msg.odin:hover::before {
+      content: '';
+      pointer-events: none;
+      position: absolute;
+      left: -10%; right: -10%; top: -10%; bottom: -10%;
+      z-index: 2;
+      background: radial-gradient(circle at 60% 60%, #dce0ea44 36%, #f7fafb11 90%);
+      opacity: 0.82;
+      animation: fog-move 2.2s linear infinite alternate;
+      filter: blur(9px) brightness(1.13);
+    }
+    @keyframes fog-move {
+      from { background-position: 60% 60%;}
+      to   { background-position: 40% 40%;}
     }
     .msg.odin h1, .msg.odin h2, .msg.odin h3, .msg.odin h4, .msg.odin h5, .msg.odin h6 {
       font-family: 'UnifrakturCook', serif;
-      color: #861010;
+      color: #232528;
       letter-spacing: 0.5px;
       margin: 0.7em 0 0.3em 0;
-      text-shadow: 0 0 4px #edc87733;
+      text-shadow: 0 0 7px #e1e4ed1a;
       font-weight: 700;
     }
     .msg.odin ul, .msg.odin ol {
-      margin: 0.7em 0 0.7em 1.5em;
+      margin: 0.75em 0 0.75em 1.7em;
     }
     .msg.odin strong {
-      color: #861010;
+      color: #232528;
       font-weight: 700;
-      text-shadow: 0 0 4px #a3601f22;
+      text-shadow: 0 0 4px #adadc744;
     }
     .msg.odin em {
-      color: #a3601f;
+      color: #222940;
       font-style: italic;
     }
     .input-area {
       display: flex;
       gap: 1em;
-      margin-top: 1.6em;
+      margin-top: 1.1em;
+      align-items: center;
     }
     .input-area input {
       flex: 1;
-      padding: 1.05em;
-      font-size: 1.13em;
-      border: 2px solid #bfa768;
-      border-radius: 12px;
-      background: #f9f7f2;
+      padding: 1.11em;
+      font-size: 1.1em;
+      border: 2.2px solid #bfc5da;
+      border-radius: 13px;
+      background: #f6f8fa;
       outline: none;
-      transition: border 0.23s;
+      transition: border 0.23s, box-shadow 0.3s;
+      box-shadow: 0 1.5px 10px #bfc5da19;
     }
     .input-area input:focus {
-      border: 2.5px solid #861010;
+      border: 2.6px solid #222940;
+      box-shadow: 0 0 8px #adadc7;
     }
     .input-area button {
-      padding: 1.08em 2em;
-      font-size: 1.13em;
-      background: linear-gradient(to right, #861010, #bfa768);
+      padding: 1.08em 2.15em;
+      font-size: 1.11em;
+      background: linear-gradient(to right, #222940, #adadc7);
       color: #fff;
       border: none;
-      border-radius: 12px;
+      border-radius: 13px;
       cursor: pointer;
       font-weight: bold;
-      box-shadow: 0 1.5px 8px #bfa76844;
-      letter-spacing: 0.08em;
+      box-shadow: 0 1.5px 10px #bfc5da19;
+      letter-spacing: 0.09em;
       transition: background 0.3s, box-shadow 0.3s;
+      font-family: inherit;
     }
     .input-area button:hover {
-      background: linear-gradient(to right, #a3601f, #d4bf6a 100%);
-      box-shadow: 0 4px 18px #d4bf6a33;
+      background: linear-gradient(to right, #363b47, #f6f6f6 100%);
+      box-shadow: 0 6px 16px #adadc7a1;
+      color: #222940;
     }
     @media (max-width: 600px) {
-      .chat-wrapper { padding: 0.7em 2vw; }
-      .chat-box { height: 300px;}
-      h1 { font-size: 2em;}
-      .norse-underline { width: 80px;}
+      .chat-wrapper { padding: 0.4em 1.5vw; }
+      .chat-box { height: 250px;}
+      h1 { font-size: 1.48em;}
+      .norse-underline { width: 60px;}
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
