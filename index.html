@@ -2,488 +2,594 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Ask Odin • Valhalla's Edge</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="description" content="Odin AI — Norse wisdom, legacy, and strategy. Ask Odin anything. Built by Valhalla’s Edge.">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;500;400&family=UnifrakturCook:wght@700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
+  <title>OdinAI - Ask Odin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Google Fonts: Inter + optional custom runic font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --card-max-width: 570px;
-      --card-min-height: 700px;
-      --gold: #c8ad64;
-      --gold-light: #ede4cb;
-      --box-shadow: 0 16px 60px 0 #27345224, 0 2px 22px #c8ad6459;
-      --rune-glow: 0 0 42px #fff6b1bb, 0 0 26px #c8ad64cc, 0 0 20px #8bb5e9b7;
+      --main-bg: #f7f9fd;
+      --card-bg: #fff;
+      --navy: #232a35;
+      --charcoal: #181c22;
+      --blue: #294579;
+      --gold: #b39c4d;
+      --rune-fade: #d7dce7;
+      --input-bg: #f6f7fa;
+      --highlight: #305082;
+      --button-grad: linear-gradient(90deg, #4d5f85 0%, #24324a 100%);
+      --send-grad: linear-gradient(90deg, #294579 0%, #b39c4d 100%);
+      --shadow: 0 8px 38px 0 rgba(60,80,130,0.14), 0 1.5px 12px 0 rgba(40,45,65,0.05);
+      --chat-shadow: 0 2px 16px 0 rgba(40,40,60,0.11);
+      --border-gold: 1.5px solid var(--gold);
+      --border-blue: 2px solid var(--blue);
     }
     html, body {
-      margin: 0;
-      padding: 0;
+      background: var(--main-bg);
+      margin: 0; padding: 0;
+      font-family: 'Inter', Arial, sans-serif;
+      color: var(--charcoal);
       min-height: 100vh;
-      width: 100vw;
-      font-family: 'Montserrat', 'Georgia', serif;
-      background: linear-gradient(135deg, #f7f8fa 0%, #e9ecf3 100%);
-      color: #232326;
-      overflow-x: hidden;
     }
     body {
-      min-height: 100vh;
-      width: 100vw;
       display: flex;
       flex-direction: column;
-      align-items: center;
-    }
-    .valhalla-bg {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      background: radial-gradient(ellipse at 60% 40%, #f5f7fb 72%, #bfcad9 100%);
-      animation: cloudsMove 38s linear infinite alternate;
-      transition: background 0.7s;
-    }
-    @keyframes cloudsMove {
-      0%   { background-position: 48% 32%; }
-      100% { background-position: 64% 54%; }
-    }
-    .odin-container {
-      position: relative;
-      width: 100vw;
-      min-height: 100vh;
-      display: flex;
       align-items: flex-start;
-      justify-content: center;
-      z-index: 2;
+      justify-content: flex-start;
+      min-height: 100vh;
     }
+    .odin-main-container {
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 32px;
+    }
+    /* LOGO */
+    .odin-logo-wrap {
+      position: relative;
+      width: 104px;
+      height: 104px;
+      z-index: 20;
+      margin: 0 auto;
+      margin-bottom: -38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      filter: drop-shadow(0 6px 16px #191c2144);
+      background: transparent;
+    }
+    .odin-logo-img {
+      width: 104px; height: 104px;
+      border-radius: 100%;
+      background: #fff;
+      box-shadow: 0 0 0 7px #eceef5;
+      object-fit: contain;
+    }
+    /* CARD */
     .odin-card {
-      background: rgba(255,255,255,0.99);
-      box-shadow: var(--box-shadow);
-      border-radius: 40px;
-      border: 2.8px solid var(--gold-light);
       position: relative;
-      padding: 54px 0 44px 0;
-      min-height: var(--card-min-height);
-      max-width: var(--card-max-width);
-      width: 99vw;
+      background: var(--card-bg);
+      box-shadow: var(--shadow);
+      border-radius: 28px;
+      margin: 0 auto;
+      padding: 0 0 28px 0;
+      width: 480px;
+      max-width: 98vw;
       display: flex;
       flex-direction: column;
       align-items: center;
-      overflow: visible;
-      margin: 5vh auto 5vh auto;
-      transition: box-shadow 0.22s, max-width 0.22s, min-height 0.22s;
+      margin-bottom: 32px;
+      min-height: 640px;
+      z-index: 10;
+      /* Soft animated border gradient */
+      border: 2.5px solid transparent;
+      background-clip: padding-box;
+      animation: cardBorderAnim 9s linear infinite;
     }
-    /* Odin logo/coin - much bigger, glowing */
-    .odin-logo {
-      margin: -104px auto 10px auto;
-      z-index: 3;
+    @keyframes cardBorderAnim {
+      0% { border-color: #dee2ef; }
+      40% { border-color: #c5cee0; }
+      60% { border-color: #b39c4d; }
+      100% { border-color: #dee2ef; }
+    }
+    /* RUNE ROW */
+    .odin-rune-row {
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      position: relative;
-      pointer-events: none;
-    }
-    .odin-logo img {
-      width: 145px;
-      max-width: 35vw;
-      border-radius: 50%;
-      box-shadow: 0 0 0 0 #ffeaa0, 0 0 42px #c8ad647c, 0 0 24px #c8ad64aa;
-      border: 3.2px solid var(--gold);
-      background: #1a1915;
-      animation: odinPulse 4.5s infinite alternate;
-      filter: drop-shadow(0 0 60px #fffbe477);
-    }
-    @keyframes odinPulse {
-      0% { box-shadow: 0 0 0 0 #ffeaa0, 0 0 42px #c8ad647c, 0 0 16px #c8ad6490; }
-      100% { box-shadow: 0 0 54px 20px #ffeaa0bb, 0 0 80px #c8ad64aa, 0 0 24px #e4ce8490; }
-    }
-    /* Music controls - under logo, never overlaps */
-    .music-bar {
-      display: flex;
-      align-items: center;
-      gap: 0.9em;
-      margin: 13px 0 16px 0;
-      user-select: none;
-      pointer-events: all;
-    }
-    .music-bar .material-icons {
-      color: var(--gold);
-      font-size: 2.15em;
-      vertical-align: middle;
-      cursor: pointer;
-      transition: color 0.17s;
-    }
-    .music-bar .material-icons:active { color: #735800; }
-    .music-bar input[type="range"] {
-      accent-color: var(--gold);
-      width: 98px;
-      margin: 0 8px;
-    }
-    /* Glowing, animated runes background */
-    .odin-runes-bg {
-      width: 100%;
-      text-align: center;
-      margin: 0 auto -6px auto;
-      letter-spacing: 1.07em;
-      color: #e1dbae;
-      font-size: 2.45em;
-      font-family: 'UnifrakturCook', cursive;
-      user-select: none;
-      opacity: 0.32;
-      position: relative;
-      z-index: 1;
-      pointer-events: none;
-      line-height: 1.1;
-      font-weight: 700;
-      filter: blur(1.3px) brightness(0.91);
-      animation: runesFade 13s ease-in-out infinite alternate, runesDrift 18s linear infinite alternate;
-      text-shadow: var(--rune-glow);
-      will-change: opacity, filter, text-shadow, transform;
-      transition: opacity 0.8s, filter 0.8s;
-    }
-    @keyframes runesDrift {
-      0%   { transform: translateX(-8px) scale(1.04);}
-      100% { transform: translateX(9px) scale(1.00);}
-    }
-    @keyframes runesFade {
-      0%   { opacity: 0.25; filter: blur(2.2px) brightness(0.82);}
-      20%  { opacity: 0.49;}
-      48%  { opacity: 0.82; filter: blur(1.3px) brightness(1.12);}
-      60%  { opacity: 0.32;}
-      100% { opacity: 0.18; filter: blur(2.6px) brightness(0.79);}
-    }
-    /* Title row: spaced "ASK O D I N", O separated */
-    .odin-title-row {
-      display: flex;
-      align-items: flex-end;
       justify-content: center;
-      margin: 0 0 6px 0;
-      position: relative;
-      z-index: 2;
+      align-items: center;
+      margin: 0 auto 4px auto;
+      letter-spacing: 1.3em;
+      color: var(--rune-fade);
+      font-size: 2.05em;
+      user-select: none;
+      width: 100%;
+      font-family: 'Inter', Arial, sans-serif;
+      /* Animate shimmer */
+      background: linear-gradient(90deg, #f7f9fd 60%, #c6d2e8 80%, #f7f9fd 100%);
+      background-size: 220% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: runeShimmer 3.5s linear infinite;
+    }
+    @keyframes runeShimmer {
+      to {
+        background-position-x: -220%;
+      }
+    }
+    /* HEADER + ARROW UNDERLINE */
+    .odin-title-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 0;
+      margin-bottom: 10px;
       width: 100%;
     }
     .odin-title {
-      font-family: 'Montserrat', 'Georgia', serif;
-      font-size: 2.3em;
-      letter-spacing: 0.23em;
+      font-size: 2.65rem;
       font-weight: 900;
-      color: #232323;
-      margin: 0;
-      padding: 0 11px;
+      letter-spacing: 0.04em;
+      color: var(--charcoal);
+      margin-bottom: 0px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-transform: uppercase;
+      position: relative;
       line-height: 1.1;
       user-select: none;
-      text-transform: uppercase;
+      font-family: 'Inter', Arial, sans-serif;
+    }
+    .odin-title .odin-o {
+      transition: color 0.2s;
+      color: var(--blue);
+      position: relative;
+      cursor: pointer;
+    }
+    .odin-title .odin-o.rune-hover::after {
+      content: "ᛟ";
+      position: absolute;
+      left: 48%;
+      bottom: 80%;
+      transform: translateX(-48%) scale(1.2);
+      background: #fff;
+      color: var(--gold);
+      font-size: 2.3em;
+      font-family: 'Inter', Arial, sans-serif;
+      font-weight: 700;
+      opacity: 0.99;
+      pointer-events: none;
+      padding: 0 8px;
+      border-radius: 7px;
+      box-shadow: 0 2px 6px #0001;
+    }
+    .odin-underline-arrow {
       display: flex;
       align-items: center;
-      word-spacing: 0.36em;
-      transition: letter-spacing 0.16s;
-    }
-    .odin-title .runic-o {
-      font-family: 'Montserrat', 'Georgia', serif;
-      font-size: 1.10em;
-      color: #23212a;
-      margin: 0 24px 0 6px; /* Space the O out to the right */
-      font-weight: 900;
-      display: inline-block;
-      cursor: pointer;
-      transition: color 0.22s, font-family 0.26s, text-shadow 0.23s, transform 0.30s;
-    }
-    .odin-title .runic-o.rune {
-      color: #e6d87c;
-      font-family: 'UnifrakturCook', cursive;
-      text-shadow: 0 0 42px #ffeaa0, 0 2px 25px #c8ad64cc;
-      transform: scale(1.20) rotate(-9deg);
-      letter-spacing: 0.13em;
-    }
-    .odin-tagline {
-      text-align: center;
-      color: #656a7d;
-      font-size: 1.11em;
-      letter-spacing: 0.07em;
-      margin-top: 8px;
-      margin-bottom: 17px;
-      font-weight: 500;
-      opacity: 0.82;
-      user-select: none;
-      text-shadow: 0 2px 8px #e9d78b0c;
-    }
-    /* Main chat/reply area (card-within-card) */
-    .odin-chat-outer {
-      width: 90%;
-      margin: 24px 0 26px 0;
-      display: flex;
+      width: 240px;
+      height: 18px;
+      margin: 4px auto 0 auto;
+      position: relative;
       justify-content: center;
-      align-items: flex-start;
     }
-    .odin-chat-box {
+    .odin-underline-arrow svg {
+      width: 220px; height: 16px;
+      display: block;
+    }
+    /* TAGLINE */
+    .odin-tagline {
+      font-size: 1.09rem;
+      margin-top: 0;
+      margin-bottom: 24px;
+      color: #7b8194;
+      text-align: center;
+      font-family: 'Inter', Arial, sans-serif;
+      letter-spacing: 0.01em;
+    }
+    /* MUSIC PLAYER (now centered below card) */
+    .odin-music {
+      display: flex;
+      align-items: center;
+      z-index: 5;
+      gap: 8px;
+      justify-content: center;
+      margin: 20px auto 0 auto;
       width: 100%;
-      background: #f8f7ebf4;
-      border-radius: 22px;
-      border: 2.5px solid #e8dfbe;
-      box-shadow: 0 2.5px 26px #ead99819, 0 1px 7px #c8ad6424;
-      padding: 30px 32px 24px 32px;
+      position: static;
+    }
+    .odin-music-btn {
+      background: none;
+      border: none;
+      font-size: 1.7em;
+      color: var(--gold);
+      cursor: pointer;
+      transition: color 0.2s, transform 0.15s;
+      outline: none;
+      padding: 0 6px;
+      margin-right: 2px;
+    }
+    .odin-music-btn.active, .odin-music-btn:hover {
+      color: var(--blue);
+      transform: scale(1.18) rotate(-8deg);
+    }
+    .odin-music-slider {
+      accent-color: var(--gold);
+      margin-left: 2px;
+    }
+    /* LOADER */
+    .odin-loader-wrap {
+      width: 48px; height: 48px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 11;
+    }
+    .odin-loader-rune {
+      font-size: 2.1em;
+      color: var(--gold);
+      animation: runeSpin 0.9s linear infinite;
+      font-family: 'Inter', Arial, sans-serif;
+      transition: color 0.3s;
+    }
+    @keyframes runeSpin {
+      100% { transform: rotate(1turn); }
+    }
+    .odin-loader-text {
+      color: #8793b8;
+      font-size: 1.02em;
+      margin-top: 4px;
+      text-align: center;
+    }
+    /* CHAT BOX */
+    .odin-chat-wrap {
+      width: 97%;
+      margin: 0 auto 0 auto;
+      padding: 0;
+      background: #f5f6f9;
+      border-radius: 17px;
+      box-shadow: var(--chat-shadow);
+      border: 1.2px solid #e2e3eb;
+      min-height: 340px;
+      max-height: 350px;
       display: flex;
       flex-direction: column;
-      min-height: 135px;
-      gap: 6px;
-      font-size: 1.19em;
+      overflow-y: auto;
+      font-size: 1.08rem;
+      margin-bottom: 18px;
       position: relative;
-      z-index: 2;
-      margin: 0;
+      scrollbar-width: thin;
     }
-    .msg {
-      border-left: 4px solid var(--gold);
-      padding: 8px 13px 8px 18px;
-      background: #faf7e2d0;
-      border-radius: 0 13px 13px 0;
-      box-shadow: 0 2px 10px #c8ad6420;
-      font-size: 1.05em;
-      font-weight: 400;
-      color: #23201c;
+    /* Custom scrollbars */
+    .odin-chat-wrap::-webkit-scrollbar {
+      width: 9px;
+      background: #ececf0;
+      border-radius: 7px;
+    }
+    .odin-chat-wrap::-webkit-scrollbar-thumb {
+      background: #d3d5e0;
+      border-radius: 7px;
+    }
+    .odin-msg {
+      margin: 12px 20px 8px 20px;
+      padding: 0;
       word-break: break-word;
-      line-height: 1.5;
-      position: relative;
-      opacity: 1;
     }
-    .msg.odin {
-      border-left: 4px solid var(--gold);
-      background: #fcfae4ed;
-      color: #35312a;
-      font-style: italic;
-      font-size: 1.08em;
-    }
-    .msg.user {
-      border-left: 4px solid #80b4f7;
-      background: #eef2f7e8;
-      color: #222e44;
-      font-weight: 600;
-      text-align: right;
-      margin-left: 2vw;
-      border-radius: 13px 0 0 13px;
-    }
-    /* Input area at bottom, fits inside card */
-    .input-area-outer {
-      width: 92%;
-      margin: 0 auto 0 auto;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 1.4vw;
-    }
-    .input-area {
-      width: 100%;
-      display: flex;
-      flex-direction: row;
-      gap: 0.5em;
-      align-items: center;
-      background: none;
-    }
-    .input-area input {
-      flex: 1 1 0px;
-      padding: 1.13em 1.19em;
-      font-size: 1.12em;
-      border: 2.3px solid var(--gold);
-      border-radius: 13px;
-      font-family: inherit;
-      outline: none;
-      background: #fdf8f2;
-      color: #242424;
-      box-shadow: 0 0.7px 10px #b3a56910;
-      min-width: 0;
-      margin-right: 9px;
-      transition: border-color 0.18s, box-shadow 0.18s;
-    }
-    .input-area button {
-      padding: 1.12em 2.1em;
-      font-size: 1.12em;
-      background: linear-gradient(90deg, #416bb4 0%, #7ba7df 85%);
-      color: #fff;
-      border: none;
-      border-radius: 13px;
-      cursor: pointer;
+    .odin-msg.user {
       font-weight: 700;
-      box-shadow: 0 2px 14px #6d90e445;
-      letter-spacing: 0.09em;
+      color: var(--blue);
+      background: linear-gradient(90deg, #e8edfa 60%, #f2f4fc 100%);
+      border-radius: 8px;
+      padding: 8px 16px;
+      margin-bottom: 0;
+      font-size: 1.08em;
+      margin-top: 14px;
+      box-shadow: 0 1px 4px #dbe3fa66;
+      border-left: 4px solid var(--gold);
+    }
+    .odin-msg.odin {
+      font-weight: 400;
+      background: #fdfaf2;
+      color: var(--charcoal);
+      border-left: 4px solid var(--gold);
+      border-radius: 8px;
+      margin-top: 10px;
+      margin-bottom: 0;
+      padding: 10px 22px 10px 18px;
+      font-size: 1.09em;
+      line-height: 1.7;
+      /* Prose styling (highlights) */
+    }
+    /* Odin response: bolded, blue, or gold for keywords */
+    .odin-msg.odin strong { color: var(--blue); font-weight: 700; }
+    .odin-msg.odin em { color: var(--gold); font-style: italic; }
+    .odin-msg.odin .gold { color: var(--gold); font-weight: 700; }
+    .odin-msg.odin .blue { color: var(--blue); font-weight: 700; }
+    .odin-msg.odin ul, .odin-msg.odin ol {
+      padding-left: 1.4em;
+      margin: 12px 0;
+    }
+    .odin-msg.odin li {
+      margin-bottom: 6px;
+      font-size: 1em;
+    }
+    /* INPUT + BUTTON */
+    .odin-input-row {
+      display: flex;
+      align-items: center;
+      width: 98%;
+      margin: 10px auto 0 auto;
+      gap: 9px;
+      position: relative;
+    }
+    .odin-input-box {
+      width: 100%;
+      font-size: 1.1em;
+      border-radius: 11px;
+      border: 1.3px solid #d2d5dd;
+      background: var(--input-bg);
+      padding: 16px 18px;
+      font-family: inherit;
+      font-weight: 500;
       outline: none;
-      border: 1.2px solid #aec2df;
-      min-width: 90px;
-      transition: background 0.18s, box-shadow 0.18s, transform 0.13s;
+      transition: border 0.2s;
+      box-sizing: border-box;
+      margin-right: 0;
+      color: var(--charcoal);
+    }
+    .odin-input-box:focus {
+      border-color: var(--blue);
+    }
+    .odin-send-btn {
+      background: var(--button-grad);
+      color: #fff;
+      font-size: 1.19em;
+      font-family: inherit;
+      font-weight: 900;
+      border: none;
+      border-radius: 11px;
+      padding: 15px 33px;
+      cursor: pointer;
+      box-shadow: 0 2px 12px #e0eafc77;
+      letter-spacing: 0.04em;
+      margin-left: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.4em;
+      transition: background 0.18s, transform 0.14s;
     }
-    .input-area button:focus-visible {
-      outline: 2px solid #3858b4;
+    .odin-send-btn:hover {
+      background: var(--send-grad);
+      transform: translateY(-2px) scale(1.07);
     }
-    .input-area button:hover, .input-area button:focus {
-      background: linear-gradient(90deg, #7ba7df 15%, #31425c 92%);
-      color: #f7faff;
-      box-shadow: 0 8px 22px #7ba7dfa6;
-      border: 1.2px solid #3858b4;
-      transform: translateY(-1.5px) scale(1.035);
+    .odin-send-btn svg {
+      margin-right: 9px;
+      margin-left: -3px;
+      font-size: 1.22em;
     }
-
-    /* Responsive styles */
+    /* Powered by */
+    .odin-powered {
+      text-align: center;
+      margin-top: 16px;
+      color: #b0b6c7;
+      font-size: 1em;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+    }
+    .odin-powered span {
+      background: #fcf6e0;
+      color: var(--gold);
+      padding: 4px 13px 4px 13px;
+      font-weight: 900;
+      font-size: 1.01em;
+      border-radius: 7px;
+      margin-left: 8px;
+      box-shadow: 0 1px 7px #f5eed188;
+    }
+    /* Loader position */
+    .odin-loader-outer {
+      margin: 22px auto 14px auto;
+      text-align: center;
+      width: 100%;
+    }
+    /* MEDIA QUERIES */
     @media (max-width: 900px) {
-      .odin-card { max-width: 97vw; min-width: 0; }
-      .odin-chat-box { padding: 20px 3vw 16px 3vw; font-size: 1.08em; }
-      .input-area-outer { width: 98vw;}
+      .odin-card { width: 99vw; max-width: 99vw; min-width: 0; }
+      .odin-logo-img { width: 84px; height: 84px; }
+      .odin-logo-wrap { width: 84px; height: 84px; margin-bottom: -32px; }
     }
-    @media (max-width: 700px) {
-      .odin-card { min-height: 72vw; }
-      .odin-logo img { width: 94px; }
-      .odin-runes-bg { font-size: 1.3em;}
-      .odin-title { font-size: 1.01em; letter-spacing: 0.13em;}
-      .music-bar { margin: 8px 0 10px 0;}
-      .odin-chat-box { padding: 13px 1vw 10px 1vw; font-size: 0.98em;}
+    @media (max-width: 600px) {
+      .odin-card { width: 99vw; max-width: 99vw; padding: 0 0 21px 0; border-radius: 14px; }
+      .odin-logo-img, .odin-logo-wrap { width: 66px; height: 66px; margin-bottom: -19px; }
+      .odin-title { font-size: 2.1em; }
+      .odin-underline-arrow { width: 140px; }
+      .odin-chat-wrap { min-height: 200px; max-height: 240px; font-size: 1em; }
+      .odin-input-box { padding: 12px 11px; font-size: 1em; }
+      .odin-send-btn { padding: 12px 12px; font-size: 1em; }
+      .odin-powered { font-size: 0.98em; }
     }
-    @media (max-width: 430px) {
-      .odin-card { min-height: 210px; }
-      .odin-title { font-size: 0.82em; }
-      .odin-logo img { width: 72px; }
-      .input-area button { min-width: 56px; padding: 0.82em 0.7em;}
-      .odin-chat-box { font-size: 0.91em;}
-      .input-area-outer { gap: 0.4em;}
+    /* Accessibility focus */
+    .odin-send-btn:focus, .odin-music-btn:focus {
+      outline: 2px solid var(--gold);
+      outline-offset: 2px;
     }
   </style>
 </head>
 <body>
-  <div class="valhalla-bg"></div>
-  <div class="odin-container">
-    <div class="odin-card">
-      <div class="odin-logo">
-        <img src="https://cdn.shopify.com/s/files/1/0620/9958/7203/files/55cc97d6-4989-41cc-aa0c-67b94a56f29f.png?v=1751060831" alt="Odin logo, Valhalla's Edge"/>
-        <div class="music-bar">
-          <span class="material-icons" id="audioIcon" title="Toggle music" tabindex="0">music_note</span>
-          <input type="range" id="musicVolume" min="0" max="100" value="32" title="Volume"/>
-        </div>
+<div class="odin-main-container">
+  <!-- Logo floating above -->
+  <div class="odin-logo-wrap">
+    <img src="https://cdn.shopify.com/s/files/1/0620/9958/7203/files/ChatGPT_Image_Jun_27_2025_02_47_18_PM.png?v=1751060934"
+         class="odin-logo-img" alt="Odin's gold logo" />
+  </div>
+  <div class="odin-card">
+    <!-- Rune row with animation -->
+    <div class="odin-rune-row" aria-hidden="true">ᛈ ᚱ ᛏ ᚺ ᚠ ᚾ ᛃ ᛟ ᚲ ᚾ ᛉ</div>
+    <!-- Header -->
+    <div class="odin-title-wrap">
+      <div class="odin-title" id="odinTitle">
+        ASK <span class="odin-o" id="odinO">O</span> DIN
       </div>
-      <div class="odin-runes-bg" id="odinRunesBG">
-        ᚠᚱᚾᛞ ᚠᛁ ᛗᛉ ᚠᚱᚾᛞ
+      <div class="odin-underline-arrow">
+        <!-- Golden arrow SVG underline -->
+        <svg viewBox="0 0 220 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 8h196" stroke="#b39c4d" stroke-width="3" stroke-linecap="round"/>
+          <polygon points="208,8 220,16 208,8 220,0" fill="#b39c4d"/>
+        </svg>
       </div>
-      <div class="odin-title-row">
-        <span class="odin-title">ASK <span class="runic-o" id="runicO" tabindex="0" aria-label="Odin O">O</span>D I N</span>
+      <div class="odin-tagline">Wisdom, legacy, and Norse myth for the modern world</div>
+    </div>
+    <!-- Chat loader (hidden by default) -->
+    <div class="odin-loader-outer" id="odinLoaderOuter" style="display:none;">
+      <div class="odin-loader-wrap">
+        <span class="odin-loader-rune" id="odinLoaderRune">ᚨ</span>
       </div>
-      <div class="odin-tagline">
-        Wisdom, legacy, and Norse myth for the modern world
-      </div>
-      <div class="odin-chat-outer">
-        <div id="chat" class="odin-chat-box" aria-live="polite" aria-atomic="false"></div>
-      </div>
-      <div class="input-area-outer">
-        <form class="input-area" autocomplete="off" onsubmit="sendMessage();return false;">
-          <input id="user-input" type="text" maxlength="600" placeholder="Ask your question..." aria-label="Type your question"/>
-          <button type="submit">
-            <span class="material-icons" style="vertical-align:middle;">send</span> SEND
-          </button>
-        </form>
-      </div>
+      <div class="odin-loader-text" id="odinLoaderText">Odin is accessing the Well of Wisdom...</div>
+    </div>
+    <!-- Chat history/messages -->
+    <div class="odin-chat-wrap" id="odinChat"></div>
+    <!-- Input row -->
+    <form class="odin-input-row" id="odinInputRow" autocomplete="off" onsubmit="event.preventDefault(); sendOdinMessage();">
+      <input id="odinInput" class="odin-input-box" type="text" maxlength="280" placeholder="Ask your question..." autocomplete="off" aria-label="Ask Odin"/>
+      <button type="submit" class="odin-send-btn" aria-label="Send to Odin">
+        <svg width="22" height="22" viewBox="0 0 20 20"><path fill="#fff" d="M2.92 9.62l12.08-3.78c1.15-.36 2.12.61 1.76 1.76l-3.78 12.08c-.36 1.15-1.74 1.23-2.2.11L7.39 14.6a.93.93 0 0 0-.76-.56l-3.49-.46c-1.13-.15-1.25-1.68-.11-2.2z"></path></svg>
+        SEND
+      </button>
+    </form>
+    <!-- Powered by -->
+    <div class="odin-powered">
+      Powered by <span>Valhalla’s Edge</span>
     </div>
   </div>
-  <!-- Royalty-free ambient music (Pixabay) -->
-  <audio id="odinAudio" loop preload="auto" src="https://cdn.pixabay.com/audio/2022/10/16/audio_12e3144860.mp3"></audio>
+  <!-- Music player & controls - now centered below the Odin card -->
+  <div class="odin-music">
+    <button class="odin-music-btn" id="odinMusicPlay" title="Play / Pause Meditation Music" aria-label="Play music">
+      <span id="odin-music-icon">🎵</span>
+    </button>
+    <input type="range" min="0" max="1" step="0.01" value="0.26" class="odin-music-slider" id="odinMusicVolume"
+      aria-label="Volume"/>
+  </div>
+</div>
+<!-- Audio (meditation music, royalty free—replace with your own if preferred) -->
+<audio id="odinAudio" src="https://cdn.pixabay.com/audio/2022/10/16/audio_125b985df9.mp3" preload="auto" loop></audio>
+<script>
+  // ========== INTERACTIVE ELEMENTS ==========
+  // O in Odin hover = rune
+  const odinO = document.getElementById('odinO');
+  odinO.addEventListener('mouseenter', () => odinO.classList.add('rune-hover'));
+  odinO.addEventListener('mouseleave', () => odinO.classList.remove('rune-hover'));
+  odinO.title = "Odin's rune: ᛟ";
 
-  <script>
-    // Odin Chat UI logic - always clear after every send
-    const chatBox = document.getElementById('chat');
-    const input = document.getElementById('user-input');
-    let threadId = null;
-    function addMsg(content, type = 'odin') {
-      let html = `<div class="msg ${type}">${content}</div>`;
-      chatBox.innerHTML += html;
-      chatBox.scrollTop = chatBox.scrollHeight;
+  // ========== MUSIC PLAYER ==========
+  const musicBtn = document.getElementById('odinMusicPlay');
+  const musicIcon = document.getElementById('odin-music-icon');
+  const musicVolume = document.getElementById('odinMusicVolume');
+  const audio = document.getElementById('odinAudio');
+  let musicPlaying = false;
+  // Start muted by default
+  audio.volume = parseFloat(musicVolume.value);
+  audio.muted = true;
+
+  musicBtn.addEventListener('click', () => {
+    if (!musicPlaying) {
+      audio.muted = false;
+      audio.play();
+      musicPlaying = true;
+      musicIcon.textContent = '🔊';
+      musicBtn.classList.add('active');
+    } else {
+      audio.pause();
+      musicPlaying = false;
+      musicIcon.textContent = '🎵';
+      musicBtn.classList.remove('active');
     }
-    function clearChat() {
-      chatBox.innerHTML = "";
-    }
-    function sendMessage() {
-      const userText = input.value.trim();
-      if (!userText) return;
-      clearChat(); // Always reset before new Q
-      addMsg("You: <b>" + userText + "</b>", "user");
-      input.value = "";
-      // Simulate Odin reply (replace with your real call):
-      setTimeout(() => {
-        addMsg('Odin: <em>"Let your legacy be forged with courage."</em>', 'odin');
-      }, 900);
-    }
-    input.addEventListener("keydown", function(e){
-      if (e.key === "Enter") {
-        e.preventDefault();
-        sendMessage();
-      }
-    });
-    // Odin O morph to rune
-    const runicO = document.getElementById('runicO');
-    let odinMorphing = false;
-    function morphToRune() {
-      runicO.textContent = "ᛟ";
-      runicO.classList.add('rune');
-      odinMorphing = true;
-    }
-    function morphToO() {
-      runicO.textContent = "O";
-      runicO.classList.remove('rune');
-      odinMorphing = false;
-    }
-    runicO.addEventListener('mouseenter', morphToRune);
-    runicO.addEventListener('mouseleave', morphToO);
-    runicO.addEventListener('focus', morphToRune);
-    runicO.addEventListener('blur', morphToO);
-    runicO.addEventListener('click', () => { odinMorphing ? morphToO() : morphToRune(); });
-    runicO.addEventListener('keydown', (e) => {
-      if (e.key === " " || e.key === "Enter") {
-        odinMorphing ? morphToO() : morphToRune();
-        e.preventDefault();
-      }
-    });
-    // Music controls
-    const audio = document.getElementById('odinAudio');
-    const audioIcon = document.getElementById('audioIcon');
-    const volumeSlider = document.getElementById('musicVolume');
-    let audioOn = false;
-    function playPauseMusic() {
-      if (!audioOn) {
-        audio.volume = volumeSlider.value / 100;
-        audio.play();
-        audioOn = true;
-        audioIcon.textContent = "music_note";
-        audioIcon.style.color = "#c8ad64";
+  });
+  musicVolume.addEventListener('input', (e) => {
+    audio.volume = parseFloat(e.target.value);
+  });
+  // ========== CHAT / BACKEND ==========
+  const chatEl = document.getElementById('odinChat');
+  const inputEl = document.getElementById('odinInput');
+  const loaderOuter = document.getElementById('odinLoaderOuter');
+  const loaderRune = document.getElementById('odinLoaderRune');
+  const loaderText = document.getElementById('odinLoaderText');
+
+  const runes = ['ᚨ','ᛟ','ᛞ','ᛗ','ᛉ','ᚲ','ᛝ','ᚹ','ᚱ','ᚺ','ᛏ','ᚠ','ᛃ','ᚾ','ᚺ'];
+  let runeIdx = 0;
+  let loaderInterval = null;
+
+  function showLoader() {
+    loaderOuter.style.display = '';
+    loaderText.textContent = "Odin is accessing the Well of Wisdom...";
+    loaderRune.textContent = runes[runeIdx];
+    loaderInterval = setInterval(() => {
+      runeIdx = (runeIdx + 1) % runes.length;
+      loaderRune.textContent = runes[runeIdx];
+    }, 180);
+  }
+  function hideLoader() {
+    loaderOuter.style.display = 'none';
+    clearInterval(loaderInterval);
+  }
+  // Odin message HTML formatter (bolds, bullets, etc)
+  function formatOdin(text) {
+    // Richen the markdown style with HTML
+    return text
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g, '<em>$1</em>')
+      .replace(/\n\s*[-•]\s+/g, '<ul><li>')      // bullets
+      .replace(/\n{2,}/g, '</li></ul><br>')     // end bullet lists
+      .replace(/(\bTHE MYTH\b)/g, '<span class="gold">$1</span>')
+      .replace(/(\bTHE MESSAGE\b)/g, '<span class="gold">$1</span>')
+      .replace(/(\bTHE MOVE\b)/g, '<span class="gold">$1</span>')
+      .replace(/(\blegacy echo\b)/ig, '<span class="blue">$1</span>');
+  }
+
+  // ========== SEND MESSAGE ==========
+  function sendOdinMessage() {
+    const userText = inputEl.value.trim();
+    if (!userText) return;
+    chatEl.innerHTML += `<div class="odin-msg user">You: ${userText}</div>`;
+    inputEl.value = '';
+    chatEl.scrollTop = chatEl.scrollHeight;
+    showLoader();
+
+    // --- No thread memory, always fresh for this premium build ---
+    fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: userText, threadId: null })
+    })
+    .then(res => res.json())
+    .then(data => {
+      hideLoader();
+      if (data.reply) {
+        chatEl.innerHTML += `<div class="odin-msg odin">${formatOdin(data.reply)}</div>`;
+      } else if (data.error) {
+        chatEl.innerHTML += `<div class="odin-msg odin">Odin: <span class="gold">ERROR -</span> ${data.error}</div>`;
       } else {
-        audio.pause();
-        audioOn = false;
-        audioIcon.textContent = "music_off";
-        audioIcon.style.color = "#bbb";
+        chatEl.innerHTML += `<div class="odin-msg odin">Odin: <span class="gold">No response from Valhalla…</span></div>`;
       }
-    }
-    audioIcon.addEventListener('click', playPauseMusic);
-    volumeSlider.addEventListener('input', () => {
-      audio.volume = volumeSlider.value / 100;
+      chatEl.scrollTop = chatEl.scrollHeight;
+    })
+    .catch(err => {
+      hideLoader();
+      chatEl.innerHTML += `<div class="odin-msg odin">Odin: <span class="gold">NETWORK ERROR:</span> ${err.message}</div>`;
+      chatEl.scrollTop = chatEl.scrollHeight;
     });
-    // Try to auto-play on load (may be blocked on some browsers)
-    setTimeout(() => {
-      audio.volume = volumeSlider.value / 100;
-      try { audio.play().catch(()=>{}); audioOn = true; } catch {}
-    }, 900);
-    // Accessibility: allow keyboard toggle
-    audioIcon.tabIndex = 0;
-    audioIcon.addEventListener('keydown', function(e){
-      if (e.key === " " || e.key === "Enter") {
-        playPauseMusic();
-        e.preventDefault();
-      }
-    });
-    // Responsive chat height
-    function adjustChatHeight() {
-      if (window.innerWidth < 500) {
-        chatBox.style.height = Math.max(135, window.innerHeight * 0.31) + "px";
-      } else {
-        chatBox.style.height = "";
-      }
+  }
+
+  // ENTER sends
+  inputEl.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      sendOdinMessage();
     }
-    window.addEventListener('resize', adjustChatHeight);
-    window.onload = () => { input.focus(); adjustChatHeight(); };
-  </script>
+  });
+
+  // Autofocus input on card load
+  window.onload = () => { setTimeout(()=>{inputEl.focus()}, 450);}
+</script>
 </body>
 </html>
