@@ -2,133 +2,217 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Odin AI</title>
+  <title>Odin AI – Valhalla Engine</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: 'Georgia', serif;
-      background: linear-gradient(to bottom, #fdfcf8, #e9e6df);
+      font-family: 'Montserrat', 'Georgia', serif;
+      background: linear-gradient(135deg, #ece7e1 0%, #e9e6df 100%);
       color: #1a1a1a;
-      padding: 0;
       margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
     .chat-wrapper {
-      max-width: 800px;
-      margin: 60px auto;
-      border: 3px solid #000;
-      border-radius: 14px;
-      padding: 2em;
-      background-color: #fff;
-      box-shadow: 6px 6px 20px rgba(0, 0, 0, 0.2);
+      max-width: 820px;
+      margin: 64px auto 0 auto;
+      background: rgba(255,255,255,0.85);
+      border-radius: 24px;
+      box-shadow: 0 8px 32px #0002, 0 1.5px 12px #a36a2c33;
+      padding: 2.5em 2em 1.8em 2em;
+      position: relative;
+      border: 2.5px solid #bfa768;
+      backdrop-filter: blur(3px);
     }
     h1 {
       text-align: center;
-      font-size: 2.5em;
-      margin-bottom: 1em;
+      font-family: 'UnifrakturCook', serif;
+      font-size: 2.8em;
+      letter-spacing: 2px;
+      color: #942b11;
+      margin-bottom: 0.5em;
       position: relative;
+      z-index: 2;
     }
-    h1::before {
-      content: "ᚨᚱᚢᛟ";
-      font-family: 'Norse', serif;
+    .norse-underline {
+      width: 130px;
+      height: 7px;
+      margin: -16px auto 28px auto;
+      background: linear-gradient(to right, #bfa768 40%, #7d3326 100%);
+      border-radius: 4px;
+      filter: blur(0.5px);
+      box-shadow: 0 0 10px #e3d09e99, 0 0 4px #a3601f55;
+      position: relative;
+      animation: glowline 2s linear infinite alternate;
+    }
+    @keyframes glowline {
+      from { filter: blur(1px) brightness(0.95);}
+      to   { filter: blur(3.5px) brightness(1.09);}
+    }
+    #loader {
+      display: none;
+      text-align: center;
+      margin: 0.7em 0 0.8em 0;
+      color: #6a492b;
+      font-style: italic;
+      font-size: 1.2em;
+      font-family: 'Montserrat', serif;
+      letter-spacing: 0.02em;
+      transition: opacity 0.35s;
+    }
+    .loader-rune {
+      display: inline-block;
       font-size: 2.2em;
-      color: rgba(0, 0, 0, 0.1);
-      position: absolute;
-      top: -30px;
-      left: 50%;
-      transform: translateX(-50%);
+      color: #bfa768;
+      margin-right: 8px;
+      vertical-align: middle;
+      filter: drop-shadow(0 0 8px #bfa76888);
+      animation: runespin 2.2s linear infinite;
+    }
+    @keyframes runespin {
+      0% { transform: rotateY(0);}
+      80% { filter: drop-shadow(0 0 16px #a3601f88);}
+      100% { transform: rotateY(360deg);}
+    }
+    .loader-dots::after {
+      content: '';
+      display: inline-block;
+      width: 1em;
+      text-align: left;
+      animation: ellipsis steps(4,end) 1.3s infinite;
+    }
+    @keyframes ellipsis {
+      to {
+        width: 4em;
+      }
     }
     .chat-box {
-      height: 400px;
+      height: 420px;
       overflow-y: auto;
-      border: 2px solid #000;
-      padding: 1em;
-      border-radius: 8px;
-      background: #f4f3f1;
+      border-radius: 18px;
+      padding: 1em 1.2em 1em 1.2em;
+      background: rgba(244,243,241,0.86);
       margin-bottom: 1em;
+      box-shadow: 0 0 24px #bfa76813, 0 0.5px 8px #86101011;
       white-space: pre-wrap;
+      border: 1.5px solid #d2ba85;
+      scroll-behavior: smooth;
+      position: relative;
+    }
+    .msg {
+      opacity: 0;
+      animation: fadeIn 0.5s forwards;
+      margin-bottom: 0.8em;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0;}
+      to   { opacity: 1;}
+    }
+    .msg.user {
+      color: #3d2718;
+      background: linear-gradient(to right, #ede2d5 90%, #c4ad7a 100%);
+      border-radius: 12px 18px 16px 8px;
+      padding: 0.7em 1.1em 0.7em 1.1em;
+      font-weight: bold;
+      margin: 0.7em 0 0.7em 30%;
+      border-left: 3px solid #bfa768;
+      box-shadow: 1px 2px 12px #ceb37518;
+    }
+    .msg.odin {
+      color: #3b2f1e;
+      background: linear-gradient(to right, #f4efe8 90%, #f8e5b6 100%);
+      font-style: italic;
+      border-left: 4px solid #861010;
+      padding: 0.9em 1.2em 0.9em 1.2em;
+      margin: 0.7em 30% 0.7em 0;
+      border-radius: 16px 12px 12px 20px;
+      box-shadow: 2px 5px 20px #bfa76813;
+    }
+    .msg.odin h1, .msg.odin h2, .msg.odin h3, .msg.odin h4, .msg.odin h5, .msg.odin h6 {
+      font-family: 'UnifrakturCook', serif;
+      color: #861010;
+      letter-spacing: 0.5px;
+      margin: 0.7em 0 0.3em 0;
+      text-shadow: 0 0 4px #edc87733;
+      font-weight: 700;
+    }
+    .msg.odin ul, .msg.odin ol {
+      margin: 0.7em 0 0.7em 1.5em;
+    }
+    .msg.odin strong {
+      color: #861010;
+      font-weight: 700;
+      text-shadow: 0 0 4px #a3601f22;
+    }
+    .msg.odin em {
+      color: #a3601f;
+      font-style: italic;
     }
     .input-area {
       display: flex;
       gap: 1em;
+      margin-top: 1.6em;
     }
     .input-area input {
       flex: 1;
-      padding: 1em;
-      font-size: 1em;
-      border: 2px solid #000;
-      border-radius: 8px;
+      padding: 1.05em;
+      font-size: 1.13em;
+      border: 2px solid #bfa768;
+      border-radius: 12px;
+      background: #f9f7f2;
+      outline: none;
+      transition: border 0.23s;
+    }
+    .input-area input:focus {
+      border: 2.5px solid #861010;
     }
     .input-area button {
-      padding: 1em 1.5em;
-      font-size: 1em;
-      background: linear-gradient(to right, #3a3a3a, #1e1e1e);
+      padding: 1.08em 2em;
+      font-size: 1.13em;
+      background: linear-gradient(to right, #861010, #bfa768);
       color: #fff;
       border: none;
-      border-radius: 8px;
+      border-radius: 12px;
       cursor: pointer;
       font-weight: bold;
+      box-shadow: 0 1.5px 8px #bfa76844;
+      letter-spacing: 0.08em;
+      transition: background 0.3s, box-shadow 0.3s;
     }
     .input-area button:hover {
-      background: linear-gradient(to right, #861010, #5b0f0f);
+      background: linear-gradient(to right, #a3601f, #d4bf6a 100%);
+      box-shadow: 0 4px 18px #d4bf6a33;
     }
-    .msg.user {
-      color: #000;
-      font-weight: bold;
-      margin-bottom: 1em;
-    }
-    .msg.odin {
-      color: #3b2f1e;
-      font-style: italic;
-      border-left: 3px solid #b31313;
-      padding-left: 1em;
-      margin-bottom: 1.5em;
-    }
-    .reset-btn {
-      display: block;
-      margin: 16px auto 0 auto;
-      padding: 0.5em 2em;
-      border-radius: 8px;
-      border: none;
-      background: #ccc;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .reset-btn:hover {
-      background: #aaa;
-    }
-    /* Make markdown headings blend nicely */
-    .msg.odin h1, .msg.odin h2, .msg.odin h3, .msg.odin h4, .msg.odin h5, .msg.odin h6 {
-      font-family: 'Georgia', serif;
-      color: #6a492b;
-      margin: 0.5em 0 0.2em 0;
-    }
-    .msg.odin ul, .msg.odin ol {
-      margin: 0.5em 0 0.5em 1.5em;
-    }
-    .msg.odin strong {
-      color: #861010;
-    }
-    .msg.odin em {
-      color: #444;
+    @media (max-width: 600px) {
+      .chat-wrapper { padding: 0.7em 2vw; }
+      .chat-box { height: 300px;}
+      h1 { font-size: 2em;}
+      .norse-underline { width: 80px;}
     }
   </style>
-  <!-- Marked.js for Markdown rendering -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
   <div class="chat-wrapper">
     <h1>Ask Odin</h1>
+    <div class="norse-underline"></div>
     <div id="chat" class="chat-box"></div>
+    <div id="loader">
+      <span class="loader-rune">ᚨ</span>
+      Odin is searching the Well of Wisdom<span class="loader-dots">...</span>
+    </div>
     <div class="input-area">
-      <input id="user-input" type="text" placeholder="Ask your question..." onkeydown="if(event.key==='Enter'){sendMessage()}" />
+      <input id="user-input" type="text" placeholder="Ask your question..." onkeydown="if(event.key==='Enter'){sendMessage()}" autocomplete="off" />
       <button onclick="sendMessage()">SEND</button>
     </div>
-    <!-- You can hide/remove the reset button if you want -->
-    <!-- <button class="reset-btn" onclick="resetOdin()">Reset Conversation</button> -->
   </div>
 <script>
   async function sendMessage() {
     const input = document.getElementById('user-input');
     const chat = document.getElementById('chat');
+    const loader = document.getElementById('loader');
     const userText = input.value.trim();
     if (!userText) return;
 
@@ -139,6 +223,9 @@
     chat.innerHTML += `<div class="msg user">You: ${userText}</div>`;
     input.value = '';
     chat.scrollTop = chat.scrollHeight;
+
+    // Show loader
+    loader.style.display = 'block';
 
     try {
       const response = await fetch('/api/chat', {
@@ -151,24 +238,23 @@
 
       const data = await response.json();
 
+      // Hide loader
+      loader.style.display = 'none';
+
       if (data.reply) {
-        chat.innerHTML += `<div class="msg odin">Odin: ${marked.parse(data.reply)}</div>`;
+        chat.innerHTML += `<div class="msg odin">${marked.parse(data.reply)}</div>`;
       } else if (data.error) {
         chat.innerHTML += `<div class="msg odin">Odin: ERROR - ${data.error}</div>`;
       } else {
         chat.innerHTML += `<div class="msg odin">Odin: (No response from Valhalla...)</div>`;
       }
     } catch (err) {
+      loader.style.display = 'none';
       console.error(err);
       chat.innerHTML += `<div class="msg odin">Odin: (NETWORK ERROR: ${err.message})</div>`;
     }
 
     chat.scrollTop = chat.scrollHeight;
-  }
-  // Optional: If you ever want to add back reset
-  function resetOdin() {
-    localStorage.removeItem('odinThreadId');
-    document.getElementById('chat').innerHTML = '';
   }
 </script>
 </body>
