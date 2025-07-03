@@ -118,7 +118,7 @@
       const data = await response.json();
       if (data.threadId) {
         threadId = data.threadId;
-        localStorage.setItem('odinThreadId', threadId); // Save it!
+        localStorage.setItem('odinThreadId', threadId);
       }
 
       if (data.reply) {
