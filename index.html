@@ -82,6 +82,19 @@
       padding-left: 1em;
       margin-bottom: 1.5em;
     }
+    .reset-btn {
+      display: block;
+      margin: 16px auto 0 auto;
+      padding: 0.5em 2em;
+      border-radius: 8px;
+      border: none;
+      background: #ccc;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .reset-btn:hover {
+      background: #aaa;
+    }
   </style>
 </head>
 <body>
@@ -92,6 +105,7 @@
       <input id="user-input" type="text" placeholder="Ask your question..." onkeydown="if(event.key==='Enter'){sendMessage()}" />
       <button onclick="sendMessage()">SEND</button>
     </div>
+    <button class="reset-btn" onclick="resetOdin()">Reset Conversation</button>
   </div>
 <script>
   let threadId = localStorage.getItem('odinThreadId') || null;
@@ -101,6 +115,9 @@
     const chat = document.getElementById('chat');
     const userText = input.value.trim();
     if (!userText) return;
+
+    // Debug: Log what's being sent
+    console.log("Frontend: Sending message:", userText, "with threadId:", threadId);
 
     chat.innerHTML += `<div class="msg user">You: ${userText}</div>`;
     input.value = '';
@@ -116,9 +133,12 @@
       });
 
       const data = await response.json();
+      // Debug: Log response
+      console.log("Frontend: Received data:", data);
+
       if (data.threadId) {
         threadId = data.threadId;
-        localStorage.setItem('odinThreadId', threadId);
+        localStorage.setItem('odinThreadId', threadId); // Save it!
       }
 
       if (data.reply) {
@@ -135,4 +155,11 @@
 
     chat.scrollTop = chat.scrollHeight;
   }
+
+  function resetOdin() {
+    localStorage.removeItem('odinThreadId');
+    location.reload();
+  }
 </script>
+</body>
+</html>
