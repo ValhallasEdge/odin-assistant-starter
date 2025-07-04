@@ -493,10 +493,14 @@
     chatEl.scrollTop = chatEl.scrollHeight;
     showLoader();
     fetch('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: userText, threadId: null })
-    })
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    message: userText,
+    assistantId: 'asst_0b7Qdwscxs168I4YFX2gKSUd', // <--- THIS
+    threadId: null
+  })
+})
     .then(res => res.json())
     .then(data => {
       hideLoader();
