@@ -1,9 +1,10 @@
 module.exports = async function (req, res) {
-  // ---- CORS HEADERS (for Shopify/frontend requests) ----
+  // --- CORS HEADERS (MUST BE FIRST) ---
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') {
+    // Respond OK to preflight, no body needed
     return res.status(200).end();
   }
 
