@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>OdinAI - Valhalla Coach</title>
+  <title>Valhalla Coach - Ask Your Guide</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <!-- Google Fonts: Inter -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
@@ -45,7 +45,6 @@
       align-items: center;
       margin-top: 32px;
     }
-    /* CARD */
     .odin-card {
       position: relative;
       background: var(--card-bg);
@@ -61,7 +60,6 @@
       margin-bottom: 32px;
       min-height: 640px;
       z-index: 10;
-      /* Soft animated border gradient */
       border: 2.5px solid transparent;
       background-clip: padding-box;
       animation: cardBorderAnim 9s linear infinite;
@@ -72,7 +70,6 @@
       60% { border-color: #b39c4d; }
       100% { border-color: #dee2ef; }
     }
-    /* ODIN LOGO (inside card, centered, glows, hover = grows 30%) */
     .odin-logo-inside {
       display: flex;
       justify-content: center;
@@ -106,12 +103,11 @@
       transform: scale(1.3);
       filter: brightness(1.1) drop-shadow(0 0 18px #ffe66a99);
     }
-    /* Header positioning with logo */
     .odin-title-wrap {
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-top: 155px; /* Moved down to make space for logo in card */
+      margin-top: 155px;
       margin-bottom: 10px;
       width: 100%;
     }
@@ -175,7 +171,6 @@
       font-family: 'Inter', Arial, sans-serif;
       letter-spacing: 0.01em;
     }
-    /* RUNE ROW - MORE RUNES, EVEN L/R, SAME EFFECT */
     .odin-rune-row {
       display: flex;
       justify-content: center;
@@ -196,7 +191,6 @@
     @keyframes runeShimmer {
       to { background-position-x: -220%; }
     }
-    /* MUSIC PLAYER - now gold note, below card, centered */
     .odin-music {
       display: flex;
       align-items: center;
@@ -209,7 +203,7 @@
       background: none;
       border: none;
       font-size: 1.7em;
-      color: var(--gold); /* GOLD color for note */
+      color: var(--gold);
       cursor: pointer;
       transition: color 0.2s, transform 0.15s;
       outline: none;
@@ -224,18 +218,7 @@
       accent-color: var(--gold);
       margin-left: 2px;
     }
-    /* Rest of your code unchanged (chat, input, button, loader, powered by, media queries) ... */
-    .odin-loader-wrap { /* ... */ }
-    .odin-loader-rune { /* ... */ }
-    .odin-loader-text { /* ... */ }
-    .odin-chat-wrap { /* ... */ }
-    .odin-msg { /* ... */ }
-    .odin-msg.user { /* ... */ }
-    .odin-msg.odin { /* ... */ }
-    .odin-input-row { /* ... */ }
-    .odin-input-box { /* ... */ }
-    .odin-input-box:focus { /* ... */ }
-    /* Raven SVG Icon size fix */
+    /* Rest of chat, input, button, loader, etc, unchanged ... */
     .odin-send-btn svg {
       width: 23px;
       height: 23px;
@@ -267,15 +250,15 @@
       background: var(--send-grad);
       transform: translateY(-2px) scale(1.07);
     }
-    /* ... */
   </style>
 </head>
 <body>
 <div class="odin-main-container">
   <div class="odin-card">
-    <!-- Odin Coin Logo INSIDE card, centered & glowing & grows on hover -->
-    <div class="odin-logo-inside" tabindex="0" aria-label="Odin coin logo (hover for glow)">
-      <img src="https://cdn.shopify.com/s/files/1/0620/9958/7203/files/ChatGPT_Image_Jun_27_2025_03_01_06_PM.png?v=1751061688" />
+    <!-- Valhalla Coach Logo INSIDE card, centered & glowing & grows on hover -->
+    <div class="odin-logo-inside" tabindex="0" aria-label="Valhalla Coach logo (hover for glow)">
+      <img src="https://cdn.shopify.com/s/files/1/0620/9958/7203/files/ChatGPT_Image_Jun_27_2025_03_01_06_PM.png?v=1751061688"
+           alt="Valhalla Coach gold logo" />
     </div>
     <!-- More evenly spread runes -->
     <div class="odin-rune-row" aria-hidden="true">
@@ -284,7 +267,7 @@
     <!-- Header -->
     <div class="odin-title-wrap">
       <div class="odin-title" id="odinTitle">
-        ASK&nbsp;<span class="odin-o" id="odinO">O</span>DIN
+        ASK&nbsp;<span class="odin-o" id="odinO">V</span>ALHALLA COACH
       </div>
       <div class="odin-underline-arrow">
         <svg viewBox="0 0 220 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -292,34 +275,31 @@
           <polygon points="208,8 220,16 208,8 220,0" fill="#b39c4d"/>
         </svg>
       </div>
-      <div class="odin-tagline">Wisdom, legacy, and Norse myth for the modern world</div>
+      <div class="odin-tagline">Your ultimate Viking guide for strength, discipline & motivation</div>
     </div>
     <!-- Chat loader (hidden by default) -->
     <div class="odin-loader-outer" id="odinLoaderOuter" style="display:none;">
       <div class="odin-loader-wrap">
         <span class="odin-loader-rune" id="odinLoaderRune">ᚨ</span>
       </div>
-      <div class="odin-loader-text" id="odinLoaderText">Odin is accessing the Well of Wisdom...</div>
+      <div class="odin-loader-text" id="odinLoaderText">Valhalla Coach is accessing the Well of Wisdom...</div>
     </div>
     <!-- Chat history/messages -->
     <div class="odin-chat-wrap" id="odinChat"></div>
     <!-- Input row -->
     <form class="odin-input-row" id="odinInputRow" autocomplete="off" onsubmit="event.preventDefault(); sendOdinMessage();">
-      <input id="odinInput" class="odin-input-box" type="text" maxlength="280" placeholder="Ask your question..." autocomplete="off" aria-label="Ask Odin"/>
-      <button type="submit" class="odin-send-btn" aria-label="Send to Odin">
-        <!-- Tiny RAVEN outline SVG icon (white stroke) -->
+      <input id="odinInput" class="odin-input-box" type="text" maxlength="280" placeholder="Ask your question..." autocomplete="off" aria-label="Ask Valhalla Coach"/>
+      <button type="submit" class="odin-send-btn" aria-label="Send to Valhalla Coach">
         <svg viewBox="0 0 36 22" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="vertical-align:middle;">
           <path d="M2 18L22 11.5 8 10 32 2M12 20l2-4.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
         SEND
       </button>
     </form>
-    <!-- Powered by -->
     <div class="odin-powered">
       Powered by <span>Valhalla’s Edge</span>
     </div>
   </div>
-  <!-- Music player & controls - below the Odin card, centered, gold note -->
   <div class="odin-music">
     <button class="odin-music-btn" id="odinMusicPlay" title="Play / Pause Meditation Music" aria-label="Play music">
       <span id="odin-music-icon">&#119070;</span>
@@ -328,14 +308,13 @@
       aria-label="Volume"/>
   </div>
 </div>
-<!-- Audio (royalty-free meditation music) -->
 <audio id="odinAudio" src="https://cdn.pixabay.com/audio/2022/10/16/audio_125b985df9.mp3" preload="auto" loop></audio>
 <script>
-  // O in Odin hover = rune
+  // O in Valhalla hover = rune
   const odinO = document.getElementById('odinO');
   odinO.addEventListener('mouseenter', () => odinO.classList.add('rune-hover'));
   odinO.addEventListener('mouseleave', () => odinO.classList.remove('rune-hover'));
-  odinO.title = "Odin's rune: ᛟ";
+  odinO.title = "Viking rune: ᛟ";
 
   // ========== MUSIC PLAYER ==========
   const musicBtn = document.getElementById('odinMusicPlay');
@@ -343,11 +322,7 @@
   const musicVolume = document.getElementById('odinMusicVolume');
   const audio = document.getElementById('odinAudio');
   let musicPlaying = false;
-
-  // Set volume and start music on load if allowed
   audio.volume = parseFloat(musicVolume.value);
-
-  // Try autoplay (most browsers require user interaction, but let's go for max chill)
   window.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
       audio.muted = false;
@@ -355,13 +330,11 @@
         musicPlaying = true;
         musicBtn.classList.add('active');
       }).catch(() => {
-        // Browser blocked autoplay, wait for manual play
         musicPlaying = false;
         musicBtn.classList.remove('active');
       });
-    }, 700); // Slight delay after UI loads for smoother experience
+    }, 700);
   });
-
   musicBtn.addEventListener('click', () => {
     if (!musicPlaying) {
       audio.muted = false;
@@ -393,7 +366,7 @@
 
   function showLoader() {
     loaderOuter.style.display = '';
-    loaderText.textContent = "Odin is accessing the Well of Wisdom...";
+    loaderText.textContent = "Valhalla Coach is accessing the Well of Wisdom...";
     loaderRune.textContent = runes[runeIdx];
     loaderInterval = setInterval(() => {
       runeIdx = (runeIdx + 1) % runes.length;
@@ -404,7 +377,6 @@
     loaderOuter.style.display = 'none';
     clearInterval(loaderInterval);
   }
-  // Odin message HTML formatter (bolds, bullets, etc)
   function formatOdin(text) {
     return text
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
@@ -436,15 +408,15 @@
       if (data.reply) {
         chatEl.innerHTML += `<div class="odin-msg odin">${formatOdin(data.reply)}</div>`;
       } else if (data.error) {
-        chatEl.innerHTML += `<div class="odin-msg odin">Odin: <span class="gold">ERROR -</span> ${data.error}</div>`;
+        chatEl.innerHTML += `<div class="odin-msg odin">Valhalla Coach: <span class="gold">ERROR -</span> ${data.error}</div>`;
       } else {
-        chatEl.innerHTML += `<div class="odin-msg odin">Odin: <span class="gold">No response from Valhalla…</span></div>`;
+        chatEl.innerHTML += `<div class="odin-msg odin">Valhalla Coach: <span class="gold">No response from Valhalla…</span></div>`;
       }
       chatEl.scrollTop = chatEl.scrollHeight;
     })
     .catch(err => {
       hideLoader();
-      chatEl.innerHTML += `<div class="odin-msg odin">Odin: <span class="gold">NETWORK ERROR:</span> ${err.message}</div>`;
+      chatEl.innerHTML += `<div class="odin-msg odin">Valhalla Coach: <span class="gold">NETWORK ERROR:</span> ${err.message}</div>`;
       chatEl.scrollTop = chatEl.scrollHeight;
     });
   }
