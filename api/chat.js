@@ -35,7 +35,8 @@ export default async function handler(req, res) {
           (msg) => msg.role === "assistant"
         );
         replyText =
-          assistantMessages[0]?.content[0]?.text?.value || "No reply.";
+  assistantMessages?.[0]?.content?.[0]?.text?.value ??
+  JSON.stringify(messages.data[messages.data.length - 1] || { message: "No reply." });
         completed = true;
       } else if (status.status === "failed") {
         throw new Error("Run failed");
