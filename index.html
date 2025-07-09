@@ -388,20 +388,32 @@ musicSlider.oninput = (e) => {
 function getThreadId(godKey) {
   const key = `valhalla_thread_${godKey}`;
   let id = localStorage.getItem(key);
-  if (id) return Promise.resolve(id);
+  
+  // ✅ If a valid thread exists, reuse it
+  if (id && id.startsWith("thread_")) {
+    return Promise.resolve(id);
+  }
+
+  // 🧼 Else create a new thread
   return fetch('https://odin-assistant-starter.vercel.app/api/start-thread', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' }
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' }
   })
     .then(res => res.json())
     .then(data => {
-      localStorage.setItem(key, data.threadId);
-      return data.threadId;
+      if (data.threadId && data.threadId.startsWith("thread_")) {
+        localStorage.setItem(key, data.threadId);
+        return data.threadId;
+      } else {
+        throw new Error('Invalid threadId');
+      }
     })
     .catch(err => {
       console.error('Thread ID error:', err);
       return null;
     });
 }
+
 
 chatForm.onsubmit = async (e) => {
   e.preventDefault();
