@@ -282,7 +282,6 @@ const urlPath = window.location.pathname.toLowerCase();
 const matchedKey = GODS.find(g => urlPath.includes(g.key + 'ai'))?.key;
 let selectedGod = GODS.find(g => g.key === matchedKey) || GODS[8]; // fallback to Valhalla Coach
 
-let selectedGod = GODS[8];
 let chatHistory = [];
 
 const godSelector = document.getElementById('god-selector');
