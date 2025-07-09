@@ -6,7 +6,169 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400|Inter:400,700&display=swap" rel="stylesheet">
   <style>
-    /* Your CSS styles (unchanged) */
+<style>
+  :root {
+    --default-color: #ffe18d;
+    --bg: linear-gradient(135deg, #141414 0%, #232323 100%);
+    --font-main: 'Montserrat', 'Inter', sans-serif;
+  }
+  body {
+    background: var(--bg);
+    min-height: 100vh;
+    font-family: var(--font-main);
+    color: #f8e6c3;
+    margin: 0; padding: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+  }
+  .valhalla-card {
+    background: rgba(25,25,25,0.97);
+    border-radius: 32px;
+    box-shadow: 0 8px 48px 0 #000a;
+    max-width: 520px;
+    width: 98vw;
+    margin: 48px auto 0 auto;
+    padding: 32px 24px 16px 24px;
+    min-height: 640px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 2.5px solid var(--default-color);
+    transition: box-shadow 0.18s, border-color 0.22s;
+    position: relative;
+    animation: fadeIn 1s;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(32px);}
+    to   { opacity: 1; transform: translateY(0);}
+  }
+  .god-selector-bar {
+    display: flex; gap: 18px; justify-content: center; align-items: center;
+    margin: 0 0 8px 0; flex-wrap: wrap; overflow-x: auto;
+    width: 100vw; max-width: 540px; padding: 16px 0;
+    background: rgba(25,25,25,0.87);
+    border-radius: 0 0 18px 18px;
+    box-shadow: 0 2px 14px 0 #0004;
+    z-index: 3; position: sticky; top: 0;
+  }
+  .god-avatar {
+    border: 3px solid #333; border-radius: 100px; width: 56px; height: 56px;
+    background: #000; cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.18s, transform 0.17s;
+    overflow: hidden; display: flex; align-items: center; justify-content: center;
+  }
+  .god-avatar.selected {
+    border-width: 3.5px;
+    box-shadow: 0 0 18px 2px var(--default-color, #ffe18d60);
+    transform: scale(1.11);
+    border-color: var(--default-color, #ffe18d) !important;
+  }
+  .god-avatar img {
+    width: 48px; height: 48px; object-fit: cover; border-radius: 50%; background: #181818;
+  }
+  .god-title {
+    font-size: 2.2rem; font-family: var(--font-main); margin: 18px 0 6px 0;
+    color: var(--default-color);
+    letter-spacing: 2px; text-align: center; font-weight: 700;
+    transition: color 0.18s;
+    text-shadow: 0 2px 16px #0002;
+  }
+  .god-bio {
+    font-size: 1.13rem; margin-bottom: 12px; text-align: center; color: #f3ebd7; min-height: 38px;
+  }
+  .chat-history {
+    flex: 1 1 auto; width: 100%; min-height: 250px; max-height: 280px;
+    overflow-y: auto;
+    background: rgba(16,16,16,0.87);
+    border-radius: 17px;
+    margin-bottom: 12px;
+    padding: 14px 13px;
+    font-size: 1.13rem;
+    box-shadow: 0 2px 14px 0 #0002;
+    transition: box-shadow 0.18s;
+    border: 1.5px solid #29281e;
+  }
+  .chat-history:hover {
+    box-shadow: 0 4px 36px 2px var(--default-color, #ffe18d66), 0 1px 7px #0002;
+  }
+  .chat-msg { margin-bottom: 8px; padding: 0.3em 0; }
+  .chat-msg.user { text-align: right; color: #c8f7ff;}
+  .chat-msg.god { text-align: left; color: var(--default-color);}
+  .chat-msg.god strong { color: var(--default-color); font-weight: bold; }
+  .chat-msg.god em { color: #ffdea0; font-style: italic;}
+  .chat-msg.god ul { margin: 8px 0 8px 22px; padding-left: 0;}
+  .chat-msg.god li { margin-bottom: 3px; }
+  .chat-input-row {
+    display: flex; width: 100%; margin-top: 12px; gap: 10px;
+  }
+  .chat-input {
+    flex: 1;
+    padding: 10px 14px;
+    border-radius: 22px;
+    border: none;
+    font-size: 1.15rem;
+    background: #222;
+    color: #fff9ec;
+    font-family: 'Inter',sans-serif;
+    outline: none;
+    box-shadow: 0 1px 8px #0004;
+  }
+  .chat-send-btn {
+    background: var(--default-color, #ffe18d);
+    color: #232323;
+    border: none;
+    border-radius: 24px;
+    padding: 8px 20px;
+    font-size: 1.16rem;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    transition: background 0.16s, color 0.12s, box-shadow 0.15s;
+    box-shadow: 0 1px 8px #0003;
+  }
+  .chat-send-btn:hover {
+    background: #fff6dc;
+    color: var(--default-color, #ffe18d);
+  }
+  .loader-runic {
+    margin: 0 auto 0.2em auto; font-size: 1.85em; letter-spacing: 0.19em;
+    color: var(--default-color, #ffe18d);
+    animation: spinRunes 1.3s linear infinite;
+    font-family: 'Inter',sans-serif;
+    text-align: center;
+    user-select: none;
+  }
+  @keyframes spinRunes { 100% { transform: rotate(1turn); } }
+  .music-player-row {
+    width: 99%; display: flex; align-items: center; justify-content: center;
+    margin: 12px auto 0 auto; gap: 12px;
+    background: #181818;
+    border-radius: 13px;
+    padding: 7px 0;
+  }
+  .music-play-btn {
+    background: none; border: none;
+    font-size: 1.62em; color: var(--default-color, #ffe18d);
+    cursor: pointer; outline: none;
+    transition: color 0.16s, transform 0.13s;
+    margin-right: 7px;
+  }
+  .music-play-btn.active, .music-play-btn:hover {
+    color: #fff6dc;
+    transform: scale(1.12) rotate(-7deg);
+  }
+  .music-slider {
+    accent-color: var(--default-color, #ffe18d);
+    margin-left: 3px;
+  }
+  @media (max-width: 640px) {
+    .valhalla-card { max-width: 99vw; min-height: 440px; }
+    .god-title { font-size: 1.42rem;}
+    .chat-history { max-height: 150px; font-size: 1.02rem;}
+    .chat-input { font-size: 1.02rem;}
+    .music-player-row { font-size: 1.12em; }
+  }
+</style>
+
   </style>
 </head>
 <body>
