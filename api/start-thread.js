@@ -6,6 +6,8 @@ export default async function handler(req, res) {
   try {
     const { OpenAI } = await import('openai');
 
+    console.log('API KEY:', process.env.OPENAI_API_KEY); // Add this line to check
+
     const openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     });
@@ -13,7 +15,7 @@ export default async function handler(req, res) {
     const thread = await openai.beta.threads.create();
     res.status(200).json({ threadId: thread.id });
   } catch (error) {
-    console.error('Start-thread error:', error);
+    console.error('Start-thread error:', error); // Make sure this logs on failure
     res.status(500).json({ error: 'Failed to start thread' });
   }
 }
