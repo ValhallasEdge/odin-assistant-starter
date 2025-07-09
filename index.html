@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <meta charset="UTF-8">
   <title>Valhalla Pantheon – Valhalla Coach</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -335,7 +336,7 @@ function renderChat() {
   chatHistory.forEach(msg => {
     const msgDiv = document.createElement('div');
     msgDiv.className = 'chat-msg ' + (msg.from === 'user' ? 'user' : 'god');
-    msgDiv.innerHTML = msg.text;
+    msgDiv.innerHTML = marked.parse(msg.text);
     chatHistoryDiv.appendChild(msgDiv);
   });
   chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight;
