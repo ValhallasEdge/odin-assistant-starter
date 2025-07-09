@@ -1,0 +1,10 @@
+{
+  "name": "odin-assistant-starter",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "openai": "^4.26.0"
+  }
+}
