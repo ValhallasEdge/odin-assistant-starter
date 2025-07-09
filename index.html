@@ -194,16 +194,88 @@
 
   <script>
     const GODS = [
-      { key: 'odin', name: 'Odin', assistantId: 'asst_D0BXH8CTZycU0ku9PjkUmW3T', avatar: '...', color: '#1c64ff', music: '...', bio: 'Wisdom, vision, and strategy—the Allfather.' },
-      { key: 'thor', name: 'Thor', assistantId: 'asst_JNie4vDtknbropUsbuXF4OpG', avatar: '...', color: '#e14b3d', music: '...', bio: 'Strength, action, and resilience—the thunder god.' },
-      { key: 'loki', name: 'Loki', assistantId: 'asst_hKdLlIlE66bKCjuuDzhwknFM', avatar: '...', color: '#0db18a', music: '...', bio: 'Creativity, wit, and transformation—the trickster.' },
-      { key: 'freya', name: 'Freya', assistantId: 'asst_A0oRwWmYijWwmRJuA2iO9JlR', avatar: '...', color: '#c5277e', music: '...', bio: 'Healing, beauty, and abundance—the goddess of love.' },
-      { key: 'oz', name: 'Oz', assistantId: 'asst_Hk4WoxgaWQr5wbagpEtmQbuY', avatar: '...', color: '#ff9200', music: '...', bio: 'Transformation, wisdom, and mastery—the digital wizard.' },
-      { key: 'tyr', name: 'Tyr', assistantId: 'asst_5RBZdhN1br4dkpDB6g1cRBCg', avatar: '...', color: '#946140', music: '...', bio: 'Justice, discipline, and sacrifice—the steadfast champion.' },
-      { key: 'heimdall', name: 'Heimdall', assistantId: 'asst_5BTp4L16s3LSFZWyOwHL2Qow', avatar: '...', color: '#8653eb', music: '...', bio: 'Clarity, vigilance, and protection—the ever-watchful guardian.' },
-      { key: 'skald', name: 'Skald', assistantId: 'asst_mDsnxmXYWK6VVR2TGlWgr0Db', avatar: '...', color: '#2b55e2', music: '...', bio: 'Story, poetry, and inspiration—the bard of legend.' },
-      { key: 'coach', name: 'Valhalla Coach', assistantId: 'asst_0b7Qdwscxs168I4YFX2gKSUd', avatar: '...', color: '#ffe18d', music: '...', bio: 'Motivation, discipline, and action—your ultimate Viking coach.' },
-    ];
+  {
+    key: 'odin',
+    name: 'Odin',
+    assistantId: 'asst_D0BXH8CTZycU0ku9PjkUmW3T',
+    avatar: 'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/ChatGPT_Image_Jun_27_2025_02_47_18_PM.png?v=1751060934',
+    color: '#1c64ff',
+    music: 'https://cdn.pixabay.com/audio/2022/12/19/audio_12b0e71fa2.mp3',
+    bio: 'Wisdom, vision, and strategy—the Allfather.'
+  },
+  {
+    key: 'thor',
+    name: 'Thor',
+    assistantId: 'asst_JNie4vDtknbropUsbuXF4OpG',
+    avatar: 'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/ChatGPT_Image_Jul_3_2025_04_31_31_PM.png?v=1751586454',
+    color: '#e14b3d',
+    music: 'https://cdn.pixabay.com/audio/2022/11/16/audio_125b5cfb62.mp3',
+    bio: 'Strength, action, and resilience—the thunder god.'
+  },
+  {
+    key: 'loki',
+    name: 'Loki',
+    assistantId: 'asst_hKdLlIlE66bKCjuuDzhwknFM',
+    avatar: 'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/ChatGPT_Image_Jun_27_2025_02_51_28_PM.png?v=1751061104',
+    color: '#0db18a',
+    music: 'https://cdn.pixabay.com/audio/2022/11/16/audio_125b5cfb62.mp3',
+    bio: 'Creativity, wit, and transformation—the trickster.'
+  },
+  {
+    key: 'freya',
+    name: 'Freya',
+    assistantId: 'asst_A0oRwWmYijWwmRJuA2iO9JlR',
+    avatar: 'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/ChatGPT_Image_Jun_30_2025_07_59_45_PM.png?v=1751338805',
+    color: '#c5277e',
+    music: 'https://cdn.pixabay.com/audio/2022/10/16/audio_125b985df9.mp3',
+    bio: 'Healing, beauty, and abundance—the goddess of love.'
+  },
+  {
+    key: 'oz',
+    name: 'Oz',
+    assistantId: 'asst_Hk4WoxgaWQr5wbagpEtmQbuY',
+    avatar: 'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/ChatGPT_Image_Jun_27_2025_02_53_41_PM.png?v=1751061236',
+    color: '#ff9200',
+    music: 'https://cdn.pixabay.com/audio/2022/07/26/audio_124b01b0b2.mp3',
+    bio: 'Transformation, wisdom, and mastery—the digital wizard.'
+  },
+  {
+    key: 'tyr',
+    name: 'Tyr',
+    assistantId: 'asst_5RBZdhN1br4dkpDB6g1cRBCg',
+    avatar: 'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/ChatGPT_Image_Jul_3_2025_04_36_18_PM.png?v=1751586454',
+    color: '#946140',
+    music: 'https://cdn.pixabay.com/audio/2023/03/27/audio_1285ba08f4.mp3',
+    bio: 'Justice, discipline, and sacrifice—the steadfast champion.'
+  },
+  {
+    key: 'heimdall',
+    name: 'Heimdall',
+    assistantId: 'asst_5BTp4L16s3LSFZWyOwHL2Qow',
+    avatar: 'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/ChatGPT_Image_Jun_30_2025_07_22_22_PM.png?v=1751338021',
+    color: '#8653eb',
+    music: 'https://cdn.pixabay.com/audio/2022/12/19/audio_12b0e71fa2.mp3',
+    bio: 'Clarity, vigilance, and protection—the ever-watchful guardian.'
+  },
+  {
+    key: 'skald',
+    name: 'Skald',
+    assistantId: 'asst_mDsnxmXYWK6VVR2TGlWgr0Db',
+    avatar: 'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/ChatGPT_Image_Jun_30_2025_07_22_47_PM.png?v=1751338340',
+    color: '#2b55e2',
+    music: 'https://cdn.pixabay.com/audio/2022/10/16/audio_125b985df9.mp3',
+    bio: 'Story, poetry, and inspiration—the bard of legend.'
+  },
+  {
+    key: 'coach',
+    name: 'Valhalla Coach',
+    assistantId: 'asst_0b7Qdwscxs168I4YFX2gKSUd',
+    avatar: 'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/ChatGPT_Image_Jun_27_2025_03_01_06_PM.png?v=1751061688',
+    color: '#ffe18d',
+    music: 'https://cdn.pixabay.com/audio/2023/01/31/audio_12dbfc3fa1.mp3',
+    bio: 'Motivation, discipline, and action—your ultimate Viking coach.'
+  }
+];
 
     // ✅ NEW LOGIC: Select god from query string (?god=odin)
     const urlParams = new URLSearchParams(window.location.search);
