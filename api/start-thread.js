@@ -1,12 +1,12 @@
-// api/start-thread.js
-
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
   try {
-    const openai = new (await import('openai')).default({
+    const { OpenAI } = await import('openai');
+
+    const openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     });
 
