@@ -198,7 +198,12 @@
 <button class="music-play-btn" id="musicPlayBtn">🎵</button>
 <input class="music-slider" id="musicSlider" max="1" min="0" step="0.01" type="range" value="0.25"/>
 </div>
-<button id="thor-game-btn" style="margin: 12px auto; background: #e14b3d; color: #fff; padding: 10px 18px; font-weight: bold; border: none; border-radius: 12px; cursor: pointer; display: block;">⚔️ Play Thor's Game (Coming Soon)</button><button id="buy-tokens-btn" onclick="window.location.href='/products/ruin-tokens-pack'" style="margin: 10px auto; background: #1a1a1a; color: #FFD700; padding: 10px 16px; border: 2px solid #FFD700; border-radius: 10px; font-weight: bold; display: block;">💰 Buy More Tokens</button></div>
+<div id="ritual-checklist" style="margin: 12px 0; text-align: left; width: 100%; background: #1a1a1a; padding: 12px; border-radius: 10px; border: 1px solid #444;">
+<h3 style="color:#FFD700; margin-top:0;">🛡 Daily Rituals</h3>
+<label style="display:block; margin: 6px 0;"><input class="ritual-check" type="checkbox" value="breathe"/> Breathe Deeply (+1)</label>
+<label style="display:block; margin: 6px 0;"><input class="ritual-check" type="checkbox" value="move"/> Move Your Body (+1)</label>
+<label style="display:block; margin: 6px 0;"><input class="ritual-check" type="checkbox" value="gratitude"/> Show Gratitude (+1)</label>
+</div><button id="thor-game-btn" style="margin: 12px auto; background: #e14b3d; color: #fff; padding: 10px 18px; font-weight: bold; border: none; border-radius: 12px; cursor: pointer; display: block;">⚔️ Play Thor's Game (Coming Soon)</button><button id="buy-tokens-btn" onclick="window.location.href='/products/ruin-tokens-pack'" style="margin: 10px auto; background: #1a1a1a; color: #FFD700; padding: 10px 16px; border: 2px solid #FFD700; border-radius: 10px; font-weight: bold; display: block;">💰 Buy More Tokens</button></div>
 <audio id="musicAudio" loop="" preload="auto"></audio>
 <script>
     const GODS = [
@@ -476,6 +481,7 @@ chatInput.focus();
 const DAILY_LIMIT = 10;
 const TOKEN_KEY = "valhalla_tokens";
 const DATE_KEY = "valhalla_last_date";
+const RITUALS_KEY = "valhalla_rituals_done";
 
 function getToday() {
   return new Date().toISOString().slice(0, 10);
@@ -484,6 +490,7 @@ function getToday() {
 function resetDailyTokens() {
   localStorage.setItem(TOKEN_KEY, DAILY_LIMIT);
   localStorage.setItem(DATE_KEY, getToday());
+  localStorage.setItem(RITUALS_KEY, JSON.stringify({}));
   updateTokenDisplay();
 }
 
@@ -503,6 +510,13 @@ function decrementToken() {
   return tokens;
 }
 
+function addToken(amount = 1) {
+  let tokens = parseInt(localStorage.getItem(TOKEN_KEY)) || 0;
+  tokens += amount;
+  localStorage.setItem(TOKEN_KEY, tokens);
+  updateTokenDisplay();
+}
+
 function checkReset() {
   const lastDate = localStorage.getItem(DATE_KEY);
   if (lastDate !== getToday()) {
@@ -514,8 +528,24 @@ function showTokenModal() {
   alert("🛑 You’re out of Ruin Tokens. Come back tomorrow or earn more through gameplay.");
 }
 
-// Init Token Logic
-checkReset();
-updateTokenDisplay();
+// Ritual handling
+document.addEventListener("DOMContentLoaded", () => {
+  checkReset();
+  updateTokenDisplay();
+
+  const saved = JSON.parse(localStorage.getItem(RITUALS_KEY) || "{}");
+  document.querySelectorAll(".ritual-check").forEach(checkbox => {
+    const key = checkbox.value;
+    if (saved[key]) checkbox.checked = true;
+
+    checkbox.addEventListener("change", () => {
+      if (checkbox.checked && !saved[key]) {
+        addToken(1);
+        saved[key] = true;
+        localStorage.setItem(RITUALS_KEY, JSON.stringify(saved));
+      }
+    });
+  });
+});
 </script></body>
 </html>
