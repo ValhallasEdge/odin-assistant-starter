@@ -1,12 +1,13 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <meta charset="UTF-8">
-  <title>Valhalla Pantheon – Valhalla Coach</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400|Inter:400,700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<meta charset="utf-8"/>
+<title>Valhalla Pantheon – Valhalla Coach</title>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css?family=Montserrat:700,400|Inter:400,700&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <style>
     #god-logo {
   width: 96px;
@@ -180,28 +181,26 @@
   }
 </style>
 
-  </style>
 </head>
 <body>
-  <div class="god-selector-bar" id="god-selector"></div>
-  <div class="valhalla-card" id="valhalla-card">
-    <img id="god-logo" src="" alt="God Logo" />
-    <div class="god-title" id="god-title"></div>
-    <div class="god-bio" id="god-bio"></div>
-    <div class="chat-history" id="chat-history"></div>
-    <div class="loader-runic" id="loader-runic" style="display:none;">ᚨ ᛟ ᚱ ᛃ ᚺ ᚠ ᚾ ᛏ</div>
-    <form class="chat-input-row" id="chat-form" autocomplete="off">
-      <input class="chat-input" id="chat-input" placeholder="Ask your guide anything..." />
-      <button class="chat-send-btn" type="submit">Send</button>
-    </form>
-    <div class="music-player-row" id="music-player">
-      <button class="music-play-btn" id="musicPlayBtn">🎵</button>
-      <input type="range" min="0" max="1" step="0.01" value="0.25" class="music-slider" id="musicSlider" />
-    </div>
-  </div>
-  <audio id="musicAudio" preload="auto" loop></audio>
-
-  <script>
+<div class="god-selector-bar" id="god-selector"></div>
+<div class="valhalla-card" id="valhalla-card">
+<img alt="God Logo" id="god-logo" src=""/>
+<div class="god-title" id="god-title"></div>
+<div class="god-bio" id="god-bio"></div><div id="ruin-token-display" style="color: #FFD700; font-weight: bold; margin-bottom: 10px;">🪙 Ruin Tokens Remaining: <span id="ruin-tokens">10</span></div>
+<div class="chat-history" id="chat-history"></div>
+<div class="loader-runic" id="loader-runic" style="display:none;">ᚨ ᛟ ᚱ ᛃ ᚺ ᚠ ᚾ ᛏ</div>
+<form autocomplete="off" class="chat-input-row" id="chat-form">
+<input class="chat-input" id="chat-input" placeholder="Ask your guide anything..."/>
+<button class="chat-send-btn" type="submit">Send</button>
+</form>
+<div class="music-player-row" id="music-player">
+<button class="music-play-btn" id="musicPlayBtn">🎵</button>
+<input class="music-slider" id="musicSlider" max="1" min="0" step="0.01" type="range" value="0.25"/>
+</div>
+</div>
+<audio id="musicAudio" loop="" preload="auto"></audio>
+<script>
     const GODS = [
   {
     key: 'odin',
@@ -431,6 +430,12 @@ function getThreadId(godKey) {
 
 chatForm.onsubmit = async (e) => {
   e.preventDefault();
+  
+  const remaining = decrementToken();
+  if (remaining <= 0) {
+    alert("🛑 You’re out of Ruin Tokens. Come back tomorrow or earn more in battle.");
+    return;
+  }
   const text = chatInput.value.trim();
   if (!text) return;
   chatHistory.push({from:'user', text});
@@ -467,5 +472,46 @@ renderChat();
 setupMusic();
 chatInput.focus();
 </script>
-</body>
+<script>
+const DAILY_LIMIT = 10;
+const TOKEN_KEY = "valhalla_tokens";
+const DATE_KEY = "valhalla_last_date";
+
+function getToday() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function resetDailyTokens() {
+  localStorage.setItem(TOKEN_KEY, DAILY_LIMIT);
+  localStorage.setItem(DATE_KEY, getToday());
+  updateTokenDisplay();
+}
+
+function updateTokenDisplay() {
+  const tokens = parseInt(localStorage.getItem(TOKEN_KEY)) || 0;
+  const el = document.getElementById("ruin-tokens");
+  if (el) el.textContent = tokens;
+}
+
+function decrementToken() {
+  let tokens = parseInt(localStorage.getItem(TOKEN_KEY)) || 0;
+  if (tokens > 0) {
+    tokens--;
+    localStorage.setItem(TOKEN_KEY, tokens);
+  }
+  updateTokenDisplay();
+  return tokens;
+}
+
+function checkReset() {
+  const lastDate = localStorage.getItem(DATE_KEY);
+  if (lastDate !== getToday()) {
+    resetDailyTokens();
+  }
+}
+
+// Run on page load
+checkReset();
+updateTokenDisplay();
+</script></body>
 </html>
