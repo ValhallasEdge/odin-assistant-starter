@@ -7,7 +7,6 @@
 <title>Valhalla Pantheon – Valhalla Coach</title>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400|Inter:400,700&amp;display=swap" rel="stylesheet"/>
-
 <style>
     #god-logo {
   width: 96px;
@@ -179,14 +178,45 @@
     .chat-input { font-size: 1.02rem;}
     .music-player-row { font-size: 1.12em; }
   }
+
+/* === Final Boss Mobile CSS Enhancements === */
+@media (max-width: 640px) {
+  .valhalla-card {
+    padding-top: 48px;
+    max-width: 95vw;
+    margin-bottom: 48px;
+  }
+  .god-selector-bar {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 8px;
+  }
+  .god-avatar {
+    margin: 0 6px;
+  }
+  #ruin-token-display, #ritual-checklist, #thor-game-btn, #buy-tokens-btn {
+    margin-top: 18px;
+    margin-bottom: 18px;
+  }
+}
+
+/* Ensure spacing for embedded containers like Shopify */
+body {
+  padding-bottom: 64px;
+}
 </style>
-</head>
+<style>
+#thor-game-btn:hover {
+  background: #ff6666;
+  transform: scale(1.05);
+}
+</style></head>
 <body>
 <div class="god-selector-bar" id="god-selector"></div>
 <div class="valhalla-card" id="valhalla-card">
 <img alt="God Logo" id="god-logo" src=""/>
 <div class="god-title" id="god-title"></div>
-<div class="god-bio" id="god-bio"></div>&lt;!-- == Ruin Token Display == --&gt;<div id="ruin-token-display" style="color: #FFD700; font-weight: bold; margin-bottom: 10px;">🪙 Ruin Tokens Remaining: <span id="ruin-tokens">10</span></div>
+<div class="god-bio" id="god-bio"></div><!--<!-- == Ruin Token Display == -->--><div id="ruin-token-display" style="color: #FFD700; font-weight: bold; margin-bottom: 10px;margin-top:18px;margin-bottom:18px;">🪙 Ruin Tokens Remaining: <span id="ruin-tokens">10</span></div>
 <div class="chat-history" id="chat-history"></div>
 <div class="loader-runic" id="loader-runic" style="display:none;">ᚨ ᛟ ᚱ ᛃ ᚺ ᚠ ᚾ ᛏ</div>
 <form autocomplete="off" class="chat-input-row" id="chat-form">
@@ -196,16 +226,14 @@
 <div class="music-player-row" id="music-player">
 <button class="music-play-btn" id="musicPlayBtn">🎵</button>
 <input class="music-slider" id="musicSlider" max="1" min="0" step="0.01" type="range" value="0.25"/>
-</div>
-&lt;!-- == Daily Ritual Checklist == --&gt;<div id="ritual-checklist" style="margin: 12px 0; text-align: left; width: 100%; background: #1a1a1a; padding: 12px; border-radius: 10px; border: 1px solid #444;">
+</div><!--<!-- == Daily Ritual Checklist == -->--><div id="ritual-checklist" style="margin: 12px 0; text-align: left; width: 100%; background: #1a1a1a; padding: 12px; border-radius: 10px; border: 1px solid #444;margin-top:18px;margin-bottom:18px;">
 <h3 style="color:#FFD700; margin-top:0;">🛡 Daily Rituals</h3>
 <label style="display:block; margin: 6px 0;"><input class="ritual-check" type="checkbox" value="breathe"/> Breathe Deeply (+1)</label>
 <label style="display:block; margin: 6px 0;"><input class="ritual-check" type="checkbox" value="move"/> Move Your Body (+1)</label>
 <label style="display:block; margin: 6px 0;"><input class="ritual-check" type="checkbox" value="gratitude"/> Show Gratitude (+1)</label>
-</div>&lt;!-- == Thor Game Button == --&gt;<button id="thor-game-btn" style="margin: 12px auto; background: #e14b3d; color: #fff; padding: 10px 18px; font-weight: bold; border: none; border-radius: 12px; cursor: pointer; display: block;">⚔️ Play Thor's Game (Coming Soon)</button>&lt;!-- == Buy More Tokens Button == --&gt;<button id="buy-tokens-btn" onclick="window.location.href='/products/ruin-tokens-pack'" style="margin: 10px auto; background: #1a1a1a; color: #FFD700; padding: 10px 16px; border: 2px solid #FFD700; border-radius: 10px; font-weight: bold; display: block;">💰 Buy More Tokens</button></div>
+</div><!--<!-- == Thor Game Button == -->--><button id="thor-game-btn" onclick="launchThorGame()" style="margin: 12px auto; background: #e14b3d; color: #fff; padding: 10px 18px; font-weight: bold; border: none; border-radius: 12px; cursor: pointer; display: block;margin-top:18px;margin-bottom:18px;; transition: background 0.2s, transform 0.2s;">⚔️ Play Thor's Game (Coming Soon)</button><!--<!-- == Buy More Tokens Button == -->--><button id="buy-tokens-btn" onclick="window.location.href='/products/ruin-tokens-pack'" style="margin: 10px auto; background: #1a1a1a; color: #FFD700; padding: 10px 16px; border: 2px solid #FFD700; border-radius: 10px; font-weight: bold; display: block;margin-top:18px;margin-bottom:18px;">💰 Buy More Tokens</button></div>
 <audio id="musicAudio" loop="" preload="auto"></audio>
-<script>
-    const GODS = [
+<script><!--const GODS = [
   {
     key: 'odin',
     name: 'Odin',
@@ -474,10 +502,8 @@ renderGodSelector();
 renderGod();
 renderChat();
 setupMusic();
-chatInput.focus();
-</script>
-<script>
-const DAILY_LIMIT = 10;
+chatInput.focus();--></script>
+<script><!--const DAILY_LIMIT = 10;
 const TOKEN_KEY = "valhalla_tokens";
 const DATE_KEY = "valhalla_last_date";
 const RITUALS_KEY = "valhalla_rituals_done";
@@ -545,9 +571,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   });
-});
-</script>
-&lt;!-- == Thor Game Modal == --&gt;<div id="thor-game-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#0d0d0dcc; z-index:9999; display:flex; align-items:center; justify-content:center;">
+});--></script><!--<!-- == Thor Game Modal == -->--><div id="thor-game-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#0d0d0dcc; z-index:9999; display:flex; align-items:center; justify-content:center;">
 <div style="background:#1a1a1a; border:3px solid #e14b3d; border-radius:20px; padding:20px; text-align:center; width:90%; max-width:400px; box-shadow:0 0 40px #e14b3d;">
 <h2 style="color:#ffe18d; margin-bottom:10px;">⚡️ Thor's Trial of Strength ⚡️</h2>
 <p style="color:#fff; margin-bottom:20px;">Stop the power meter in the ⚡ zone to earn Ruin Tokens!</p>
@@ -560,8 +584,7 @@ document.addEventListener("DOMContentLoaded", () => {
 <button onclick="closeThorGame()" style="margin-top:20px; padding:6px 16px; background:#444; color:#fff; border:none; border-radius:8px; cursor:pointer;">Return to Pantheon</button>
 </div>
 </div>
-<script>
-let gamePlayedToday = localStorage.getItem("thor_game_date") === new Date().toISOString().slice(0, 10);
+<script><!--let gamePlayedToday = localStorage.getItem("thor_game_date") === new Date().toISOString().slice(0, 10);
 let powerInterval, direction = 1;
 
 document.getElementById("thor-game-btn").onclick = () => {
@@ -614,6 +637,5 @@ function closeThorGame() {
   document.getElementById("thor-game-modal").style.display = "none";
   document.getElementById("thor-result").innerText = "";
   document.getElementById("stop-btn").disabled = false;
-}
-</script></body>
+}--></script></body>
 </html>
