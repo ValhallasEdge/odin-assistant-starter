@@ -198,7 +198,7 @@
 <button class="music-play-btn" id="musicPlayBtn">🎵</button>
 <input class="music-slider" id="musicSlider" max="1" min="0" step="0.01" type="range" value="0.25"/>
 </div>
-</div>
+<button id="thor-game-btn" style="margin: 12px auto; background: #e14b3d; color: #fff; padding: 10px 18px; font-weight: bold; border: none; border-radius: 12px; cursor: pointer; display: block;">⚔️ Play Thor's Game (Coming Soon)</button><button id="buy-tokens-btn" onclick="window.location.href='/products/ruin-tokens-pack'" style="margin: 10px auto; background: #1a1a1a; color: #FFD700; padding: 10px 16px; border: 2px solid #FFD700; border-radius: 10px; font-weight: bold; display: block;">💰 Buy More Tokens</button></div>
 <audio id="musicAudio" loop="" preload="auto"></audio>
 <script>
     const GODS = [
@@ -433,7 +433,7 @@ chatForm.onsubmit = async (e) => {
   
   const remaining = decrementToken();
   if (remaining <= 0) {
-    alert("🛑 You’re out of Ruin Tokens. Come back tomorrow or earn more in battle.");
+    showTokenModal();
     return;
   }
   const text = chatInput.value.trim();
@@ -510,7 +510,11 @@ function checkReset() {
   }
 }
 
-// Run on page load
+function showTokenModal() {
+  alert("🛑 You’re out of Ruin Tokens. Come back tomorrow or earn more through gameplay.");
+}
+
+// Init Token Logic
 checkReset();
 updateTokenDisplay();
 </script></body>
