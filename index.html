@@ -9,8 +9,8 @@
 <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400|Inter:400,700&amp;display=swap" rel="stylesheet"/>
 <style>
     #god-logo {
-  width: 108px;
-  height: 108px;
+  width: 120px;
+  height: 120px;
   object-fit: cover;
   border-radius: 50%;
   margin-top: 32px;
@@ -62,7 +62,7 @@
     z-index: 3; position: sticky; top: 0;
   }
   .god-avatar {
-    border: 3px solid #333; border-radius: 100px; width: 56px; height: 56px;
+    border: 3px solid #333; border-radius: 100px; width: 72px; height: 72px;
     background: #000; cursor: pointer;
     transition: border-color 0.2s, box-shadow 0.18s, transform 0.17s;
     overflow: hidden; display: flex; align-items: center; justify-content: center;
@@ -74,7 +74,7 @@
     border-color: var(--default-color, #ffe18d) !important;
   }
   .god-avatar img {
-    width: 56px; height: 56px; object-fit: cover; border-radius: 50%; background: #181818;
+    width: 64px; height: 64px; object-fit: cover; border-radius: 50%; background: #181818;
   }
   .god-title {
     font-size: 2.2rem; font-family: var(--font-main); margin: 18px 0 6px 0;
@@ -164,6 +164,8 @@
     margin-right: 7px;
   }
   .music-play-btn.active, .music-play-btn:hover {
+  background: none;
+  box-shadow: 0 0 8px #ffe18d;
     color: #fff6dc;
     transform: scale(1.12) rotate(-7deg);
   }
@@ -207,16 +209,30 @@ body {
   transform: scale(1.05);
   transition: all 0.2s;
 }
+
+.music-slider::-webkit-slider-thumb {
+  background: #ffe18d;
+  border: none;
+  height: 14px;
+  width: 14px;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-top: -4px;
+}
+.music-slider::-webkit-slider-runnable-track {
+  background: #444;
+  height: 6px;
+  border-radius: 3px;
+}
 </style>
 </head>
 <body>
 <!-- 🛡 Rituals Explanation Block -->
-
 <div class="god-selector-bar" id="god-selector"></div>
 <div class="valhalla-card" id="valhalla-card">
 <img alt="God Logo" id="god-logo" src=""/>
 <div class="god-title" id="god-title"></div>
-<div class="god-bio" id="god-bio"></div><!--== Ruin Token Display ==--><div id="ruin-token-display" style="color: #FFD700; font-weight: bold; margin-bottom: 10px;">🪙 Ruin Tokens Remaining: <span id="ruin-tokens">10</span></div>
+<div class="god-bio" id="god-bio"></div><!--== Ruin Token Display ==--><div id="ruin-token-display" style="color: #FFD700; font-weight: bold; margin-bottom: 10px;"><span style="font-size: 1.2em; margin-right: 6px;">🪙</span> Ruin Tokens Remaining: <span id="ruin-tokens">10</span></div>
 <div class="chat-history" id="chat-history"></div>
 <div class="loader-runic" id="loader-runic" style="display:none;">ᚨ ᛟ ᚱ ᛃ ᚺ ᚠ ᚾ ᛏ</div>
 <form autocomplete="off" class="chat-input-row" id="chat-form">
