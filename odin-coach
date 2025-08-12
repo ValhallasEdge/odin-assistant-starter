@@ -1,0 +1,23 @@
+<iframe id="ve-odin"
+  src="https://PREVIEW_ORIGIN/odin-coach.html?assistantId=asst_D0BXH8CTZycU0ku9PjkUmW3T"
+  style="border:none;width:100%;height:700px;border-radius:16px" loading="lazy"></iframe>
+
+<script>
+(function(){
+  const O="https://PREVIEW_ORIGIN"; // protocol + host only
+  const f=document.getElementById('ve-odin');
+  const j=(k,v)=>{try{return JSON.parse(localStorage.getItem(k))??v}catch{return v}};
+  function post(){
+    f.contentWindow.postMessage({
+      type:'ve-master',
+      frostRituals: j('frostRituals', []),
+      fireRituals:  j('fireRituals',  []),
+      runesSessions:j('runesSessions',[]),
+      fitWorkouts:  j('fitWorkouts',  []),
+      // feastMeals: j('feastMeals', []) // optional when you add it
+      weekHint: null
+    }, O);
+  }
+  f.addEventListener('load', post);
+})();
+</script>
