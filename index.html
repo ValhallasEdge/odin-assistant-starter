@@ -1,714 +1,247 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-<meta charset="utf-8"/>
-<title>Valhalla Pantheon – Valhalla Coach</title>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<link href="https://fonts.googleapis.com/css?family=Montserrat:700,400|Inter:400,700&amp;display=swap" rel="stylesheet"/>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Realm Coach</title>
+
 <style>
-    #god-logo {
-  width: 120px;
-  height: 120px;
-  object-position: top center;
-  object-fit: cover;
-  border-radius: 50%;
-  margin-top: 32px;
-  margin-bottom: 8px;
-  border: 3px solid var(--default-color, #ffe18d);
-  box-shadow: 0 0 12px 2px var(--default-color, #ffe18d33);
+:root{
+  --bg:#0c151c;--panel:#0f1d27;--line:#27475b;--txt:#eaf7ff;--sub:#cfe8fb;
+  --chip:#123345;--chipB:#23536a;--btn:#163043;--btn2:#1b3a4c;--glow:#9fd3ff3a;
+  --accent:#9fd3ff;
 }
-  :root {
-    --default-color: #ffe18d;
-    --bg: linear-gradient(135deg, #141414 0%, #232323 100%);
-    --font-main: 'Montserrat', 'Inter', sans-serif;
-  }
-  body {
-    background: var(--bg);
-    min-height: 100vh;
-    font-family: var(--font-main);
-    color: #f8e6c3;
-    margin: 0; padding: 0;
-    display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
-  }
-  .valhalla-card {
-    background: rgba(25,25,25,0.97);
-    border-radius: 32px;
-    box-shadow: 0 8px 48px 0 #000a;
-    max-width: 520px;
-    width: 98vw;
-    margin: 48px auto 0 auto;
-    padding: 32px 24px 16px 24px;
-    min-height: 640px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border: 2.5px solid var(--default-color);
-    transition: box-shadow 0.18s, border-color 0.22s;
-    position: relative;
-    animation: fadeIn 1s;
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(32px);}
-    to   { opacity: 1; transform: translateY(0);}
-  }
-  .god-selector-bar {
-    display: flex; gap: 18px; justify-content: center; align-items: center;
-    margin: 0 0 8px 0; flex-wrap: wrap; overflow-x: auto;
-    width: 100vw; max-width: 540px; padding: 16px 0;
-    background: rgba(25,25,25,0.87);
-    border-radius: 0 0 18px 18px;
-    box-shadow: 0 2px 14px 0 #0004;
-    z-index: 3; position: sticky; top: 0;
-  }
-  .god-avatar {
-    border: 3px solid #333; border-radius: 100px; width: 72px; height: 72px;
-    background: #000; cursor: pointer;
-    transition: border-color 0.2s, box-shadow 0.18s, transform 0.17s;
-    overflow: hidden; display: flex; align-items: center; justify-content: center;
-  }
-  .god-avatar.selected {
-    border-width: 3.5px;
-    box-shadow: 0 0 18px 2px var(--default-color, #ffe18d60);
-    transform: scale(1.11);
-    border-color: var(--default-color, #ffe18d) !important;
-  }
-  .god-avatar img {
-    width: 64px; height: 64px;
-    object-position: top center; object-fit: cover; border-radius: 50%; background: #181818;
-  }
-  .god-title {
-    font-size: 2.2rem; font-family: var(--font-main); margin: 18px 0 6px 0;
-    color: var(--default-color);
-    letter-spacing: 2px; text-align: center; font-weight: 700;
-    transition: color 0.18s;
-    text-shadow: 0 2px 16px #0002;
-  }
-  .god-bio {
-    font-size: 1.13rem; margin-bottom: 12px; text-align: center; color: #f3ebd7; min-height: 38px;
-  }
-  .chat-history {
-    flex: 1 1 auto; width: 100%; min-height: 250px; max-height: 280px;
-    overflow-y: auto;
-    background: rgba(16,16,16,0.87);
-    border-radius: 17px;
-    margin-bottom: 12px;
-    padding: 14px 13px;
-    font-size: 1.13rem;
-    box-shadow: 0 2px 14px 0 #0002;
-    transition: box-shadow 0.18s;
-    border: 1.5px solid #29281e;
-  }
-  .chat-history:hover {
-    box-shadow: 0 4px 36px 2px var(--default-color, #ffe18d66), 0 1px 7px #0002;
-  }
-  .chat-msg { margin-bottom: 8px; padding: 0.3em 0; }
-  .chat-msg.user { text-align: right; color: #c8f7ff;}
-  .chat-msg.god { text-align: left; color: var(--default-color);}
-  .chat-msg.god strong { color: var(--default-color); font-weight: bold; }
-  .chat-msg.god em { color: #ffdea0; font-style: italic;}
-  .chat-msg.god ul { margin: 8px 0 8px 22px; padding-left: 0;}
-  .chat-msg.god li { margin-bottom: 3px; }
-  .chat-input-row {
-    display: flex; width: 100%; margin-top: 32px; gap: 10px;
-  }
-  .chat-input {
-    flex: 1;
-    padding: 10px 14px;
-    border-radius: 22px;
-    border: none;
-    font-size: 1.15rem;
-    background: #222;
-    color: #fff9ec;
-    font-family: 'Inter',sans-serif;
-    outline: none;
-    box-shadow: 0 1px 8px #0004;
-  }
-  .chat-send-btn {
-    background: var(--default-color, #ffe18d);
-    color: #232323;
-    border: none;
-    border-radius: 24px;
-    padding: 8px 20px;
-    font-size: 1.16rem;
-    cursor: pointer;
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 700;
-    transition: background 0.16s, color 0.12s, box-shadow 0.15s;
-    box-shadow: 0 1px 8px #0003;
-  }
-  .chat-send-btn:hover {
-    background: #fff6dc;
-    color: var(--default-color, #ffe18d);
-  }
-  .loader-runic {
-    margin: 0 auto 0.2em auto; font-size: 1.85em; letter-spacing: 0.19em;
-    color: var(--default-color, #ffe18d);
-    animation: spinRunes 1.3s linear infinite;
-    font-family: 'Inter',sans-serif;
-    text-align: center;
-    user-select: none;
-  }
-  @keyframes spinRunes { 100% { transform: rotate(1turn); } }
-  .music-player-row {
-    width: 99%; display: flex; align-items: center; justify-content: center;
-    margin: 12px auto 0 auto; gap: 12px;
-    background: #181818;
-    border-radius: 13px;
-    padding: 7px 0;
-  }
-  .music-play-btn {
-    background: none; border: none;
-    font-size: 1.62em; color: var(--default-color, #ffe18d);
-    cursor: pointer; outline: none;
-    transition: color 0.16s, transform 0.13s;
-    margin-right: 7px;
-  }
-  .music-play-btn.active, .music-play-btn:hover {
-  background: none;
-  box-shadow: 0 0 8px #ffe18d;
-    color: #fff6dc;
-    transform: scale(1.12) rotate(-7deg);
-  }
-  .music-slider {
-    accent-color: var(--default-color, #ffe18d);
-    margin-left: 3px;
-  }
-  @media (max-width: 640px) {
-    .valhalla-card { max-width: 99vw; min-height: 440px; }
-    .god-title { font-size: 1.42rem;}
-    .chat-history { max-height: 150px; font-size: 1.02rem;}
-    .chat-input { font-size: 1.02rem;}
-    .music-player-row { font-size: 1.12em; }
-  }
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,Segoe UI,Roboto,Inter,Arial,sans-serif}
+.wrap{max-width:820px;margin:14px auto;padding:12px}
+.open{display:inline-block;margin-bottom:10px;background:var(--btn);color:var(--txt);border:1px solid var(--line);
+  padding:.62rem 1rem;border-radius:.85rem;cursor:pointer;box-shadow:0 0 0 0 var(--glow);transition:box-shadow .2s,transform .2s}
+.open:hover{box-shadow:0 0 26px 2px var(--glow);transform:translateY(-1px)}
+.panel{position:relative;border:1px solid var(--line);border-radius:18px;background:var(--panel);box-shadow:0 10px 42px #0009;overflow:hidden}
+.hdr{display:flex;justify-content:space-between;align-items:center;padding:1rem;background:linear-gradient(180deg,#132330,#0e1a23);border-bottom:1px solid var(--line)}
+.title{font-weight:800;letter-spacing:.4px}
+.close{background:transparent;border:1px solid var(--line);color:var(--sub);border-radius:.6rem;padding:.25rem .6rem;cursor:pointer}
+.brief{padding:.75rem 1rem;border-bottom:1px dashed var(--line);color:var(--sub)}
+.suggest{display:flex;flex-wrap:wrap;gap:.5rem;padding:.6rem 1rem;border-bottom:1px dashed var(--line)}
+.chip{background:var(--chip);border:1px solid var(--chipB);color:var(--sub);padding:.38rem .65rem;border-radius:.6rem;cursor:pointer}
+.chat{display:flex;flex-direction:column;gap:.6rem;max-height:58vh;overflow:auto;padding:1rem}
+.msg{padding:.65rem .8rem;border-radius:.8rem;line-height:1.45;box-shadow:0 1px 6px rgba(0,0,0,.25)}
+.bot{background:#122737;border:1px solid #23455a}
+.you{background:#12323d;border:1px solid #235861;margin-left:auto}
+.form{display:grid;gap:.6rem;padding:0 1rem 1rem}
+textarea{background:#0a1720;color:var(--txt);border:1px solid #25465a;border-radius:.8rem;padding:.6rem .75rem;min-height:86px;resize:vertical}
+.send{justify-self:end;background:var(--btn2);color:var(--txt);border:1px solid #2e5d76;border-radius:.7rem;padding:.55rem .95rem;cursor:pointer}
+@media (max-width:640px){ .chat{max-height:64vh} }
 
-/* Final Responsive Polish */
-@media (max-width: 640px) {
-  .valhalla-card {
-    padding-top: 48px;
-    margin-bottom: 48px;
-    max-width: 96vw;
+/* cinematic particles (disabled for reduced-motion) */
+@media (prefers-reduced-motion:no-preference){
+  .panel::before, .panel::after{
+    content:"";position:absolute;inset:-20% -10% auto -10%;height:40%;pointer-events:none;mix-blend-mode:screen;opacity:.55;
+    background: radial-gradient(120px 60px at 10% 60%, #9fd3ff22, transparent 60%),
+                radial-gradient(160px 80px at 85% 20%, #9fd3ff14, transparent 60%),
+                radial-gradient(100px 60px at 50% 90%, #9fd3ff10, transparent 60%);
+    animation: drift 22s linear infinite;
+    filter: blur(1.1px);
   }
-  .god-selector-bar {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    padding: 8px;
-  }
-  .god-avatar {
-    margin: 0 6px;
-  }
-  #ruin-token-display, #ritual-checklist, #thor-game-btn, #buy-tokens-btn {
-    margin-top: 18px;
-    margin-bottom: 18px;
-  }
-}
-body {
-  padding-bottom: 64px;
-}
-#thor-game-btn:hover {
-  background: #ff6666;
-  transform: scale(1.05);
-  transition: all 0.2s;
-}
+  .panel::after{ animation-duration: 28s; opacity:.35; }
+  @keyframes drift{ to{ transform: translateY(-14%) } }
 
-.music-slider::-webkit-slider-thumb {
-  background: #ffe18d;
-  border: none;
-  height: 14px;
-  width: 14px;
-  border-radius: 50%;
-  cursor: pointer;
-  margin-top: -4px;
-}
-.music-slider::-webkit-slider-runnable-track {
-  background: #444;
-  height: 6px;
-  border-radius: 3px;
+  .runes{position:absolute;inset:0;pointer-events:none;color:#9fd3ff18;font-size:42px;letter-spacing:.42em;filter:blur(.4px);
+    animation: float 18s linear infinite}
+  @keyframes float{ to { transform: translate3d(0,-10%,0) } }
 }
 </style>
 </head>
 <body>
-<!-- 🛡 Rituals Explanation Block -->
-<div class="god-selector-bar" id="god-selector"></div>
-<div class="valhalla-card" id="valhalla-card">
-<img alt="God Logo" id="god-logo" src=""/>
-<div class="god-title" id="god-title"></div>
-<div class="god-bio" id="god-bio"></div><!--== Ruin Token Display ==--><div id="ruin-token-display" style="color: #FFD700; font-weight: bold; margin-bottom: 10px;"><span style="font-size: 1.2em; margin-right: 6px;">🪙</span> Ruin Tokens Remaining: <span id="ruin-tokens">10</span></div>
-<div class="chat-history" id="chat-history"></div>
-<div class="loader-runic" id="loader-runic" style="display:none;">ᚨ ᛟ ᚱ ᛃ ᚺ ᚠ ᚾ ᛏ</div>
-<form autocomplete="off" class="chat-input-row" id="chat-form">
-<input class="chat-input" id="chat-input" placeholder="Ask your guide anything..."/>
-<button class="chat-send-btn" type="submit">Send</button>
-</form>
-<div class="music-player-row" id="music-player">
-<button class="music-play-btn" id="musicPlayBtn">🎵</button>
-<input class="music-slider" id="musicSlider" max="1" min="0" step="0.01" type="range" value="0.25"/>
-</div><!--== Daily Ritual Checklist ==--><!--== Thor Game Button ==--><button id="thor-game-btn" style="margin: 12px auto; background: #e14b3d; color: #fff; padding: 10px 18px; font-weight: bold; border: none; border-radius: 12px; cursor: pointer; display: block;">⚔️ Play Thor's Game</button><!--== Buy More Tokens Button ==--><button id="buy-tokens-btn" onclick="window.location.href='/products/ruin-tokens-pack'" style="margin: 10px auto; background: #1a1a1a; color: #FFD700; padding: 10px 16px; border: 2px solid #FFD700; border-radius: 10px; font-weight: bold; display: block;">💰 Buy More Tokens</button></div>
-<audio id="musicAudio" loop="" preload="auto"></audio>
+<div class="wrap">
+  <button class="open" id="openBtn">Consult your Realm Guide</button>
+
+  <section class="panel" id="panel" role="dialog" aria-modal="true" hidden>
+    <div class="runes" aria-hidden="true">ᚠᚢᚦᚨᚱᚲ ᚷᚹᚺᚾᛁ ᛃᛇᛈᛉᛊ</div>
+    <header class="hdr">
+      <div class="title" id="title">Realm Guide</div>
+      <button class="close" id="closeBtn" aria-label="Close">×</button>
+    </header>
+
+    <div class="brief" id="brief">Waiting for your realm stats…</div>
+
+    <div class="suggest">
+      <button class="chip" data-q="Give me a safe 7‑day plan based on my logs.">7‑day plan</button>
+      <button class="chip" data-q="Why is my streak stalling and how do I fix it?">Fix a stall</button>
+      <button class="chip" data-q="Coach me on breathwork/recovery for this realm.">Breathwork</button>
+      <button class="chip" data-q="Set a ritual adventure for this week.">Ritual adventure</button>
+    </div>
+
+    <div class="chat" id="chat" role="log" aria-live="polite"></div>
+
+    <form class="form" id="form">
+      <textarea id="input" placeholder="Ask your guide…" required></textarea>
+      <label style="color:#a9c7da;font-size:.9rem">
+        <input type="checkbox" id="attach" checked> Attach my stats
+      </label>
+      <button class="send" type="submit">Send</button>
+    </form>
+  </section>
+</div>
+
 <script>
-    const GODS = [
-  {
-    key: 'odin',
-    name: 'Odin',
-    assistantId: 'asst_D0BXH8CTZycU0ku9PjkUmW3T',
-    avatar: 'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/mimir-icon.jpg?v=1752795592',
-    color: '#1c64ff',
-    music: 'https://cdn.pixabay.com/audio/2022/12/19/audio_12b0e71fa2.mp3',
-    bio: 'Wisdom, vision, and strategy—the Allfather.'
-  },
-  {
-    key: 'thor',
-    name: 'Thor',
-    assistantId: 'asst_JNie4vDtknbropUsbuXF4OpG',
-    avatar: 'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/Thor_-God-of-Thunder_-Icon.jpg?v=1752622811',
-    color: '#e14b3d',
-    music: 'https://cdn.pixabay.com/audio/2022/11/16/audio_125b5cfb62.mp3',
-    bio: 'Strength, action, and resilience—the thunder god.'
-  },
-  {
-    key: 'loki',
-    name: 'Loki',
-    assistantId: 'asst_hKdLlIlE66bKCjuuDzhwknFM',
-    avatar: 'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/Loki_-God-of-Mischief_-Icon.jpg?v=1752622811',
-    color: '#0db18a',
-    music: 'https://cdn.pixabay.com/audio/2022/11/16/audio_125b5cfb62.mp3',
-    bio: 'Creativity, wit, and transformation—the trickster.'
-  },
-  {
-    key: 'freya',
-    name: 'Freya',
-    assistantId: 'asst_A0oRwWmYijWwmRJuA2iO9JlR',
-    avatar: 'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/Freya_-Icon.jpg?v=1752622811',
-    color: '#c5277e',
-    music: 'https://cdn.pixabay.com/audio/2022/10/16/audio_125b985df9.mp3',
-    bio: 'Healing, beauty, and abundance—the goddess of love.'
-  },
-  {
-    key: 'oz',
-    name: 'Oz',
-    assistantId: 'asst_Hk4WoxgaWQr5wbagpEtmQbuY',
-    avatar: 'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/Oz_-Icon.jpg?v=1752623378',
-    color: '#ff9200',
-    music: 'https://cdn.pixabay.com/audio/2022/07/26/audio_124b01b0b2.mp3',
-    bio: 'Transformation, wisdom, and mastery—the digital wizard.'
-  },
-  {
-    key: 'tyr',
-    name: 'Tyr',
-    assistantId: 'asst_5RBZdhN1br4dkpDB6g1cRBCg',
-    avatar: 'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/tyr---icon.jpg?v=1752803717',
-    color: '#946140',
-    music: 'https://cdn.pixabay.com/audio/2023/03/27/audio_1285ba08f4.mp3',
-    bio: 'Justice, discipline, and sacrifice—the steadfast champion.'
-  },
-  {
-    key: 'heimdall',
-    name: 'Heimdall',
-    assistantId: 'asst_5BTp4L16s3LSFZWyOwHL2Qow',
-    avatar: 'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/heimdall_-icon.jpg?v=1752622811',
-    color: '#8653eb',
-    music: 'https://cdn.pixabay.com/audio/2022/12/19/audio_12b0e71fa2.mp3',
-    bio: 'Clarity, vigilance, and protection—the ever-watchful guardian.'
-  },
-  {
-    key: 'skald',
-    name: 'Skald',
-    assistantId: 'asst_mDsnxmXYWK6VVR2TGlWgr0Db',
-    avatar: 'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/Skald_-Icon.jpg?v=1752623003',
-    color: '#2b55e2',
-    music: 'https://cdn.pixabay.com/audio/2022/10/16/audio_125b985df9.mp3',
-    bio: 'Story, poetry, and inspiration—the bard of legend.'
-  },
-  {
-    key: 'coach',
-    name: 'Valhalla Coach',
-    assistantId: 'asst_0b7Qdwscxs168I4YFX2gKSUd',
-    avatar: 'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/Valhalla-Coach-Icon.jpg?v=1752623891',
-    color: '#ffe18d',
-    music: 'https://cdn.pixabay.com/audio/2023/01/31/audio_12dbfc3fa1.mp3',
-    bio: 'Motivation, discipline, and action—your ultimate Viking coach.'
-  }
-];
+(()=>{
+  // --------- Params (assistant & realm) ---------
+  const p = new URLSearchParams(location.search);
+  const assistantId = p.get('assistantId') || '';        // REQUIRED
+  const realm = (p.get('realm') || 'frost').toLowerCase();
 
-    // ✅ NEW LOGIC: Select god from query string (?god=odin)
-    const urlParams = new URLSearchParams(window.location.search);
-    const godParam = urlParams.get('god');
-    const matchedKey = GODS.find(g => g.key === godParam)?.key;
-    let selectedGod = GODS.find(g => g.key === matchedKey) || GODS[8]; // fallback to Coach
+  // --------- UI refs ---------
+  const title = document.getElementById('title');
+  const brief = document.getElementById('brief');
+  const chat  = document.getElementById('chat');
+  const form  = document.getElementById('form');
+  const input = document.getElementById('input');
+  const attach= document.getElementById('attach');
+  const panel = document.getElementById('panel');
+  const openBtn = document.getElementById('openBtn');
+  const closeBtn= document.getElementById('closeBtn');
 
-let chatHistory = [];
+  // Title per realm (feel free to tweak names)
+  const realmTitle = {
+    frost:'Frost Guide', fire:'Fire Keeper', runes:'Skald — Runes Guide',
+    feast:'Freyja — Feast Guide', fitness:'Thor — Fitness Guide', brave:'Týr — BRAVE Guide'
+  }[realm] || 'Realm Guide';
+  title.textContent = realmTitle;
 
-const godSelector = document.getElementById('god-selector');
-const godLogo = document.getElementById('god-logo');
-const godTitle = document.getElementById('god-title');
-const godBio = document.getElementById('god-bio');
-const chatHistoryDiv = document.getElementById('chat-history');
-const chatForm = document.getElementById('chat-form');
-const chatInput = document.getElementById('chat-input');
-const valhallaCard = document.getElementById('valhalla-card');
-const loaderRunic = document.getElementById('loader-runic');
-const musicAudio = document.getElementById('musicAudio');
-const musicPlayer = document.getElementById('music-player');
-const musicPlayBtn = document.getElementById('musicPlayBtn');
-const musicSlider = document.getElementById('musicSlider');
+  // a11y open/close
+  openBtn.addEventListener('click',()=>{ panel.hidden=false; openBtn.setAttribute('aria-expanded','true'); input.focus(); });
+  closeBtn.addEventListener('click',()=>{ panel.hidden=true;  openBtn.setAttribute('aria-expanded','false'); openBtn.focus(); });
+  panel.addEventListener('keydown',e=>{ if(e.key==='Escape') closeBtn.click(); });
 
-function setThemeColor(hex) {
-  document.documentElement.style.setProperty('--default-color', hex || '#ffe18d');
-}
+  // chips
+  document.querySelectorAll('.chip').forEach(c=> c.addEventListener('click',()=>{ input.value=c.dataset.q; input.focus(); }));
 
-function renderGodSelector() {
-  godSelector.innerHTML = '';
-  GODS.forEach((god) => {
-    const avatarDiv = document.createElement('div');
-    avatarDiv.className = 'god-avatar' + (selectedGod.key === god.key ? ' selected' : '');
-    avatarDiv.title = god.name;
-    avatarDiv.style.borderColor = (selectedGod.key === god.key) ? god.color : '#333';
-    avatarDiv.onclick = () => {
-      selectedGod = god;
-      setThemeColor(god.color);
-      renderGodSelector();
-      renderGod();
-      chatHistory = [];
-      renderChat();
-      setupMusic();
-    };
-    const img = document.createElement('img');
-    img.src = god.avatar;
-    img.alt = god.name;
-    avatarDiv.appendChild(img);
-    godSelector.appendChild(avatarDiv);
+  // --------- Data from parent via postMessage ---------
+  let realmLogs = [];   // array of this realm's entries (e.g., frostRituals)
+  let masterRaw = null; // optional cross-realm snapshot
+
+  // Accept stats from parent page (Shopify, etc.)
+  window.addEventListener('message',(ev)=>{
+    const d = ev.data || {};
+    if(d.type === 've-stats' && d.realm && d.logs){
+      realmLogs = Array.isArray(d.logs) ? d.logs : [];
+      masterRaw = d.master || null;
+      renderBrief();
+    }
   });
-}
 
-function renderGod() {
-  godLogo.src = selectedGod.avatar;
-  godTitle.innerText = selectedGod.name;
-  godBio.innerText = selectedGod.bio;
-  chatInput.placeholder = `Ask ${selectedGod.name} anything...`;
-  setThemeColor(selectedGod.color);
-}
+  function addMsg(t,who='bot'){
+    const el=document.createElement('div');
+    el.className='msg '+(who==='you'?'you':'bot');
+    el.textContent=t;
+    chat.appendChild(el);
+    chat.scrollTop=chat.scrollHeight;
+  }
 
-function renderChat() {
-  chatHistoryDiv.innerHTML = '';
-  chatHistory.forEach(msg => {
-    const msgDiv = document.createElement('div');
-    msgDiv.className = 'chat-msg ' + (msg.from === 'user' ? 'user' : 'god');
-    msgDiv.innerHTML = marked.parse(msg.text);
-    chatHistoryDiv.appendChild(msgDiv);
+  // --------- Summaries ----------
+  function parseTemp(raw){
+    if(raw==null) return null;
+    const n = parseFloat(String(raw).replace(',','.'));
+    return Number.isFinite(n)? n : null;
+  }
+
+  function summarize(realm, logs){
+    if(!Array.isArray(logs) || logs.length===0) return null;
+    const last7 = logs.slice(-7);
+    const sum = (arr,sel)=> arr.reduce((a,x)=> a+(+sel(x)||0), 0);
+    const avg = (arr,sel)=> sum(arr,sel)/Math.max(1,arr.length);
+
+    const durKey = 'duration'; // all your samples use "duration" minutes
+    const tempSel = (realm==='frost' || realm==='fire') ? (l=>parseTemp(l.tempRaw)) : (()=>null);
+
+    const avgDur  = +(avg(last7, l=> l[durKey]).toFixed(1));
+    const someTemp = tempSel(last7[0])!=null;
+    const avgTemp = someTemp ? +(avg(last7, tempSel).toFixed(1)) : null;
+    const last = logs[logs.length-1];
+
+    // streak = ≥1 entry per calendar date
+    const dates = new Set(logs.map(l => (l.isoDate || new Date(l.timestamp).toISOString().slice(0,10))));
+    let streak=0; for(;;){ const d=new Date(); d.setDate(d.getDate()-streak); const key=d.toISOString().slice(0,10); if(dates.has(key)) streak++; else break; }
+
+    return { sessions: logs.length, avgDur7: avgDur, avgTemp7: avgTemp, last, streak };
+  }
+
+  function renderBrief(){
+    const s = summarize(realm, realmLogs);
+    if(!s){ brief.textContent = 'No recent sessions found — your guide will start you gently.'; return; }
+    const tempPart = (s.avgTemp7!=null) ? ` • 7d avg temp: ${s.avgTemp7}°` : '';
+    brief.textContent = `Sessions: ${s.sessions} • 7d avg duration: ${s.avgDur7} min${tempPart} • Streak: ${s.streak}d`;
+  }
+
+  // --------- Threads ----------
+  const threadKey = (assistantId)=> `valhalla_thread_${assistantId}`;
+  async function getThread(){
+    let id = localStorage.getItem(threadKey(assistantId));
+    if(id && id.startsWith('thread_')) return id;
+    const r = await fetch('/api/start-thread',{method:'POST',headers:{'Content-Type':'application/json'}});
+    const j = await r.json();
+    if(j.threadId){ localStorage.setItem(threadKey(assistantId), j.threadId); return j.threadId; }
+    throw new Error('No threadId');
+  }
+
+  // --------- Prompt ----------
+  function buildPrompt(q){
+    const s = attach.checked ? summarize(realm, realmLogs) : null;
+    const master = attach.checked ? (masterRaw || null) : null;
+
+    const safety = {
+      frost:'Emphasize gradual cold exposure, breathwork, and medical caution. Avoid extremes.',
+      fire:'Emphasize heat safety, hydration, cooldown. Avoid extremes.',
+      runes:'Mindfulness and breath practices; non-clinical guidance.',
+      feast:'General nutrition rituals only; no medical claims.',
+      fitness:'Progressive overload, recovery, joint safety.',
+      brave:'Discipline and ethical framing; non-clinical.'
+    }[realm] || 'Be safe and practical.';
+
+    const rules = `You are the ${realmTitle}. Tone: calm, stoic, practical, mythic edge. ${safety}
+Respond concisely with: (1) brief reflection, (2) 2–3 numbered steps with specific targets, (3) one optional stretch, (4) a safety reminder.`;
+
+    const realmBlock = s ? `
+[Realm Summary]
+Sessions: ${s.sessions}
+7-day avg duration: ${s.avgDur7} min${s.avgTemp7!=null?`\n7-day avg temp: ${s.avgTemp7}°`:''}
+Streak: ${s.streak} days
+Last: ${(s.last?.isoDate)|| (s.last?.timestamp) || 'n/a'} — duration ${s.last?.duration||'n/a'} min${s.last?.tempRaw?`, temp ${s.last.tempRaw}`:''}
+` : `[No realm data — give a gentle beginner path]`;
+
+    const masterBlock = master ? `\n[Master Snapshot]\n${JSON.stringify(master).slice(0, 900)}` : '';
+
+    const question = q || 'Guide me for this week based on my logs.';
+
+    return `${rules}\n${realmBlock}${masterBlock}\n\n[User]\n${question}`;
+  }
+
+  // --------- Send ----------
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const q = input.value.trim();
+    if(!q) return;
+    addMsg(q,'you'); input.value=''; addMsg('Consulting your guide…');
+    try{
+      if(!assistantId) throw new Error('Missing assistantId');
+      const threadId = await getThread();
+      const r = await fetch('/api/chat',{
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ assistantId, message: buildPrompt(q), threadId })
+      });
+      const j = await r.json();
+      chat.lastChild.textContent = j.reply || '…';
+    }catch(err){
+      console.error(err);
+      chat.lastChild.textContent = 'The guide is silent. Try again soon.';
+    }
   });
-  chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight;
-}
 
-const runes = ['ᚨ','ᛟ','ᚱ','ᛃ','ᚺ','ᚠ','ᚾ','ᛏ'];
-let runeIdx = 0, loaderInterval = null;
-function showLoader() {
-  loaderRunic.style.display = '';
-  loaderRunic.textContent = runes[runeIdx];
-  loaderInterval = setInterval(() => {
-    runeIdx = (runeIdx + 1) % runes.length;
-    loaderRunic.textContent = runes[runeIdx];
-  }, 170);
-}
-function hideLoader() {
-  loaderRunic.style.display = 'none';
-  clearInterval(loaderInterval);
-}
-
-function setupMusic() {
-  if (!selectedGod.music) {
-    musicPlayer.style.display = 'none';
-    musicAudio.pause();
-    return;
-  }
-  musicPlayer.style.display = '';
-  musicAudio.src = selectedGod.music;
-  musicAudio.volume = musicSlider.value;
-  musicAudio.pause();
-  musicPlayBtn.classList.remove('active');
-}
-let musicPlaying = false;
-musicPlayBtn.onclick = () => {
-  if (!musicPlaying) {
-    musicAudio.muted = false;
-    musicAudio.play();
-    musicPlayBtn.classList.add('active');
-    musicPlaying = true;
-  } else {
-    musicAudio.pause();
-    musicPlayBtn.classList.remove('active');
-    musicPlaying = false;
-  }
-};
-musicSlider.oninput = (e) => {
-  musicAudio.volume = e.target.value;
-};
-
-function getThreadId(godKey) {
-  const key = `valhalla_thread_${godKey}`;
-  let id = localStorage.getItem(key);
-  
-  // ✅ If a valid thread exists, reuse it
-  if (id && id.startsWith("thread_")) {
-    return Promise.resolve(id);
-  }
-
-  // 🧼 Else create a new thread
-  return fetch('https://odin-assistant-starter.vercel.app/api/start-thread', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' }
-  })
-    .then(res => res.json())
-    .then(data => {
-      if (data.threadId && data.threadId.startsWith("thread_")) {
-        localStorage.setItem(key, data.threadId);
-        return data.threadId;
-      } else {
-        throw new Error('Invalid threadId');
-      }
-    })
-    .catch(err => {
-      console.error('Thread ID error:', err);
-      return null;
-    });
-}
-
-
-chatForm.onsubmit = async (e) => {
-  e.preventDefault();
-  
-  const remaining = decrementToken();
-  if (remaining <= 0) {
-    showTokenModal();
-    return;
-  }
-  const text = chatInput.value.trim();
-  if (!text) return;
-  chatHistory.push({from:'user', text});
-  renderChat();
-  chatInput.value = '';
-  showLoader();
-  try {
-    const threadId = await getThreadId(selectedGod.key);
-    if (!threadId) throw new Error('No thread ID');
-    const response = await fetch('https://odin-assistant-starter.vercel.app/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        assistantId: selectedGod.assistantId,
-        message: text,
-        threadId: threadId
-      })
-    });
-    const data = await response.json();
-    hideLoader();
-    chatHistory.push({ from: 'god', text: data.reply || 'No reply from the gods.' });
-    renderChat();
-  } catch (err) {
-    hideLoader();
-    chatHistory.push({ from: 'god', text: '⚠️ Network error. Please try again.' });
-    renderChat();
-  }
-};
-
-// Init
-renderGodSelector();
-renderGod();
-renderChat();
-setupMusic();
-chatInput.focus();
+  // initial
+  renderBrief();
+})();
 </script>
-<script>
-const DAILY_LIMIT = 10;
-const TOKEN_KEY = "valhalla_tokens";
-const DATE_KEY = "valhalla_last_date";
-const RITUALS_KEY = "valhalla_rituals_done";
-
-function getToday() {
-  return new Date().toISOString().slice(0, 10);
-}
-
-function resetDailyTokens() {
-  localStorage.setItem(TOKEN_KEY, DAILY_LIMIT);
-  localStorage.setItem(DATE_KEY, getToday());
-  localStorage.setItem(RITUALS_KEY, JSON.stringify({}));
-  updateTokenDisplay();
-}
-
-function updateTokenDisplay() {
-  const tokens = parseInt(localStorage.getItem(TOKEN_KEY)) || 0;
-  const el = document.getElementById("ruin-tokens");
-  if (el) el.textContent = tokens;
-}
-
-function decrementToken() {
-  let tokens = parseInt(localStorage.getItem(TOKEN_KEY)) || 0;
-  if (tokens > 0) {
-    tokens--;
-    localStorage.setItem(TOKEN_KEY, tokens);
-  }
-  updateTokenDisplay();
-  return tokens;
-}
-
-function addToken(amount = 1) {
-  let tokens = parseInt(localStorage.getItem(TOKEN_KEY)) || 0;
-  tokens += amount;
-  localStorage.setItem(TOKEN_KEY, tokens);
-  updateTokenDisplay();
-}
-
-function checkReset() {
-  const lastDate = localStorage.getItem(DATE_KEY);
-  if (lastDate !== getToday()) {
-    resetDailyTokens();
-  }
-}
-
-function showTokenModal() {
-  alert("🛑 You’re out of Ruin Tokens. Come back tomorrow or earn more through gameplay.");
-}
-
-// Ritual handling
-document.addEventListener("DOMContentLoaded", () => {
-  checkReset();
-  updateTokenDisplay();
-
-  const saved = JSON.parse(localStorage.getItem(RITUALS_KEY) || "{}");
-  document.querySelectorAll(".ritual-check").forEach(checkbox => {
-    const key = checkbox.value;
-    if (saved[key]) checkbox.checked = true;
-
-    checkbox.addEventListener("change", () => {
-      if (checkbox.checked && !saved[key]) {
-        addToken(1);
-        saved[key] = true;
-        localStorage.setItem(RITUALS_KEY, JSON.stringify(saved));
-      }
-    });
-  });
-});
-</script><!--== Thor Game Modal ==--><div id="thor-game-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#0d0d0dcc; z-index:9999; display:flex; align-items:center; justify-content:center;; display: none;">
-<div style="background:#1a1a1a; border:3px solid #e14b3d; border-radius:20px; padding:20px; text-align:center; width:90%; max-width:400px; box-shadow:0 0 40px #e14b3d;">
-<h2 style="color:#ffe18d; margin-bottom:10px;">⚡️ Thor's Trial of Strength ⚡️</h2>
-<p style="color:#fff; margin-bottom:20px;">Stop the power meter in the ⚡ zone to earn Ruin Tokens!</p>
-<div id="power-bar-container" style="position:relative; background:#333; width:100%; height:30px; border-radius:15px; overflow:hidden; margin-bottom:20px;">
-<div id="power-target" style="position:absolute; left:40%; width:20%; height:100%; background:#ffd70066;"></div>
-<div id="power-meter" style="position:absolute; left:0; width:10%; height:100%; background:#e14b3d;"></div>
-</div>
-<button id="stop-btn" onclick="stopPowerMeter()" style="padding:10px 20px; font-weight:bold; font-size:1.1em; border:none; border-radius:10px; background:#e14b3d; color:#fff; cursor:pointer;">Strike!</button>
-<p id="thor-result" style="color:#FFD700; margin-top:15px;"></p>
-<button onclick="closeThorGame()" style="margin-top:20px; padding:6px 16px; background:#444; color:#fff; border:none; border-radius:8px; cursor:pointer;">Return to Pantheon</button>
-</div>
-</div>
-<script>
-let gamePlayedToday = localStorage.getItem("thor_game_date") === new Date().toISOString().slice(0, 10);
-let powerInterval, direction = 1;
-
-document.getElementById("thor-game-btn").onclick = () => {
-  if (gamePlayedToday) {
-    alert("Thor awaits new warriors tomorrow.");
-    return;
-  }
-  document.getElementById("thor-game-modal").style.display = "flex";
-  startPowerMeter();
-};
-
-function startPowerMeter() {
-  const meter = document.getElementById("power-meter");
-  let pos = 0;
-  direction = 1;
-  powerInterval = setInterval(() => {
-    pos += direction * 2;
-    if (pos >= 90 || pos <= 0) direction *= -1;
-    meter.style.left = pos + "%";
-  }, 16);
-}
-
-function stopPowerMeter() {
-  clearInterval(powerInterval);
-  const pos = parseFloat(document.getElementById("power-meter").style.left);
-  const result = document.getElementById("thor-result");
-  const targetStart = 40, targetEnd = 60;
-  let reward = 0;
-  if (pos >= targetStart && pos <= targetEnd) {
-    reward = 3;
-    result.innerText = "⚡ Perfect strike! Thor grants you 3 Ruin Tokens!";
-  } else if (Math.abs(pos - targetStart) <= 10 || Math.abs(pos - targetEnd) <= 10) {
-    reward = 1;
-    result.innerText = "⚔️ Close! You earn 1 token.";
-  } else {
-    result.innerText = "💨 Missed! No tokens earned.";
-  }
-  if (reward > 0) {
-    let tokens = parseInt(localStorage.getItem("valhalla_tokens")) || 0;
-    tokens += reward;
-    localStorage.setItem("valhalla_tokens", tokens);
-  }
-  localStorage.setItem("thor_game_date", new Date().toISOString().slice(0, 10));
-  gamePlayedToday = true;
-  updateTokenDisplay();
-  document.getElementById("stop-btn").disabled = true;
-}
-
-function closeThorGame() {
-  document.getElementById("thor-game-modal").style.display = "none";
-  document.getElementById("thor-result").innerText = "";
-  document.getElementById("stop-btn").disabled = false;
-}
-</script><script>
-function launchThorGame() {
-  const alreadyPlayed = localStorage.getItem("thor_game_date") === new Date().toISOString().slice(0, 10);
-  if (alreadyPlayed) {
-    alert("Thor awaits new warriors tomorrow.");
-    return;
-  }
-  document.getElementById("thor-game-modal").style.display = "flex";
-  startPowerMeter();
-}
-
-let powerInterval, direction = 1;
-
-function startPowerMeter() {
-  const meter = document.getElementById("power-meter");
-  let pos = 0;
-  direction = 1;
-  powerInterval = setInterval(() => {
-    pos += direction * 2;
-    if (pos >= 90 || pos <= 0) direction *= -1;
-    meter.style.left = pos + "%";
-  }, 16);
-}
-
-function stopPowerMeter() {
-  clearInterval(powerInterval);
-  const pos = parseFloat(document.getElementById("power-meter").style.left);
-  const result = document.getElementById("thor-result");
-  const targetStart = 40, targetEnd = 60;
-  let reward = 0;
-  if (pos >= targetStart && pos <= targetEnd) {
-    reward = 3;
-    result.innerHTML = "<span style='color:#00ff88;'>⚡ Perfect strike! Thor grants you 3 Ruin Tokens!</span>";
-  } else if (Math.abs(pos - targetStart) <= 10 || Math.abs(pos - targetEnd) <= 10) {
-    reward = 1;
-    result.innerHTML = "<span style='color:#ffe18d;'>⚔️ Close! You earn 1 token.</span>";
-  } else {
-    result.innerHTML = "<span style='color:#ff5555;'>💨 Missed! No tokens earned.</span>";
-  }
-  if (reward > 0) {
-    let tokens = parseInt(localStorage.getItem("valhalla_tokens")) || 0;
-    tokens += reward;
-    localStorage.setItem("valhalla_tokens", tokens);
-  }
-  localStorage.setItem("thor_game_date", new Date().toISOString().slice(0, 10));
-  updateTokenDisplay();
-  document.getElementById("stop-btn").disabled = true;
-}
-
-function closeThorGame() {
-  document.getElementById("thor-game-modal").style.display = "none";
-  document.getElementById("thor-result").innerText = "";
-  document.getElementById("stop-btn").disabled = false;
-}
-</script></body>
+</body>
 </html>
