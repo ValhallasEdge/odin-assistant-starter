@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Markdown (kept) -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <meta charset="utf-8"/>
   <title>Valhalla Pantheon – Valhalla Coach</title>
@@ -11,20 +10,22 @@
   <style>
   /* ================== THEME & SIZING ================== */
   :root{
-    --default-color:#ffe18d;
+    --default-color:#ffe18d;                 /* selected god’s color (card theme) */
     --bg: linear-gradient(135deg,#141414 0%,#232323 100%);
     --font-main:'Montserrat','Inter',sans-serif;
 
-    /* Desktop: ~20% bigger overall */
+    /* Desktop: ~20% taller so most users see everything without inner scrolling */
     --card-w: clamp(560px, 78vw, 980px);
-    --card-pad: 36px 28px 20px 28px;
+    --card-pad: 40px 28px 24px 28px;
+    --card-min-h: clamp(720px, 88vh, 1100px);
+
     --title-size: clamp(1.9rem, 2.6vw, 3.2rem);
     --bio-size: clamp(1.05rem, 1.25vw, 1.22rem);
     --chat-size: clamp(1rem, 1.15vw, 1.14rem);
 
-    --avatar-w: 88px;   /* bigger faces */
-    --avatar-h: 88px;
-    --avatar-img: 76px;
+    --avatar-w: 96px;    /* bigger faces to make selection easier */
+    --avatar-h: 96px;
+    --avatar-img: 82px;
 
     --rail-bg: rgba(25,25,25,.92);
   }
@@ -32,14 +33,16 @@
     :root{
       --card-w: 96vw;
       --card-pad: 26px 16px 18px 16px;
-      --title-size: clamp(1.5rem, 5vw, 1.9rem);
-      --avatar-w: 84px;
-      --avatar-h: 84px;
-      --avatar-img: 72px;
+      --card-min-h: 640px;
+      --title-size: clamp(1.55rem, 5vw, 2rem);
+      --avatar-w: 90px;
+      --avatar-h: 90px;
+      --avatar-img: 78px;
     }
   }
 
   /* ================== PAGE ================== */
+  html, body { height: 100%; }
   body{
     background: var(--bg);
     min-height:100vh;
@@ -71,6 +74,7 @@
   .god-selector-bar::-webkit-scrollbar-thumb{ background:#2b2b2b; border-radius:8px; }
 
   .god-avatar{
+    --hover-color: var(--default-color);      /* per-avatar hover glow (set inline in JS) */
     flex:0 0 auto;
     width:var(--avatar-w); height:var(--avatar-h);
     border:3px solid #333; border-radius:100px;
@@ -81,10 +85,10 @@
     outline:none;
     position:relative;
   }
+  /* Hover: faint per-god glow ONLY on the icon, not the card */
   .god-avatar:hover{
-    /* faint glow picks up current --default-color */
-    box-shadow: 0 0 16px 2px color-mix(in srgb, var(--default-color) 42%, transparent);
-    border-color: var(--default-color);
+    box-shadow: 0 0 16px 2px color-mix(in srgb, var(--hover-color) 42%, transparent);
+    border-color: var(--hover-color);
   }
   .god-avatar.selected{
     border-color: var(--default-color) !important;
@@ -114,9 +118,9 @@
     width:min(98vw, var(--card-w));
     margin: 44px auto 0 auto;
     padding: var(--card-pad);
+    min-height: var(--card-min-h);
 
-    /* IMPORTANT: let content set height so the PAGE scrolls, not inner elements */
-    min-height: 0;
+    /* Let content define height so the PAGE (not inner divs) scrolls */
     display:flex; flex-direction:column; align-items:center;
     position:relative; isolation:isolate;
     animation: fadeIn .8s ease;
@@ -124,11 +128,11 @@
   @keyframes fadeIn{ from{opacity:0; transform:translateY(18px);} to{opacity:1; transform:translateY(0);} }
 
   #god-logo{
-    width:136px; height:136px;
+    width:140px; height:140px;
     border-radius:50%;
     object-fit:cover; object-position:top center;
     border:3px solid var(--default-color);
-    margin: 22px 0 10px 0;
+    margin: 14px 0 10px 0;
     box-shadow: 0 0 14px 2px color-mix(in srgb, var(--default-color) 38%, transparent);
   }
   .god-title{
@@ -156,11 +160,11 @@
     background: radial-gradient(circle at 30% 30%, #fff2a8 0%, #ffd76c 36%, #b88a2a 70%, #926f22 100%);
     box-shadow: 0 0 10px #ffd76c44, inset 0 0 4px #0008;
     animation: runeSpin 6s linear infinite;
-    font-size: 16px; color:#4e3b00; /* rune color */
+    font-size: 16px; color:#4e3b00;
     font-family: "Inter", sans-serif;
     user-select:none;
   }
-  .rune-coin::before{ content: "ᚠ"; } /* Fehu = wealth */
+  .rune-coin::before{ content: "ᚠ"; } /* Fehu (wealth) */
   @keyframes runeSpin{ to{ transform: rotate(1turn); } }
   .rune-coin:hover{
     box-shadow: 0 0 14px #ffd76c88, inset 0 0 6px #0009;
@@ -170,8 +174,7 @@
   /* ================== CHAT ================== */
   .chat-history{
     width:100%;
-    /* Let it expand naturally so the IFRAME/page controls scrolling */
-    overflow: visible;
+    overflow: visible;                          /* no inner scrollbars */
     background: rgba(16,16,16,.88);
     border:1.5px solid #29281e;
     border-radius:17px;
@@ -201,9 +204,11 @@
     display:flex; width:100%;
     gap:10px; margin-top:18px;
     align-items:center;
+    box-sizing: border-box;
   }
   .chat-input{
-    flex:1; padding:12px 16px;
+    flex:1; min-width: 0;                      /* prevents overflow on tiny screens */
+    padding:12px 16px;
     border-radius:22px; border:none; outline:none;
     background:#222; color:#fff9ec; font-size:1.08rem;
     font-family:'Inter',sans-serif;
@@ -212,19 +217,27 @@
   .chat-send-btn{
     background:var(--default-color); color:#232323;
     border:none; border-radius:24px;
-    padding:10px 20px; font-size:1.04rem;
+    padding:12px 20px; font-size:1.02rem;
     font-family:'Montserrat',sans-serif; font-weight:700;
     cursor:pointer;
     transition: background .16s, color .12s, transform .12s;
     box-shadow: 0 1px 8px #0003;
+    flex: 0 0 auto;
   }
   .chat-send-btn:hover{ background:#fff6dc; color:var(--default-color); transform: translateY(-1px); }
+
+  /* Stack input + button on very small screens so they don’t hang outside */
+  @media (max-width: 640px){
+    .chat-input-row{ flex-direction: column; align-items: stretch; }
+    .chat-send-btn{ width:100%; }
+  }
 
   /* ================== MUSIC ================== */
   .music-player-row{
     width:100%; display:flex; align-items:center; justify-content:center;
     gap:12px; background:#181818; border:1px solid #2a2a2a;
     border-radius:13px; padding:8px 10px; margin:12px auto 0 auto;
+    box-sizing: border-box;
   }
   .music-play-btn{
     background:none; border:none; cursor:pointer;
@@ -235,7 +248,7 @@
     box-shadow: 0 0 8px var(--default-color);
     color:#fff6dc; transform: scale(1.12) rotate(-7deg);
   }
-  .music-slider{ accent-color:var(--default-color); margin-left:3px; }
+  .music-slider{ flex:1; accent-color:var(--default-color); margin-left:3px; }
   .music-slider::-webkit-slider-thumb{
     background:#ffe18d; border:none; height:14px; width:14px; border-radius:50%;
     cursor:pointer; margin-top:-4px;
@@ -252,11 +265,9 @@
   }
   .buy-btn:hover{ filter: brightness(1.06); }
 
-  /* ================== MOBILE POLISH ================== */
-  @media (max-width: 640px){
-    .valhalla-card{ margin-top: 24px; }
-    .god-selector-bar{ padding: 10px 8px 12px 8px; }
-    .music-player-row{ font-size:1rem; }
+  /* Extra bottom breathing room on desktop so there’s no instant inner scroll */
+  @media (min-width: 641px){
+    .desktop-spacer { height: 10vh; }
   }
   </style>
 </head>
@@ -297,6 +308,9 @@
 
     <!-- Buy Tokens -->
     <button id="buy-tokens-btn" class="buy-btn" onclick="window.location.href='/products/ruin-tokens-pack'">💰 Buy More Tokens</button>
+
+    <!-- spacer for desktop so the whole “response area” is visible on load -->
+    <div class="desktop-spacer" aria-hidden="true"></div>
   </div>
 
   <audio id="musicAudio" loop preload="auto"></audio>
@@ -377,15 +391,13 @@
       avatar.className = 'god-avatar' + (selectedGod.key===god.key ? ' selected' : '');
       avatar.title = god.name;
       avatar.style.borderColor = (selectedGod.key===god.key) ? god.color : '#333';
+      avatar.style.setProperty('--hover-color', god.color);     // per-god hover glow color
       avatar.setAttribute('role','tab');
       avatar.setAttribute('aria-selected', selectedGod.key===god.key ? 'true':'false');
       avatar.setAttribute('tabindex','0');
       avatar.setAttribute('aria-label', `Select ${god.name}`);
 
-      // Hover glow should match that god's color: use inline var during hover/selected
-      avatar.addEventListener('mouseenter', ()=> setThemeColor(god.color));
-      avatar.addEventListener('mouseleave', ()=> setThemeColor(selectedGod.color));
-
+      // NO theme change on hover; click selects
       avatar.onclick = ()=> selectGod(god);
       avatar.onkeydown = (e)=>{
         if (e.key==='Enter' || e.key===' ') { e.preventDefault(); selectGod(god); }
@@ -425,7 +437,6 @@
       d.innerHTML = html;
       chatHistoryDiv.appendChild(d);
     });
-    // Natural flow; no forced scroll into view to avoid inner scrolling feel
   }
 
   /* ================== LOADER ================== */
@@ -554,7 +565,6 @@
     if(tokens > 0){
       tokens--;
       localStorage.setItem(TOKEN_KEY, tokens);
-      // subtle pulse on change
       const el = document.getElementById('ruin-tokens');
       if(el){ el.style.transition='transform .18s'; el.style.transform='scale(1.12)'; setTimeout(()=>{ el.style.transform=''; }, 180); }
     }
@@ -575,7 +585,6 @@
     alert("🛑 You’re out of Ruin Tokens. Come back tomorrow or earn more through gameplay.");
   }
 
-  // Ritual handling (kept)
   document.addEventListener('DOMContentLoaded', ()=>{
     checkReset(); updateTokenDisplay();
     const saved = JSON.parse(localStorage.getItem(RITUALS_KEY) || "{}");
