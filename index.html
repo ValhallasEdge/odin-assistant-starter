@@ -10,142 +10,116 @@
   <style>
   /* ================== THEME & SIZING ================== */
   :root{
-    --default-color:#ffe18d;                 /* selected god’s color (card theme) */
-    --bg: linear-gradient(135deg,#141414 0%,#232323 100%);
+    --default-color:#ffe18d;                  /* selected god’s color (card theme) */
     --font-main:'Montserrat','Inter',sans-serif;
 
-    /* Desktop: ~20% taller so most users see everything without inner scrolling */
+    /* Card tuned shorter per your note (you’ll stretch iframe height in Shopify) */
     --card-w: clamp(560px, 78vw, 980px);
-    --card-pad: 40px 28px 24px 28px;
-    --card-min-h: clamp(720px, 88vh, 1100px);
+    --card-pad: 32px 24px 20px 24px;
+    --card-min-h: clamp(600px, 72vh, 900px);
 
-    --title-size: clamp(1.9rem, 2.6vw, 3.2rem);
-    --bio-size: clamp(1.05rem, 1.25vw, 1.22rem);
-    --chat-size: clamp(1rem, 1.15vw, 1.14rem);
+    --title-size: clamp(1.8rem, 2.4vw, 3rem);
+    --bio-size: clamp(1.05rem, 1.25vw, 1.2rem);
+    --chat-size: clamp(1rem, 1.15vw, 1.12rem);
 
-    --avatar-w: 96px;    /* bigger faces to make selection easier */
+    /* Carousel avatars */
+    --avatar-w: 96px;     /* bigger faces */
     --avatar-h: 96px;
     --avatar-img: 82px;
 
-    --rail-bg: rgba(25,25,25,.92);
-  }
-  @media (max-width: 640px){
-    :root{
-      --card-w: 96vw;
-      --card-pad: 26px 16px 18px 16px;
-      --card-min-h: 640px;
-      --title-size: clamp(1.55rem, 5vw, 2rem);
-      --avatar-w: 90px;
-      --avatar-h: 90px;
-      --avatar-img: 78px;
-    }
+    /* Reply band (≈ 1 inch on most screens, with sane bounds) */
+    --reply-min-h: clamp(96px, 14vh, 160px);
   }
 
-  /* ================== PAGE ================== */
-  html, body { height: 100%; }
+  /* Make the iframe background see-through if parent allows it */
+  html, body { height:100%; background: transparent; }
   body{
-    background: var(--bg);
-    min-height:100vh;
-    margin:0; padding:0 0 48px 0;
-    font-family: var(--font-main);
-    color:#f8e6c3;
-    display:flex; flex-direction:column; align-items:center;
+    margin:0; padding:0 0 40px 0;
+    color:#f8e6c3; font-family:var(--font-main);
+    display:flex; flex-direction:column; align-items:center; gap:0;
   }
 
-  /* ================== STICKY AVATAR RAIL ================== */
-  .god-rail-wrap{
-    position:sticky; top:0; z-index:6;
-    width:100%;
-    background: var(--rail-bg);
-    backdrop-filter: blur(4px);
-    box-shadow: 0 2px 14px #0007;
-    display:flex; justify-content:center;
+  /* ================== FULL-WIDTH OVAL CAROUSEL ================== */
+  .carousel-wrap{
+    position: sticky; top: 0; z-index: 6;
+    width: 100vw; left: 50%; transform: translateX(-50%);
+    padding: 10px 0 14px 0;
+    backdrop-filter: blur(2px);
+    /* fade/taper at edges */
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+            mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
   }
-  .god-selector-bar{
-    display:flex; gap:18px; align-items:center;
-    width:min(98vw, var(--card-w));
-    padding:10px 10px 12px 10px;
-    overflow-x:auto; overflow-y:hidden;
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x proximity;
-    border-radius: 0 0 18px 18px;
+  .carousel{
+    position: relative;
+    width: 100%;
+    height: max(var(--avatar-h), 110px);
+    overflow: visible;            /* we animate items, no scrollbar */
+    touch-action: pan-y;          /* allow vertical page scroll, we handle horizontal drag */
+    cursor: grab;
   }
-  .god-selector-bar::-webkit-scrollbar{ height:8px; }
-  .god-selector-bar::-webkit-scrollbar-thumb{ background:#2b2b2b; border-radius:8px; }
+  .carousel:active{ cursor: grabbing; }
 
-  .god-avatar{
-    --hover-color: var(--default-color);      /* per-avatar hover glow (set inline in JS) */
-    flex:0 0 auto;
-    width:var(--avatar-w); height:var(--avatar-h);
-    border:3px solid #333; border-radius:100px;
-    background:#000; cursor:pointer; user-select:none;
-    display:flex; align-items:center; justify-content:center;
-    transition: border-color .18s, box-shadow .18s, transform .16s;
-    scroll-snap-align:center;
-    outline:none;
-    position:relative;
+  .car-item{
+    --hover-color:#ffe18d;        /* set inline per-god */
+    position: absolute; top: 50%; left: 50%;
+    width: var(--avatar-w); height: var(--avatar-h);
+    transform: translate(-50%,-50%);
+    border-radius: 999px;
+    display: grid; place-items: center;
+    border: 3px solid #333;
+    background: #000;
+    transition: border-color .18s ease;
+    will-change: transform, filter, opacity;
   }
-  /* Hover: faint per-god glow ONLY on the icon, not the card */
-  .god-avatar:hover{
-    box-shadow: 0 0 16px 2px color-mix(in srgb, var(--hover-color) 42%, transparent);
+  .car-item img{
+    width: var(--avatar-img); height: var(--avatar-img);
+    border-radius: 50%; object-fit: cover; object-position: top center;
+    background:#181818; display:block;
+    pointer-events: none;
+  }
+  .car-item:hover{
     border-color: var(--hover-color);
+    box-shadow: 0 0 18px 2px color-mix(in srgb, var(--hover-color) 55%, transparent);
   }
-  .god-avatar.selected{
+  .car-item.selected{
     border-color: var(--default-color) !important;
-    box-shadow: 0 0 18px 2px color-mix(in srgb, var(--default-color) 60%, transparent);
-    transform: scale(1.06);
-  }
-  .god-avatar:focus{
-    outline:2px solid var(--default-color);
-    outline-offset:2px;
-  }
-  .god-avatar img{
-    width:var(--avatar-img); height:var(--avatar-img);
-    object-fit:cover; object-position:top center;
-    border-radius:50%; background:#181818; display:block;
+    box-shadow: 0 0 22px 3px color-mix(in srgb, var(--default-color) 65%, transparent);
   }
 
   /* ================== CARD ================== */
   .valhalla-card{
-    background:
-      radial-gradient(1100px 620px at 50% -10%, rgba(255,255,255,.05), transparent 60%),
-      rgba(25,25,25,.97);
     border: 2.5px solid var(--default-color);
-    border-radius:32px;
-    box-shadow:
-      0 18px 80px color-mix(in srgb, var(--default-color) 18%, #000),
-      inset 0 0 80px rgba(255,255,255,.03);
-    width:min(98vw, var(--card-w));
-    margin: 44px auto 0 auto;
+    border-radius: 32px;
+    width: min(98vw, var(--card-w));
+    margin: 20px auto 0 auto;
     padding: var(--card-pad);
     min-height: var(--card-min-h);
-
-    /* Let content define height so the PAGE (not inner divs) scrolls */
-    display:flex; flex-direction:column; align-items:center;
-    position:relative; isolation:isolate;
-    animation: fadeIn .8s ease;
+    background: rgba(20,20,20,.72);     /* subtle glass so outer page shows through */
+    box-shadow:
+      0 18px 64px color-mix(in srgb, var(--default-color) 18%, #000),
+      inset 0 0 80px rgba(255,255,255,.03);
+    display: flex; flex-direction: column; align-items: center;
+    position: relative; isolation: isolate;
+    animation: fadeIn .7s ease;
   }
   @keyframes fadeIn{ from{opacity:0; transform:translateY(18px);} to{opacity:1; transform:translateY(0);} }
 
   #god-logo{
-    width:140px; height:140px;
-    border-radius:50%;
-    object-fit:cover; object-position:top center;
-    border:3px solid var(--default-color);
-    margin: 14px 0 10px 0;
+    width: 136px; height: 136px; border-radius: 50%;
+    object-fit: cover; object-position: top center;
+    border: 3px solid var(--default-color);
+    margin: 8px 0 10px 0;
     box-shadow: 0 0 14px 2px color-mix(in srgb, var(--default-color) 38%, transparent);
   }
   .god-title{
-    font-size:var(--title-size);
-    letter-spacing:2px; font-weight:700; text-align:center;
-    color:var(--default-color);
-    margin:10px 0 6px;
-    text-shadow:0 2px 16px #0002;
+    font-size: var(--title-size);
+    letter-spacing: 2px; font-weight:700; text-align:center;
+    color: var(--default-color); margin: 8px 0 4px 0;
+    text-shadow: 0 2px 16px #0002;
   }
   .god-bio{
-    font-size:var(--bio-size);
-    color:#f3ebd7; text-align:center;
-    margin:0 0 10px 0;
+    font-size: var(--bio-size); text-align:center; color:#f3ebd7;
+    margin: 0 0 8px 0;
   }
 
   /* ================== RUIN TOKENS ================== */
@@ -160,31 +134,27 @@
     background: radial-gradient(circle at 30% 30%, #fff2a8 0%, #ffd76c 36%, #b88a2a 70%, #926f22 100%);
     box-shadow: 0 0 10px #ffd76c44, inset 0 0 4px #0008;
     animation: runeSpin 6s linear infinite;
-    font-size: 16px; color:#4e3b00;
-    font-family: "Inter", sans-serif;
+    font-size: 16px; color:#4e3b00; font-family: "Inter", sans-serif;
     user-select:none;
   }
-  .rune-coin::before{ content: "ᚠ"; } /* Fehu (wealth) */
+  .rune-coin::before{ content: "ᚠ"; } /* Fehu */
   @keyframes runeSpin{ to{ transform: rotate(1turn); } }
-  .rune-coin:hover{
-    box-shadow: 0 0 14px #ffd76c88, inset 0 0 6px #0009;
-    transform: scale(1.04);
-  }
+  .rune-coin:hover{ box-shadow: 0 0 14px #ffd76c88, inset 0 0 6px #0009; transform: scale(1.04); }
 
-  /* ================== CHAT ================== */
+  /* ================== CHAT (reply band is transparent window) ================== */
   .chat-history{
     width:100%;
-    overflow: visible;                          /* no inner scrollbars */
-    background: rgba(16,16,16,.88);
-    border:1.5px solid #29281e;
-    border-radius:17px;
-    padding:14px 13px;
-    font-size:var(--chat-size);
-    margin-bottom:12px;
-    box-shadow: 0 2px 14px #0002, 0 4px 28px 2px color-mix(in srgb, var(--default-color) 18%, transparent);
+    min-height: var(--reply-min-h);
+    background: transparent;             /* show page/card behind */
+    border: 0;
+    border-radius: 14px;
+    padding: 8px 4px;
+    font-size: var(--chat-size);
+    margin: 6px 0 6px 0;
+    box-shadow: none;                     /* no box so it reads as space */
   }
-  .chat-msg{ margin-bottom:10px; padding:.25em 0; }
-  .chat-msg.user{ text-align:right; color:#c8f7ff; }
+  .chat-msg{ margin-bottom:10px; padding:.2em 0; text-shadow: 0 1px 2px rgba(0,0,0,.55); }
+  .chat-msg.user{ text-align:right; color:#cfeaff; }
   .chat-msg.god{ text-align:left; color:var(--default-color); }
   .chat-msg.god strong{ color:var(--default-color); }
   .chat-msg.god em{ color:#ffdea0; font-style:italic; }
@@ -192,41 +162,32 @@
   .chat-msg.god li{ margin-bottom:4px; }
 
   .loader-runic{
-    margin: 4px auto .2em auto;
-    font-size:1.85em; letter-spacing:.19em;
-    color:var(--default-color);
-    animation: spinRunes 1.3s linear infinite;
+    margin: 2px auto .2em auto; font-size:1.6em; letter-spacing:.19em;
+    color:var(--default-color); animation: spinRunes 1.3s linear infinite;
     text-align:center; user-select:none;
   }
   @keyframes spinRunes{ 100%{ transform: rotate(1turn); } }
 
   .chat-input-row{
-    display:flex; width:100%;
-    gap:10px; margin-top:18px;
-    align-items:center;
+    display:flex; width:100%; gap:10px; margin-top:10px; align-items:center;
     box-sizing: border-box;
   }
   .chat-input{
-    flex:1; min-width: 0;                      /* prevents overflow on tiny screens */
-    padding:12px 16px;
+    flex:1; min-width: 0; padding:12px 16px;
     border-radius:22px; border:none; outline:none;
-    background:#222; color:#fff9ec; font-size:1.08rem;
-    font-family:'Inter',sans-serif;
-    box-shadow: 0 1px 8px #0004;
+    background:#222; color:#fff9ec; font-size:1.06rem;
+    font-family:'Inter',sans-serif; box-shadow: 0 1px 8px #0004;
   }
   .chat-send-btn{
     background:var(--default-color); color:#232323;
     border:none; border-radius:24px;
-    padding:12px 20px; font-size:1.02rem;
-    font-family:'Montserrat',sans-serif; font-weight:700;
-    cursor:pointer;
-    transition: background .16s, color .12s, transform .12s;
-    box-shadow: 0 1px 8px #0003;
-    flex: 0 0 auto;
+    padding:12px 20px; font-size:1.02rem; font-weight:700; font-family:'Montserrat',sans-serif;
+    cursor:pointer; transition: background .16s, color .12s, transform .12s;
+    box-shadow: 0 1px 8px #0003; flex: 0 0 auto;
   }
   .chat-send-btn:hover{ background:#fff6dc; color:var(--default-color); transform: translateY(-1px); }
 
-  /* Stack input + button on very small screens so they don’t hang outside */
+  /* Mobile: stack input + button so nothing hangs outside */
   @media (max-width: 640px){
     .chat-input-row{ flex-direction: column; align-items: stretch; }
     .chat-send-btn{ width:100%; }
@@ -234,48 +195,36 @@
 
   /* ================== MUSIC ================== */
   .music-player-row{
-    width:100%; display:flex; align-items:center; justify-content:center;
-    gap:12px; background:#181818; border:1px solid #2a2a2a;
-    border-radius:13px; padding:8px 10px; margin:12px auto 0 auto;
-    box-sizing: border-box;
+    width:100%; display:flex; align-items:center; justify-content:center; gap:12px;
+    background:#181818aa; border:1px solid #2a2a2a; border-radius:13px;
+    padding:8px 10px; margin:10px 0 0 0; box-sizing: border-box;
   }
   .music-play-btn{
-    background:none; border:none; cursor:pointer;
-    font-size:1.62em; color:var(--default-color);
+    background:none; border:none; cursor:pointer; font-size:1.62em; color:var(--default-color);
     transition: color .16s, transform .13s;
   }
   .music-play-btn.active, .music-play-btn:hover{
-    box-shadow: 0 0 8px var(--default-color);
-    color:#fff6dc; transform: scale(1.12) rotate(-7deg);
+    box-shadow: 0 0 8px var(--default-color); color:#fff6dc; transform: scale(1.12) rotate(-7deg);
   }
   .music-slider{ flex:1; accent-color:var(--default-color); margin-left:3px; }
   .music-slider::-webkit-slider-thumb{
-    background:#ffe18d; border:none; height:14px; width:14px; border-radius:50%;
-    cursor:pointer; margin-top:-4px;
+    background:#ffe18d; border:none; height:14px; width:14px; border-radius:50%; cursor:pointer; margin-top:-4px;
   }
   .music-slider::-webkit-slider-runnable-track{ background:#444; height:6px; border-radius:3px; }
 
   /* ================== BUY TOKENS ================== */
   .buy-btn{
-    margin: 14px auto 0 auto;
-    background:#1a1a1a; color:#FFD700;
-    padding:10px 16px; border:2px solid #FFD700;
-    border-radius:10px; font-weight:bold; display:block;
-    cursor:pointer;
+    margin: 12px auto 0 auto; background:#1a1a1a; color:#FFD700;
+    padding:10px 16px; border:2px solid #FFD700; border-radius:10px; font-weight:bold; display:block; cursor:pointer;
   }
   .buy-btn:hover{ filter: brightness(1.06); }
-
-  /* Extra bottom breathing room on desktop so there’s no instant inner scroll */
-  @media (min-width: 641px){
-    .desktop-spacer { height: 10vh; }
-  }
   </style>
 </head>
 
 <body>
-  <!-- Sticky, scrollable avatars -->
-  <div class="god-rail-wrap">
-    <div class="god-selector-bar" id="god-selector" role="tablist" aria-label="Choose your guide"></div>
+  <!-- Full-width, smooth “oval” carousel -->
+  <div class="carousel-wrap">
+    <div class="carousel" id="godCarousel" aria-label="Choose your guide"></div>
   </div>
 
   <!-- Main card -->
@@ -308,9 +257,6 @@
 
     <!-- Buy Tokens -->
     <button id="buy-tokens-btn" class="buy-btn" onclick="window.location.href='/products/ruin-tokens-pack'">💰 Buy More Tokens</button>
-
-    <!-- spacer for desktop so the whole “response area” is visible on load -->
-    <div class="desktop-spacer" aria-hidden="true"></div>
   </div>
 
   <audio id="musicAudio" loop preload="auto"></audio>
@@ -356,8 +302,8 @@
       bio:'Motivation, discipline, and action—your ultimate Viking coach.' }
   ];
 
-  /* ================== STATE & ELEMENTS ================== */
-  const godSelector = document.getElementById('god-selector');
+  /* ================== ELEMENTS & STATE ================== */
+  const car = document.getElementById('godCarousel');
   const godLogo = document.getElementById('god-logo');
   const godTitle = document.getElementById('god-title');
   const godBio = document.getElementById('god-bio');
@@ -375,56 +321,109 @@
     document.documentElement.style.setProperty('--default-color', hex || '#ffe18d');
   }
 
-  // Case-insensitive ?god=
+  // ?god= selection (case-insensitive)
   const urlParams = new URLSearchParams(window.location.search);
   const godParam = (urlParams.get('god')||'').toLowerCase();
-  const matched = GODS.find(g => g.key.toLowerCase() === godParam);
-  let selectedGod = matched || GODS.find(g=>g.key==='coach') || GODS[0];
+  let selectedGod = GODS.find(g => g.key.toLowerCase() === godParam) || GODS.find(g=>g.key==='coach') || GODS[0];
 
   let chatHistory = [];
 
-  /* ================== RENDER ================== */
-  function renderGodSelector(list = GODS){
-    godSelector.innerHTML = '';
-    list.forEach(god=>{
-      const avatar = document.createElement('div');
-      avatar.className = 'god-avatar' + (selectedGod.key===god.key ? ' selected' : '');
-      avatar.title = god.name;
-      avatar.style.borderColor = (selectedGod.key===god.key) ? god.color : '#333';
-      avatar.style.setProperty('--hover-color', god.color);     // per-god hover glow color
-      avatar.setAttribute('role','tab');
-      avatar.setAttribute('aria-selected', selectedGod.key===god.key ? 'true':'false');
-      avatar.setAttribute('tabindex','0');
-      avatar.setAttribute('aria-label', `Select ${god.name}`);
+  /* ================== OVAL CAROUSEL (requestAnimationFrame) ================== */
+  const items = [];
+  let current = 0;                 // fractional position
+  let speed = 0.003;               // auto-rotate speed (slow & smooth)
+  const spacing = 1;               // logical spacing between items
+  let dragging = false, lastX = 0, vx = 0;
 
-      // NO theme change on hover; click selects
-      avatar.onclick = ()=> selectGod(god);
-      avatar.onkeydown = (e)=>{
-        if (e.key==='Enter' || e.key===' ') { e.preventDefault(); selectGod(god); }
-      };
+  function buildCarousel(){
+    car.innerHTML = '';
+    GODS.forEach((g, idx)=>{
+      const d = document.createElement('div');
+      d.className = 'car-item';
+      if (g.key === selectedGod.key) d.classList.add('selected');
+      d.style.setProperty('--hover-color', g.color);
+      d.setAttribute('role','button');
+      d.setAttribute('aria-label', `Select ${g.name}`);
+      d.tabIndex = 0;
 
       const img = document.createElement('img');
-      img.src = god.avatar; img.alt = god.name; img.loading='lazy';
-      avatar.appendChild(img);
-      godSelector.appendChild(avatar);
+      img.src = g.avatar; img.alt = g.name; img.loading = 'lazy';
+      d.appendChild(img);
+
+      d.addEventListener('click', ()=> selectGod(g));
+      d.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') selectGod(g); });
+
+      items.push({el:d, idx});
+      car.appendChild(d);
     });
   }
 
-  function selectGod(god){
-    selectedGod = god;
-    setThemeColor(god.color);
-    renderGodSelector();
-    renderGod();
-    chatHistory = [];
-    renderChat();
-    setupMusic();
+  function layoutCarousel(){
+    const rect = car.getBoundingClientRect();
+    const cx = rect.width/2, cy = rect.height/2;
+
+    const R = Math.min(rect.width, 1000) * 0.38;   // horizontal radius
+    const ry = Math.min(rect.height, 180) * 0.18;  // small vertical wobble for oval illusion
+
+    const N = items.length;
+    for (let k=0; k<N; k++){
+      const it = items[k];
+      // position along ellipse using angle = (index - current) * step
+      const step = (2*Math.PI)/N;
+      const angle = (k - current) * step;
+
+      const x = cx + R * Math.sin(angle);
+      const y = cy + ry * Math.cos(angle);         // subtle vertical shift
+
+      // scale and opacity taper toward edges
+      const depth = (Math.cos(angle)+1)/2;         // 0..1 (front=1)
+      const scale = 0.78 + 0.32 * depth;           // 0.78..1.10
+      const alpha = 0.55 + 0.45 * depth;           // 0.55..1
+      const blur = 2 * (1 - depth);                // slight edge blur
+
+      it.el.style.transform = `translate(${x - rect.width/2}px, ${y - rect.height/2}px) scale(${scale})`;
+      it.el.style.opacity = alpha.toFixed(3);
+      it.el.style.filter = `blur(${blur.toFixed(2)}px)`;
+      it.el.style.zIndex = (100 + Math.round(depth*100)).toString();
+      it.el.classList.toggle('selected', GODS[k].key === selectedGod.key);
+    }
   }
 
+  function tick(){
+    if (!dragging) current += speed;
+    else current += -vx * 0.015;     // convert drag velocity to movement
+
+    // keep current in 0..N
+    const N = items.length;
+    if (current >= N) current -= N;
+    if (current < 0) current += N;
+
+    layoutCarousel();
+    requestAnimationFrame(tick);
+  }
+
+  // basic drag for manual control
+  car.addEventListener('pointerdown', (e)=>{
+    dragging = true; lastX = e.clientX; vx = 0;
+    car.setPointerCapture(e.pointerId);
+  });
+  car.addEventListener('pointermove', (e)=>{
+    if (!dragging) return;
+    const dx = e.clientX - lastX;
+    lastX = e.clientX;
+    vx = dx;                        // store velocity
+    current -= dx / 160;            // sensitivity
+  });
+  function endDrag(e){ dragging = false; vx = 0; if (e && e.pointerId) { try{car.releasePointerCapture(e.pointerId);}catch{} } }
+  car.addEventListener('pointerup', endDrag);
+  car.addEventListener('pointercancel', endDrag);
+  car.addEventListener('pointerleave', ()=>{ dragging=false; vx=0; });
+
+  /* ================== RENDER & SELECT ================== */
   function renderGod(){
     godLogo.src = selectedGod.avatar;
     godTitle.textContent = selectedGod.name;
     godBio.textContent = selectedGod.bio;
-    chatInput.placeholder = `Ask ${selectedGod.name} anything...`;
     setThemeColor(selectedGod.color);
   }
 
@@ -439,6 +438,12 @@
     });
   }
 
+  function selectGod(g){
+    selectedGod = g;
+    renderGod();
+    renderChat();   // optional: keep history or clear; your call
+  }
+
   /* ================== LOADER ================== */
   const runes = ['ᚨ','ᛟ','ᚱ','ᛃ','ᚺ','ᚠ','ᚾ','ᛏ'];
   let runeIdx=0, loaderInterval=null;
@@ -450,17 +455,13 @@
       loaderRunic.textContent = runes[runeIdx];
     },170);
   }
-  function hideLoader(){
-    loaderRunic.style.display='none';
-    clearInterval(loaderInterval);
-  }
+  function hideLoader(){ loaderRunic.style.display='none'; clearInterval(loaderInterval); }
 
   /* ================== MUSIC ================== */
   function setupMusic(){
     if(!selectedGod.music){
       musicPlayer.style.display='none';
-      musicAudio.pause();
-      return;
+      musicAudio.pause(); return;
     }
     musicPlayer.style.display='';
     musicAudio.src = selectedGod.music;
@@ -473,19 +474,13 @@
   musicPlayBtn.onclick = ()=>{
     if(!musicPlaying){
       musicAudio.muted=false;
-      musicAudio.play().then(()=>{
-        musicPlayBtn.classList.add('active'); musicPlaying = true;
-      }).catch(()=>{});
+      musicAudio.play().then(()=>{ musicPlayBtn.classList.add('active'); musicPlaying = true; }).catch(()=>{});
     }else{
       musicAudio.pause(); musicPlayBtn.classList.remove('active'); musicPlaying=false;
     }
   };
   musicSlider.oninput = (e)=>{ musicAudio.volume = parseFloat(e.target.value || '0.25'); };
-  document.addEventListener('visibilitychange', ()=>{
-    if(document.visibilityState==='visible' && musicPlaying){
-      musicAudio.play().catch(()=>{});
-    }
-  });
+  document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible' && musicPlaying){ musicAudio.play().catch(()=>{}); } });
 
   /* ================== THREAD + CHAT (endpoints unchanged) ================== */
   function getThreadId(godKey){
@@ -549,41 +544,19 @@
   const RITUALS_KEY = "valhalla_rituals_done";
 
   function getToday(){ return new Date().toISOString().slice(0,10); }
-  function resetDailyTokens(){
-    localStorage.setItem(TOKEN_KEY, DAILY_LIMIT);
-    localStorage.setItem(DATE_KEY, getToday());
-    localStorage.setItem(RITUALS_KEY, JSON.stringify({}));
-    updateTokenDisplay();
-  }
-  function updateTokenDisplay(){
-    const tokens = parseInt(localStorage.getItem(TOKEN_KEY)) || 0;
-    const el = document.getElementById('ruin-tokens');
-    if(el) el.textContent = tokens;
-  }
+  function resetDailyTokens(){ localStorage.setItem(TOKEN_KEY, DAILY_LIMIT); localStorage.setItem(DATE_KEY, getToday()); localStorage.setItem(RITUALS_KEY, JSON.stringify({})); updateTokenDisplay(); }
+  function updateTokenDisplay(){ const tokens = parseInt(localStorage.getItem(TOKEN_KEY)) || 0; const el = document.getElementById('ruin-tokens'); if(el) el.textContent = tokens; }
   function decrementToken(){
     let tokens = parseInt(localStorage.getItem(TOKEN_KEY)) || 0;
     if(tokens > 0){
-      tokens--;
-      localStorage.setItem(TOKEN_KEY, tokens);
-      const el = document.getElementById('ruin-tokens');
-      if(el){ el.style.transition='transform .18s'; el.style.transform='scale(1.12)'; setTimeout(()=>{ el.style.transform=''; }, 180); }
+      tokens--; localStorage.setItem(TOKEN_KEY, tokens);
+      const el = document.getElementById('ruin-tokens'); if(el){ el.style.transition='transform .18s'; el.style.transform='scale(1.12)'; setTimeout(()=>{ el.style.transform=''; }, 180); }
     }
-    updateTokenDisplay();
-    return tokens;
+    updateTokenDisplay(); return tokens;
   }
-  function addToken(amount=1){
-    let tokens = parseInt(localStorage.getItem(TOKEN_KEY)) || 0;
-    tokens += amount;
-    localStorage.setItem(TOKEN_KEY, tokens);
-    updateTokenDisplay();
-  }
-  function checkReset(){
-    const last = localStorage.getItem(DATE_KEY);
-    if(last !== getToday()) resetDailyTokens();
-  }
-  function showTokenModal(){
-    alert("🛑 You’re out of Ruin Tokens. Come back tomorrow or earn more through gameplay.");
-  }
+  function addToken(amount=1){ let tokens = parseInt(localStorage.getItem(TOKEN_KEY)) || 0; tokens += amount; localStorage.setItem(TOKEN_KEY, tokens); updateTokenDisplay(); }
+  function checkReset(){ const last = localStorage.getItem(DATE_KEY); if(last !== getToday()) resetDailyTokens(); }
+  function showTokenModal(){ alert("🛑 You’re out of Ruin Tokens. Come back tomorrow or earn more through gameplay."); }
 
   document.addEventListener('DOMContentLoaded', ()=>{
     checkReset(); updateTokenDisplay();
@@ -602,11 +575,14 @@
   });
 
   /* ================== INIT ================== */
-  renderGodSelector();
-  renderGod();
-  renderChat();
-  setupMusic();
-  chatInput.focus();
+  (function init(){
+    buildCarousel();
+    renderGod();
+    renderChat();
+    setupMusic();
+    requestAnimationFrame(tick);
+    chatInput.focus();
+  })();
   </script>
 </body>
 </html>
