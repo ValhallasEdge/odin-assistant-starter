@@ -9,147 +9,132 @@
 
 <style>
   :root{
-    --brand:#ffe18d;                 /* live theme accent (changes on select) */
-    --bg: radial-gradient(1200px 600px at 50% -10%, #191919 0%, #0f0f0f 50%, #0b0b0b 100%);
-    --panel:#141414;
-    --panel2:#101010;
+    --brand:#ffe18d;                 /* selected god accent */
     --ink:#f8e6c3;
-    --muted:#d7c8a0;
     --ring:#2a2a2a;
     --soft: rgba(255,225,141,.16);
+
+    /* Card sizing: you’ll control the iframe height in Shopify */
+    --card-w: min(96vw, 880px);
+    --card-pad: 26px 18px 14px;
+    --reply-min-h: clamp(100px, 16vh, 160px);
   }
 
-  /* Base page */
   html,body{height:100%}
   body{
     margin:0;
     color:var(--ink);
     font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-    background:var(--bg) fixed;
+    background: transparent; /* let Shopify page show through */
     -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
     padding: max(env(safe-area-inset-top), 0) 0 max(env(safe-area-inset-bottom), 12px);
   }
 
-  /* Top carousel wrapper (full-width) */
+  /* ======= FULL-WIDTH CAROUSEL BAR ======= */
   .pantheon-bar{
     position:sticky; top:0; z-index:20;
-    background:linear-gradient(180deg, rgba(0,0,0,.62), rgba(0,0,0,.28));
+    background:linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.2));
     backdrop-filter:saturate(120%) blur(6px);
     border-bottom:1px solid #26231a;
   }
-  /* Carousel rail */
-  .god-rail{
-    --rail-h: 104px;
-    height: var(--rail-h);
-    display:flex;
-    gap:16px;
-    align-items:center;
-    overflow-x:auto;
-    overscroll-behavior-x:contain;
-    scroll-snap-type:x mandatory;
-    padding:10px 16px;
-    mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
-    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+  .rail{
+    height: 106px;
+    display:flex; align-items:center; gap:18px;
+    overflow-x:auto; overflow-y:hidden;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    padding: 10px 18px;
+    scroll-snap-type:x proximity;
+    /* edge fade/taper */
+    mask-image: linear-gradient(90deg, transparent 0, #000 8%, #000 92%, transparent 100%);
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 8%, #000 92%, transparent 100%);
   }
-  .god-rail::-webkit-scrollbar{ height:10px }
-  .god-rail::-webkit-scrollbar-thumb{ background:#3b3422; border-radius:100px }
+  .rail::-webkit-scrollbar{ height:10px }
+  .rail::-webkit-scrollbar-thumb{ background:#3b3422; border-radius:100px }
 
-  /* Avatar chip */
-  .god-chip{
-    position:relative;
-    flex:0 0 auto;
-    width:88px; height:88px;         /* desktop default */
+  .chip{
+    --hover:#ffe18d;                 /* set inline per-god */
+    flex: 0 0 auto;
+    width:92px; height:92px;
     border-radius:999px;
     border:3px solid var(--ring);
-    box-shadow: 0 0 0 0 var(--soft);
+    background:#000;
     overflow:hidden;
     cursor:pointer;
     scroll-snap-align:center;
     transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, filter .18s ease;
-    background:#000;
+    /* taper/oval via variables set in JS */
+    transform: translateY(var(--dy,0px)) scale(var(--sc,1));
+    opacity: var(--op,1);
+    filter: var(--blur,none);
   }
-  .god-chip img{
-    width:100%; height:100%;
-    object-fit:cover; object-position:top center;
+  .chip img{
+    width:100%; height:100%; object-fit:cover; object-position: top center;
     border-radius:inherit; display:block;
   }
-  .god-chip:hover{
-    box-shadow: 0 0 18px 2px var(--soft);
+  .chip:hover{
+    border-color:var(--hover);
+    box-shadow:0 0 18px 2px color-mix(in srgb, var(--hover) 55%, transparent);
     filter: saturate(1.08);
   }
-  .god-chip[data-selected="true"]{
-    transform: scale(1.09);
-    border-color: var(--brand);
-    box-shadow: 0 0 20px 2px var(--soft), inset 0 0 0 3px rgba(0,0,0,.45);
+  .chip[data-selected="true"]{
+    transform: translateY(var(--dy,0px)) scale(calc(var(--sc,1) + .08));
+    border-color:var(--brand);
+    box-shadow:0 0 22px 3px color-mix(in srgb, var(--brand) 65%, transparent), inset 0 0 0 3px rgba(0,0,0,.45);
   }
 
-  /* Depth/oval illusion (JS updates CSS vars) */
-  .god-chip{
-    transform: translateY(var(--dy,0px)) scale(var(--sc,1));
-  }
-
-  /* Card */
+  /* ======= CARD ======= */
   .card{
     position:relative;
-    max-width: 840px;
-    width: min(96vw, 840px);
-    margin: 18px auto 24px;
-    border-radius:26px;
-    background: linear-gradient(180deg, #161616, #121212);
-    border: 2px solid var(--brand);
-    box-shadow:
-      0 16px 70px rgba(0,0,0,.55),
-      0 0 40px 2px rgba(255,225,141,.05);
-    padding: 26px 18px 14px;
+    width: var(--card-w);
+    margin: 14px auto 20px;
+    padding: var(--card-pad);
+    border-radius:24px;
+    border:2px solid var(--brand);
+    background: linear-gradient(180deg, rgba(18,18,18,.82), rgba(16,16,16,.76));
+    box-shadow: 0 16px 70px rgba(0,0,0,.55), 0 0 40px 2px rgba(255,225,141,.05);
+    z-index:10; /* always above the sticky rail */
   }
 
-  /* Title & bio */
   #god-logo{
-    width: 136px; height:136px; border-radius:50%;
+    width:132px; height:132px; border-radius:50%;
     object-fit:cover; object-position: top center;
-    border: 4px solid var(--brand);
+    border:4px solid var(--brand);
     box-shadow: 0 0 24px 2px var(--soft), inset 0 0 18px rgba(0,0,0,.5);
-    display:block; margin: 8px auto 10px;
+    display:block; margin: 6px auto 8px;
   }
   #god-title{
-    text-align:center;
-    font-family:Montserrat,Inter,sans-serif; font-weight:700; letter-spacing:2px;
-    font-size: clamp(1.3rem, 1.1rem + 1.2vw, 2.1rem);
+    text-align:center; font-family:Montserrat,Inter,sans-serif; font-weight:700; letter-spacing:2px;
+    font-size: clamp(1.35rem, 1.1rem + 1.2vw, 2.1rem);
     color: var(--brand);
     text-shadow: 0 2px 14px rgba(0,0,0,.35);
-    margin: 2px 0 4px;
+    margin: 0 0 4px;
   }
   #god-bio{
-    text-align:center;
-    color:#f3ebd7;
-    margin: 0 10px 6px;
-    font-size: clamp(.98rem, .92rem + .4vw, 1.12rem);
+    text-align:center; color:#f3ebd7;
+    margin: 0 10px 10px; font-size: clamp(.98rem, .92rem + .4vw, 1.12rem);
   }
 
-  /* Ruin tokens */
+  /* ======= RUIN TOKENS ======= */
   .tokens{
     display:flex; gap:10px; align-items:center; justify-content:center;
-    margin: 10px 0 12px;
-    font-weight:700;
-    color:#ffefae;
+    margin: 8px 0 10px;
+    font-weight:700; color:#ffefae;
   }
-  .coin{
-    width:22px; height:22px; display:inline-block;
-  }
-  .coin svg{ display:block; width:100%; height:100%; }
-  .coin .spin{ transform-origin:50% 50%; animation: spin 9s linear infinite; }
-  @keyframes spin{ to{ transform: rotate(1turn); } }
+  .coin{ width:22px; height:22px; display:inline-block }
+  .coin svg{ display:block; width:100%; height:100% }
+  .coin .spin{ transform-origin:50% 50%; animation: spin 9s linear infinite }
+  @keyframes spin{ to{ transform: rotate(1turn) } }
 
-  /* Chat history – transparent, readable */
+  /* ======= CHAT ======= */
   .history{
     position:relative;
     border:1px solid #29281e;
     border-radius:14px;
     padding: 12px 12px;
-    min-height: 140px;              /* ~ one inch on many mobiles */
+    min-height: var(--reply-min-h);
     max-height: clamp(220px, 42vh, 520px);
-    overflow-y:auto;
+    overflow-y: auto;
     background: rgba(5,5,5,.30);
     -webkit-backdrop-filter: blur(2.5px);
     backdrop-filter: blur(2.5px);
@@ -160,86 +145,79 @@
   .history .god{ color:var(--brand) }
 
   .loader{
-    text-align:center; user-select:none; letter-spacing:.25em;
-    margin: 6px 0 2px; color: var(--brand); font-size: 1.3rem;
-    animation: pulse .9s ease-in-out infinite alternate;
+    display:flex; align-items:center; justify-content:center;
+    gap:10px; margin: 8px 0 4px; height: 32px;
   }
-  @keyframes pulse{ to{ opacity:.4; } }
+  .rune{
+    width:28px; height:28px; border-radius:50%;
+    display:grid; place-items:center;
+    border:2px solid var(--brand);
+    color:#231f15; background: radial-gradient(circle at 30% 30%, #fff6d1, #ffd86b 45%, #b58623 100%);
+    box-shadow: 0 0 10px var(--soft), inset 0 0 6px rgba(0,0,0,.45);
+    animation: spin 1.6s linear infinite;
+    font-size: 16px; font-weight:700;
+  }
 
-  /* Input row – always fits on mobile */
+  /* ======= INPUT & MUSIC ======= */
   .input-row{
-    display:grid;
-    grid-template-columns: 1fr auto;
-    gap:10px;
-    margin: 14px 0 6px;
+    display:grid; grid-template-columns: 1fr auto; gap:10px;
+    margin: 12px 0 6px;
   }
   .input-row input{
     background:#1d1d1d; border:1px solid #2b2b2b; color:#fff;
-    border-radius:14px; font-size:1.02rem; padding:12px 14px;
-    min-width:0;
+    border-radius:14px; font-size:1.02rem; padding:12px 14px; min-width:0;
   }
   .input-row button{
     background: var(--brand); color:#231f15; border:0; border-radius:14px;
     font-weight:800; padding: 12px 18px; cursor:pointer;
     font-family:Montserrat,Inter,sans-serif;
     box-shadow: 0 6px 18px rgba(255,225,141,.20);
-    transition: transform .12s ease, box-shadow .12s ease, color .12s ease, background .12s ease;
+    transition: transform .12s ease, box-shadow .12s ease;
   }
   .input-row button:hover{ transform: translateY(-1px); box-shadow: 0 10px 22px rgba(255,225,141,.28) }
-  .input-row button:active{ transform: translateY(0) }
 
-  /* Music row */
   .music{
     display:flex; align-items:center; gap:12px;
     background:#121212; border:1px solid #26231a; border-radius:12px;
     padding: 8px 10px; margin: 6px 0 2px;
   }
+  .music .state{
+    min-width:58px; text-align:center; font-weight:700; color:#cbb78a;
+  }
   .music button{
-    background:none; border:0; font-size:1.45rem; cursor:pointer; color:var(--brand);
-    transition: transform .14s ease, text-shadow .14s ease;
+    background:none; border:0; font-size:1.45rem; cursor:pointer;
+    color:var(--brand);
+    transition: transform .14s ease, text-shadow .14s ease, color .12s ease;
   }
-  .music button.active, .music button:hover{
-    text-shadow: 0 0 12px var(--soft); transform: scale(1.08) rotate(-6deg);
-  }
-  .music input[type="range"]{
-    flex:1; accent-color: var(--brand);
-  }
+  .music button[aria-pressed="true"]{ color:#fff6dc; text-shadow: 0 0 12px var(--soft) }
+  .music input[type="range"]{ flex:1; accent-color: var(--brand) }
 
-  /* Footer breathing room */
-  .pad{ height:14px }
-
-  /* Mobile tuning */
+  /* ======= RESPONSIVE ======= */
   @media(max-width: 640px){
-    .god-rail{ --rail-h: 92px; gap:14px; padding: 8px 12px }
-    .god-chip{ width:74px; height:74px; border-width:2.5px }
-    .card{ width: min(96vw, 560px); padding: 22px 14px 12px; margin: 12px auto 18px }
-    #god-logo{ width:120px; height:120px }
+    .rail{ height: 96px; gap:14px; padding:8px 12px }
+    .chip{ width:80px; height:80px; border-width:2.5px }
+    .card{ width: min(96vw, 560px); margin-top: 12px; padding: 22px 14px 12px }
+    #god-logo{ width:118px; height:118px }
+    .input-row{ grid-template-columns: 1fr; }
+    .input-row button{ width:100% }
   }
 
-  /* Desktop lux */
   @media(min-width: 1024px){
-    .god-rail{ --rail-h: 116px }
-    .god-chip{ width:96px; height:96px }
-    .card{ border-width:2.5px }
+    .rail{ height: 116px }
+    .chip{ width:96px; height:96px }
   }
 
-  /* Reduced motion */
   @media (prefers-reduced-motion: reduce){
-    .god-rail{ scroll-behavior:auto }
-    .coin .spin{ animation:none }
+    .coin .spin, .rune{ animation: none }
   }
 </style>
 </head>
 <body>
 
-<!-- Top rotating carousel -->
 <header class="pantheon-bar">
-  <div id="rail" class="god-rail" aria-label="Choose your guide">
-    <!-- chips injected by JS -->
-  </div>
+  <div id="rail" class="rail" aria-label="Choose your guide"></div>
 </header>
 
-<!-- Main Card -->
 <main class="card" id="card">
   <img id="god-logo" alt="Guide portrait" src="" />
   <div id="god-title"></div>
@@ -247,7 +225,7 @@
 
   <div class="tokens" aria-live="polite">
     <span class="coin" aria-hidden="true">
-      <!-- Gold coin with rune ᚱ -->
+      <!-- Spinning gold coin with rune ᚱ -->
       <svg viewBox="0 0 64 64" role="img" aria-label="Ruin coin">
         <defs>
           <radialGradient id="g" cx="50%" cy="50%" r="60%">
@@ -267,27 +245,27 @@
   </div>
 
   <section id="history" class="history" aria-live="polite"></section>
-  <div id="loader" class="loader" hidden>ᚨ ᛟ ᚱ ᛃ ᚺ ᚠ ᚾ ᛏ</div>
+
+  <div id="loader" class="loader" hidden>
+    <span class="rune" aria-hidden="true">ᚠ</span>
+  </div>
 
   <form id="chat-form" class="input-row" autocomplete="off">
-    <input id="chat-input" class="chat-input" placeholder="Ask your guide anything…" />
+    <input id="chat-input" placeholder="Ask your guide anything…" />
     <button type="submit" id="sendBtn">Send</button>
   </form>
 
   <div class="music" id="music">
-    <button id="musicPlay" aria-label="Play or pause music">🎵</button>
+    <div class="state" id="musicState">Off</div>
+    <button id="musicBtn" aria-pressed="false" aria-label="Toggle music">🔇</button>
     <input id="musicVol" type="range" min="0" max="1" step="0.01" value="0.25" />
   </div>
-
-  <div class="pad"></div>
 </main>
 
 <audio id="bgAudio" preload="auto" loop></audio>
 
 <script>
-/* -----------------------------
-   Data
-------------------------------*/
+/* ---------- Data ---------- */
 const GODS = [
   { key:'odin', name:'Odin',     assistantId:'asst_D0BXH8CTZycU0ku9PjkUmW3T', avatar:'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/mimir-icon.jpg?v=1752795592', color:'#1c64ff', music:'https://cdn.pixabay.com/audio/2022/12/19/audio_12b0e71fa2.mp3', bio:'Wisdom, vision, and strategy—the Allfather.' },
   { key:'thor', name:'Thor',     assistantId:'asst_JNie4vDtknbropUsbuXF4OpG', avatar:'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/Thor_-God-of-Thunder_-Icon.jpg?v=1752622811', color:'#e14b3d', music:'https://cdn.pixabay.com/audio/2022/11/16/audio_125b5cfb62.mp3', bio:'Strength, action, and resilience—the thunder god.' },
@@ -300,167 +278,169 @@ const GODS = [
   { key:'coach',name:'Valhalla Coach', assistantId:'asst_0b7Qdwscxs168I4YFX2gKSUd', avatar:'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/Valhalla-Coach-Icon.jpg?v=1752623891',color:'#ffe18d', music:'https://cdn.pixabay.com/audio/2023/01/31/audio_12dbfc3fa1.mp3', bio:'Motivation, discipline, and action—your ultimate Viking coach.' }
 ];
 
-/* -----------------------------
-   State / Elements
-------------------------------*/
-const qs = s=>document.querySelector(s);
-const rail = qs('#rail');
-const card = qs('#card');
-const logo = qs('#god-logo');
-const titleEl = qs('#god-title');
-const bioEl = qs('#god-bio');
-const hist = qs('#history');
-const loader = qs('#loader');
-const form = qs('#chat-form');
-const input = qs('#chat-input');
-const sendBtn = qs('#sendBtn');
-const musicRow = qs('#music');
-const musicBtn = qs('#musicPlay');
-const musicVol = qs('#musicVol');
-const audio = qs('#bgAudio');
+/* ---------- Elements ---------- */
+const rail = document.getElementById('rail');
+const card = document.getElementById('card');
+const logo = document.getElementById('god-logo');
+const titleEl = document.getElementById('god-title');
+const bioEl = document.getElementById('god-bio');
+const hist = document.getElementById('history');
+const loader = document.getElementById('loader');
+const form = document.getElementById('chat-form');
+const input = document.getElementById('chat-input');
+const sendBtn = document.getElementById('sendBtn');
+
+const music = document.getElementById('music');
+const musicBtn = document.getElementById('musicBtn');
+const musicState = document.getElementById('musicState');
+const musicVol = document.getElementById('musicVol');
+const audio = document.getElementById('bgAudio');
 
 const params = new URLSearchParams(location.search);
-const fromURL = params.get('god');
-let selected = GODS.find(g=>g.key===fromURL) || GODS.find(g=>g.key==='coach');
-
+const fromURL = (params.get('god')||'').toLowerCase();
+let selected = GODS.find(g=>g.key.toLowerCase()===fromURL) || GODS.find(g=>g.key==='coach');
 let chatHistory = [];
 
-/* -----------------------------
-   Theme & render
-------------------------------*/
+/* ---------- Helpers ---------- */
 function setTheme(color){ document.documentElement.style.setProperty('--brand', color || '#ffe18d'); }
+function hexToSoft(hex){ try{ const c=hex.replace('#',''); const r=parseInt(c.slice(0,2),16),g=parseInt(c.slice(2,4),16),b=parseInt(c.slice(4,6),16); return `rgba(${r},${g},${b},0.38)`; }catch{ return 'rgba(255,225,141,.38)'; }}
 
-function renderRail(){
+/* ---------- Build rail ---------- */
+const isDesktop = matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+function buildRail(){
   rail.innerHTML='';
-  // Duplicate items for infinite scroll loop
-  const list = [...GODS, ...GODS];
-  list.forEach((g, i)=>{
+  const list = isDesktop ? [...GODS, ...GODS] : [...GODS]; // infinite feel only on desktop
+  list.forEach(g=>{
     const chip = document.createElement('div');
-    chip.className='god-chip';
+    chip.className='chip';
+    chip.title = g.name;
     chip.dataset.key = g.key;
     chip.dataset.selected = (g.key===selected.key);
-    chip.title = g.name;
-    chip.style.setProperty('--sc', g.key===selected.key ? 1.09 : 1);
+    chip.style.setProperty('--hover', g.color);
     chip.innerHTML = `<img alt="${g.name}" src="${g.avatar}">`;
-    chip.addEventListener('mouseenter', ()=>chip.style.boxShadow=`0 0 18px 2px ${hexToSoft(g.color)}`);
-    chip.addEventListener('mouseleave', ()=>chip.style.boxShadow='0 0 0 0 var(--soft)');
+    chip.addEventListener('mouseenter', ()=> chip.style.boxShadow=`0 0 18px 2px ${hexToSoft(g.color)}`);
+    chip.addEventListener('mouseleave', ()=> chip.style.boxShadow='none');
     chip.addEventListener('click', ()=> selectGod(g.key));
     rail.appendChild(chip);
   });
   centerOnSelected();
+  applyTaper(); // initial taper
 }
 
-function renderCard(){
-  logo.src = selected.avatar;
-  titleEl.textContent = selected.name;
-  bioEl.textContent = selected.bio;
-  setTheme(selected.color);
-  input.placeholder = `Ask ${selected.name} anything…`;
-  // music
-  if(selected.music){
-    musicRow.style.display='';
-    audio.src = selected.music;
-    audio.volume = parseFloat(musicVol.value||'0.25');
-    audio.pause();
-    musicBtn.classList.remove('active');
-  }else{
-    musicRow.style.display='none';
-    audio.pause();
-  }
-}
-
-function renderHistory(){
-  hist.innerHTML = chatHistory.map(m=>(
-    `<div class="msg ${m.from==='user'?'user':'god'}">${marked.parse(m.text || '')}</div>`
-  )).join('');
-  hist.scrollTop = hist.scrollHeight;
-}
-
-function selectGod(key){
-  const g = GODS.find(x=>x.key===key) || selected;
-  selected = g;
+/* ---------- Taper/oval: scale + fade at ends ---------- */
+function applyTaper(){
+  const center = rail.scrollLeft + rail.clientWidth/2;
+  const maxDist = rail.clientWidth * .62; // distance to start shrinking
   [...rail.children].forEach(ch=>{
-    ch.dataset.selected = (ch.dataset.key===g.key);
+    const mid = ch.offsetLeft + ch.clientWidth/2;
+    const dist = Math.abs(mid - center);
+    const t = Math.min(dist / maxDist, 1);   // 0 at center .. 1 at far edge
+    // progressive shrink so last 2-3 chips are clearly smaller
+    const scale = 1 - 0.22 * Math.pow(t, 1.15);      // ~ -22% at far edge
+    const opacity = 1 - 0.35 * Math.pow(t, 1.2);     // ~ -35% at far edge
+    const blur = 2 * Math.pow(t, 1.1);               // subtle blur at edges
+    const dy = isDesktop ? (6 * Math.pow(t, 1.2)) : 0; // vertical curve only on desktop
+
+    ch.style.setProperty('--sc', scale.toFixed(3));
+    ch.style.setProperty('--op', opacity.toFixed(3));
+    ch.style.setProperty('--blur', `blur(${blur.toFixed(2)}px)`);
+    ch.style.setProperty('--dy', dy.toFixed(1)+'px');
   });
-  renderCard();
-  chatHistory = [];
-  renderHistory();
-  persistThreadFor(g.key); // ensure thread
 }
 
-/* -----------------------------
-   Infinite carousel (smooth)
-------------------------------*/
-let auto = { playing:true, speed: 0.25 }; // px per frame
-let rafId = null;
-
-function loop(){
-  if(auto.playing){
-    rail.scrollLeft += auto.speed;
-    // loop seamlessly
-    if(rail.scrollLeft > rail.scrollWidth/2){
-      rail.scrollLeft = 0;
-    }
+/* ---------- Desktop auto-glide; Mobile no autoplay (prevents jitter) ---------- */
+let rafId=null;
+function startDesktopAuto(){
+  if(!isDesktop) return;
+  function tick(){
+    rail.scrollLeft += 0.25; // slow glide
+    // seamless loop halfway
+    if(rail.scrollLeft > rail.scrollWidth/2){ rail.scrollLeft = 0; }
+    applyTaper();
+    rafId = requestAnimationFrame(tick);
   }
-  applyDepth();
-  rafId = requestAnimationFrame(loop);
+  rafId = requestAnimationFrame(tick);
 }
+// Pause auto on interaction
+if(isDesktop){
+  ['mouseenter','mousedown','focusin','touchstart'].forEach(ev=>{
+    rail.addEventListener(ev, ()=> { if(rafId){ cancelAnimationFrame(rafId); rafId=null; } }, {passive:true});
+  });
+  ['mouseleave','mouseup','blur','touchend'].forEach(ev=>{
+    rail.addEventListener(ev, ()=> { if(!rafId) startDesktopAuto(); }, {passive:true});
+  });
+}
+// Mobile & desktop both: update taper on scroll (throttled with rAF)
+let scrollTicking=false;
+rail.addEventListener('scroll', ()=>{
+  if(!scrollTicking){
+    scrollTicking=true;
+    requestAnimationFrame(()=>{ applyTaper(); scrollTicking=false; });
+  }
+}, {passive:true});
 
 function centerOnSelected(){
-  // scroll to first instance of selected
   const chip = [...rail.children].find(el=>el.dataset.key===selected.key);
   if(chip){
     rail.scrollLeft = chip.offsetLeft - (rail.clientWidth - chip.clientWidth)/2;
   }
 }
 
-function applyDepth(){
-  // Elliptical illusion: scale & vertical drift by distance to center
-  const center = rail.scrollLeft + rail.clientWidth/2;
-  [...rail.children].forEach(ch=>{
-    const mid = ch.offsetLeft + ch.clientWidth/2;
-    const dist = Math.abs(mid - center);
-    const t = Math.min(dist / (rail.clientWidth * .6), 1); // 0 center .. 1 edge
-    const sc = 1 - t*0.12;
-    const dy = (Math.sin(t*Math.PI) * 10); // small dip
-    ch.style.setProperty('--sc', sc.toFixed(3));
-    ch.style.setProperty('--dy', dy.toFixed(1)+'px');
-  });
+/* ---------- Select & render ---------- */
+function renderCard(){
+  logo.src = selected.avatar;
+  titleEl.textContent = selected.name;
+  bioEl.textContent = selected.bio;
+  setTheme(selected.color);
+  input.placeholder = `Ask ${selected.name} anything…`;
+
+  // Mark selection in rail
+  [...rail.children].forEach(ch=> ch.dataset.selected = (ch.dataset.key===selected.key));
+
+  // music
+  if(selected.music){
+    music.style.display='';
+    audio.src = selected.music;
+    audio.volume = parseFloat(musicVol.value||'0.25');
+    audio.pause();
+    musicBtn.setAttribute('aria-pressed','false');
+    musicBtn.textContent = '🔇';
+    musicState.textContent = 'Off';
+  }else{
+    music.style.display='none';
+    audio.pause();
+  }
+}
+function renderHistory(){
+  hist.innerHTML = chatHistory.map(m=>(
+    `<div class="msg ${m.from==='user'?'user':'god'}">${marked.parse(m.text || '')}</div>`
+  )).join('');
+  hist.scrollTop = hist.scrollHeight;
+}
+function selectGod(key){
+  const g = GODS.find(x=>x.key===key) || selected;
+  selected = g;
+  renderCard();
+  chatHistory = [];
+  renderHistory();
+  getOrCreateThread(g.key); // warm thread
 }
 
-// Pause on interaction
-['mouseenter','mousedown','touchstart','focusin'].forEach(ev=>{
-  rail.addEventListener(ev, ()=> { auto.playing = false; }, {passive:true});
-});
-['mouseleave','mouseup','touchend','blur'].forEach(ev=>{
-  rail.addEventListener(ev, ()=> { auto.playing = true; }, {passive:true});
-});
-
-/* -----------------------------
-   Threads & chat
-------------------------------*/
-function storageKeyFor(god){ return `valhalla_thread_${god}`; }
-
-async function getOrCreateThread(godKey){
-  const k = storageKeyFor(godKey);
+/* ---------- Threads & chat ---------- */
+function storageKey(g){ return `valhalla_thread_${g}`; }
+async function getOrCreateThread(g){
+  const k = storageKey(g);
   const existing = localStorage.getItem(k);
   if(existing && existing.startsWith('thread_')) return existing;
-
   try{
-    const res = await fetch('https://odin-assistant-starter.vercel.app/api/start-thread',{method:'POST',headers:{'Content-Type':'application/json'}});
+    const res = await fetch('https://odin-assistant-starter.vercel.app/api/start-thread', {method:'POST', headers:{'Content-Type':'application/json'}});
     const data = await res.json();
-    if(data.threadId && data.threadId.startsWith('thread_')){
-      localStorage.setItem(k, data.threadId);
-      return data.threadId;
-    }
+    if(data.threadId && data.threadId.startsWith('thread_')){ localStorage.setItem(k, data.threadId); return data.threadId; }
   }catch(e){ console.error(e); }
   return null;
 }
-function persistThreadFor(godKey){ getOrCreateThread(godKey); }
-
-function showLoader(show){
-  loader.hidden = !show;
-}
+function showLoader(show){ loader.hidden = !show; }
 
 form.addEventListener('submit', async (e)=>{
   e.preventDefault();
@@ -471,16 +451,15 @@ form.addEventListener('submit', async (e)=>{
 
   chatHistory.push({from:'user', text:t});
   renderHistory();
-  input.value = '';
-  showLoader(true);
+  input.value='';
 
+  showLoader(true);
   try{
     const threadId = await getOrCreateThread(selected.key);
-    if(!threadId) throw new Error('thread');
+    if(!threadId) throw new Error('no-thread');
 
-    const res = await fetch('https://odin-assistant-starter.vercel.app/api/chat',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
+    const res = await fetch('https://odin-assistant-starter.vercel.app/api/chat', {
+      method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ assistantId: selected.assistantId, message: t, threadId })
     });
     const data = await res.json();
@@ -495,70 +474,39 @@ form.addEventListener('submit', async (e)=>{
   }
 });
 
-/* -----------------------------
-   Music
-------------------------------*/
-let playing = false;
+/* ---------- Music UX (clear On/Off) ---------- */
+let playing=false;
 musicBtn.addEventListener('click', ()=>{
-  if(!playing){ audio.muted=false; audio.play(); playing=true; musicBtn.classList.add('active'); }
-  else { audio.pause(); playing=false; musicBtn.classList.remove('active'); }
+  playing = !playing;
+  if(playing){
+    audio.muted=false; audio.play().catch(()=>{ playing=false; });
+  }else{
+    audio.pause();
+  }
+  musicBtn.setAttribute('aria-pressed', playing ? 'true':'false');
+  musicBtn.textContent = playing ? '🎵' : '🔇';
+  musicState.textContent = playing ? 'On' : 'Off';
 });
 musicVol.addEventListener('input', e=> audio.volume = parseFloat(e.target.value||'0.25') );
 
-/* -----------------------------
-   Ruin tokens (daily)
-------------------------------*/
+/* ---------- Ruin tokens (daily) ---------- */
 const DAILY_LIMIT=10, TOKEN_KEY="valhalla_tokens", DATE_KEY="valhalla_last_date";
-const tokenEl = qs('#ruin-tokens');
+const tokenEl = document.getElementById('ruin-tokens');
 function today(){ return new Date().toISOString().slice(0,10); }
-function resetDaily(){
-  localStorage.setItem(TOKEN_KEY, DAILY_LIMIT);
-  localStorage.setItem(DATE_KEY, today());
-  updateTokens();
-}
-function updateTokens(){
-  tokenEl.textContent = parseInt(localStorage.getItem(TOKEN_KEY)||'0');
-}
-function checkReset(){
-  const last = localStorage.getItem(DATE_KEY);
-  if(last !== today()) resetDaily();
-  updateTokens();
-}
-function decrementToken(){
-  let t = parseInt(localStorage.getItem(TOKEN_KEY)||'0');
-  if(t>0){ t--; localStorage.setItem(TOKEN_KEY,t); }
-  updateTokens();
-  return t;
-}
+function resetDaily(){ localStorage.setItem(TOKEN_KEY, DAILY_LIMIT); localStorage.setItem(DATE_KEY, today()); updateTokens(); }
+function updateTokens(){ tokenEl.textContent = parseInt(localStorage.getItem(TOKEN_KEY)||'0'); }
+function checkReset(){ const last = localStorage.getItem(DATE_KEY); if(last !== today()) resetDaily(); updateTokens(); }
+function decrementToken(){ let t=parseInt(localStorage.getItem(TOKEN_KEY)||'0'); if(t>0){ t--; localStorage.setItem(TOKEN_KEY,t); } updateTokens(); return t; }
 
-/* -----------------------------
-   Utils
-------------------------------*/
-function hexToSoft(hex){
-  // convert #rrggbb to soft glow rgba string
-  try{
-    const c = hex.replace('#','');
-    const r=parseInt(c.substring(0,2),16), g=parseInt(c.substring(2,4),16), b=parseInt(c.substring(4,6),16);
-    return `rgba(${r},${g},${b},0.40)`;
-  }catch(e){ return 'rgba(255,225,141,.38)'; }
-}
-
-/* -----------------------------
-   Init
-------------------------------*/
-renderRail();
-renderCard();
-renderHistory();
-checkReset();
-centerOnSelected();
-applyDepth();
-loop(); // start carousel animation
-
-// Keep the card centered visual stack (carousel never overlaps)
-card.style.zIndex = 10;
-
-// focus the input for quick typing
-setTimeout(()=> input.focus(), 150);
+/* ---------- Init ---------- */
+(function init(){
+  buildRail();
+  renderCard();
+  renderHistory();
+  checkReset();
+  if(isDesktop) startDesktopAuto();
+  setTimeout(()=> input.focus(), 150);
+})();
 </script>
 </body>
 </html>
