@@ -1,28 +1,26 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-<meta charset="utf-8"/>
-<title>Valhalla Pantheon – Valhalla Coach</title>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<link href="https://fonts.googleapis.com/css?family=Montserrat:700,400|Inter:400,700&amp;display=swap" rel="stylesheet"/>
-<style>
-    #god-logo {
-  width: 120px;
-  height: 120px;
-  object-position: top center;
-  object-fit: cover;
-  border-radius: 50%;
-  margin-top: 32px;
-  margin-bottom: 8px;
-  border: 3px solid var(--default-color, #ffe18d);
-  box-shadow: 0 0 12px 2px var(--default-color, #ffe18d33);
-}
-  :root {
-    --default-color: #ffe18d;
+  <!-- Markdown renderer (unchanged) -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <meta charset="utf-8"/>
+  <title>Valhalla Pantheon – Valhalla Coach</title>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400|Inter:400,700&display=swap" rel="stylesheet"/>
+
+  <style>
+  /* ============ THEME TOKENS & BASE ============ */
+  :root{
+    --default-color:#ffe18d;
     --bg: linear-gradient(135deg, #141414 0%, #232323 100%);
-    --font-main: 'Montserrat', 'Inter', sans-serif;
+    --font-main:'Montserrat','Inter',sans-serif;
+
+    /* New sizing tokens to make everything feel bigger and scale well */
+    --card-w: clamp(560px, 78vw, 980px);
+    --card-min-h: clamp(640px, 72vh, 900px);
+    --title-size: clamp(1.8rem, 2.4vw, 3rem);
+    --bio-size: clamp(1.05rem, 1.3vw, 1.2rem);
+    --chat-size: clamp(1rem, 1.2vw, 1.15rem);
   }
   body {
     background: var(--bg);
@@ -31,132 +29,167 @@
     color: #f8e6c3;
     margin: 0; padding: 0;
     display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+    padding-bottom: 64px;
   }
+
+  /* ============ CARD ============ */
   .valhalla-card {
-    background: rgba(25,25,25,0.97);
+    background: radial-gradient(1200px 700px at 50% -10%, rgba(255,255,255,.05), transparent 60%), rgba(25,25,25,0.97);
     border-radius: 32px;
-    box-shadow: 0 8px 48px 0 #000a;
-    max-width: 520px;
+    box-shadow: 0 8px 48px 0 rgba(0,0,0,.65);
+    max-width: var(--card-w);
     width: 98vw;
     margin: 48px auto 0 auto;
     padding: 32px 24px 16px 24px;
-    min-height: 640px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    min-height: var(--card-min-h);
+    display: flex; flex-direction: column; align-items: center;
     border: 2.5px solid var(--default-color);
     transition: box-shadow 0.18s, border-color 0.22s;
-    position: relative;
-    animation: fadeIn 1s;
+    position: relative; isolation:isolate;
+    animation: fadeIn 0.9s ease;
+    box-shadow:
+      0 18px 80px color-mix(in srgb, var(--default-color) 18%, #000),
+      inset 0 0 80px rgba(255,255,255,.03);
   }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(32px);}
-    to   { opacity: 1; transform: translateY(0);}
+  @keyframes fadeIn { from{opacity:0; transform:translateY(24px);} to{opacity:1; transform:translateY(0);} }
+
+  #god-logo {
+    width: 132px; height: 132px;
+    object-position: top center; object-fit: cover;
+    border-radius: 50%;
+    margin-top: 28px; margin-bottom: 10px;
+    border: 3px solid var(--default-color, #ffe18d);
+    box-shadow: 0 0 14px 2px color-mix(in srgb, var(--default-color) 38%, transparent);
   }
+
+  .god-title {
+    font-size: var(--title-size);
+    letter-spacing: 2px; text-align: center; font-weight: 700;
+    color: var(--default-color);
+    margin: 12px 0 6px 0;
+    text-shadow: 0 2px 16px #0002;
+    transition: color .18s ease;
+  }
+  .god-bio {
+    font-size: var(--bio-size);
+    margin-bottom: 12px; text-align: center; color: #f3ebd7; min-height: 38px;
+  }
+
+  /* ============ AVATAR RAIL + PADDLES ============ */
+  .god-rail-wrap{
+    position: sticky; top: 0; z-index: 4;
+    background: linear-gradient(180deg, rgba(25,25,25,.9), rgba(25,25,25,.85));
+    backdrop-filter: blur(4px);
+    box-shadow: 0 2px 14px 0 #0006;
+    width: 100%;
+    display:flex; flex-direction:column; align-items:center;
+  }
+  .god-nav{
+    display:flex; gap:8px; justify-content: space-between;
+    width: min(96vw, var(--card-w));
+    padding: 6px 0 0;
+  }
+  .god-nav button{
+    background:#111; color:var(--default-color);
+    border:1px solid var(--default-color);
+    border-radius:10px; padding:6px 10px; cursor:pointer;
+    font-weight:700;
+    transition: transform .15s ease, background .15s ease, color .15s ease;
+  }
+  .god-nav button:hover{ transform: translateY(-1px); background:#181818; color:#fff6dc; }
+
   .god-selector-bar {
     display: flex; gap: 18px; justify-content: center; align-items: center;
-    margin: 0 0 8px 0; flex-wrap: wrap; overflow-x: auto;
-    width: 100vw; max-width: 540px; padding: 16px 0;
-    background: rgba(25,25,25,0.87);
+    margin: 4px 0 10px 0; flex-wrap: nowrap; overflow-x: auto;
+    width: min(96vw, var(--card-w)); padding: 12px 6px 14px 6px;
+    scroll-snap-type: x mandatory;
     border-radius: 0 0 18px 18px;
-    box-shadow: 0 2px 14px 0 #0004;
-    z-index: 3; position: sticky; top: 0;
   }
+  .god-selector-bar::-webkit-scrollbar{ height: 8px; }
+  .god-selector-bar::-webkit-scrollbar-thumb{ background:#2b2b2b; border-radius:8px; }
   .god-avatar {
-    border: 3px solid #333; border-radius: 100px; width: 72px; height: 72px;
+    border: 3px solid #333; border-radius: 100px; width: 78px; height: 78px;
     background: #000; cursor: pointer;
     transition: border-color 0.2s, box-shadow 0.18s, transform 0.17s;
     overflow: hidden; display: flex; align-items: center; justify-content: center;
+    scroll-snap-align: center;
+    outline: none;
   }
   .god-avatar.selected {
     border-width: 3.5px;
-    box-shadow: 0 0 18px 2px var(--default-color, #ffe18d60);
-    transform: scale(1.11);
     border-color: var(--default-color, #ffe18d) !important;
+    box-shadow: 0 0 18px 2px color-mix(in srgb, var(--default-color) 50%, transparent);
+    transform: scale(1.11);
+  }
+  .god-avatar:focus{
+    outline: 2px solid var(--default-color);
+    outline-offset: 2px;
   }
   .god-avatar img {
-    width: 64px; height: 64px;
+    width: 68px; height: 68px;
     object-position: top center; object-fit: cover; border-radius: 50%; background: #181818;
   }
-  .god-title {
-    font-size: 2.2rem; font-family: var(--font-main); margin: 18px 0 6px 0;
-    color: var(--default-color);
-    letter-spacing: 2px; text-align: center; font-weight: 700;
-    transition: color 0.18s;
-    text-shadow: 0 2px 16px #0002;
-  }
-  .god-bio {
-    font-size: 1.13rem; margin-bottom: 12px; text-align: center; color: #f3ebd7; min-height: 38px;
-  }
+
+  /* ============ CHAT ============ */
   .chat-history {
-    flex: 1 1 auto; width: 100%; min-height: 250px; max-height: 280px;
+    flex: 1 1 auto; width: 100%; min-height: 260px; max-height: none;
     overflow-y: auto;
     background: rgba(16,16,16,0.87);
     border-radius: 17px;
     margin-bottom: 12px;
     padding: 14px 13px;
-    font-size: 1.13rem;
-    box-shadow: 0 2px 14px 0 #0002;
+    font-size: var(--chat-size);
+    box-shadow: 0 2px 14px 0 #0002, 0 4px 36px 2px color-mix(in srgb, var(--default-color) 22%, transparent);
     transition: box-shadow 0.18s;
     border: 1.5px solid #29281e;
   }
-  .chat-history:hover {
-    box-shadow: 0 4px 36px 2px var(--default-color, #ffe18d66), 0 1px 7px #0002;
-  }
-  .chat-msg { margin-bottom: 8px; padding: 0.3em 0; }
+  .chat-msg { margin-bottom: 10px; padding: 0.25em 0; }
   .chat-msg.user { text-align: right; color: #c8f7ff;}
   .chat-msg.god { text-align: left; color: var(--default-color);}
   .chat-msg.god strong { color: var(--default-color); font-weight: bold; }
   .chat-msg.god em { color: #ffdea0; font-style: italic;}
   .chat-msg.god ul { margin: 8px 0 8px 22px; padding-left: 0;}
-  .chat-msg.god li { margin-bottom: 3px; }
+  .chat-msg.god li { margin-bottom: 4px; }
+
   .chat-input-row {
-    display: flex; width: 100%; margin-top: 32px; gap: 10px;
+    display: flex; width: 100%; margin-top: 24px; gap: 10px;
   }
   .chat-input {
     flex: 1;
-    padding: 10px 14px;
-    border-radius: 22px;
-    border: none;
-    font-size: 1.15rem;
+    padding: 12px 16px;
+    border-radius: 22px; border: none;
+    font-size: 1.1rem;
     background: #222;
     color: #fff9ec;
     font-family: 'Inter',sans-serif;
-    outline: none;
-    box-shadow: 0 1px 8px #0004;
+    outline: none; box-shadow: 0 1px 8px #0004;
   }
   .chat-send-btn {
     background: var(--default-color, #ffe18d);
     color: #232323;
-    border: none;
-    border-radius: 24px;
-    padding: 8px 20px;
-    font-size: 1.16rem;
-    cursor: pointer;
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 700;
-    transition: background 0.16s, color 0.12s, box-shadow 0.15s;
+    border: none; border-radius: 24px;
+    padding: 10px 20px;
+    font-size: 1.06rem; cursor: pointer;
+    font-family: 'Montserrat', sans-serif; font-weight: 700;
+    transition: background 0.16s, color 0.12s, box-shadow 0.15s, transform .12s ease;
     box-shadow: 0 1px 8px #0003;
   }
-  .chat-send-btn:hover {
-    background: #fff6dc;
-    color: var(--default-color, #ffe18d);
-  }
+  .chat-send-btn:hover { background: #fff6dc; color: var(--default-color, #ffe18d); transform: translateY(-1px); }
+
   .loader-runic {
-    margin: 0 auto 0.2em auto; font-size: 1.85em; letter-spacing: 0.19em;
+    margin: 4px auto 0.2em auto; font-size: 1.85em; letter-spacing: 0.19em;
     color: var(--default-color, #ffe18d);
     animation: spinRunes 1.3s linear infinite;
-    font-family: 'Inter',sans-serif;
-    text-align: center;
-    user-select: none;
+    font-family: 'Inter',sans-serif; text-align: center; user-select: none;
   }
   @keyframes spinRunes { 100% { transform: rotate(1turn); } }
+
+  /* ============ MUSIC ============ */
   .music-player-row {
     width: 99%; display: flex; align-items: center; justify-content: center;
     margin: 12px auto 0 auto; gap: 12px;
-    background: #181818;
-    border-radius: 13px;
-    padding: 7px 0;
+    background: #181818; border-radius: 13px; padding: 7px 8px;
+    border:1px solid #2a2a2a;
   }
   .music-play-btn {
     background: none; border: none;
@@ -166,549 +199,436 @@
     margin-right: 7px;
   }
   .music-play-btn.active, .music-play-btn:hover {
-  background: none;
-  box-shadow: 0 0 8px #ffe18d;
-    color: #fff6dc;
-    transform: scale(1.12) rotate(-7deg);
+    box-shadow: 0 0 8px #ffe18d; color: #fff6dc; transform: scale(1.12) rotate(-7deg);
   }
-  .music-slider {
-    accent-color: var(--default-color, #ffe18d);
-    margin-left: 3px;
+  .music-slider { accent-color: var(--default-color, #ffe18d); margin-left: 3px; }
+  .music-slider::-webkit-slider-thumb {
+    background: #ffe18d; border: none; height: 14px; width: 14px; border-radius: 50%;
+    cursor: pointer; margin-top: -4px;
   }
+  .music-slider::-webkit-slider-runnable-track {
+    background: #444; height: 6px; border-radius: 3px;
+  }
+
+  /* ============ SMALL SCREENS ============ */
   @media (max-width: 640px) {
-    .valhalla-card { max-width: 99vw; min-height: 440px; }
-    .god-title { font-size: 1.42rem;}
-    .chat-history { max-height: 150px; font-size: 1.02rem;}
-    .chat-input { font-size: 1.02rem;}
-    .music-player-row { font-size: 1.12em; }
+    .valhalla-card { max-width: 99vw; min-height: 520px; padding-top: 40px; margin-bottom: 40px; }
+    .god-title { font-size: clamp(1.42rem, 4.2vw, 2rem); }
+    .chat-input { font-size: 1.02rem; }
+    .music-player-row { font-size: 1.02em; }
+    .god-selector-bar { padding: 10px; -webkit-overflow-scrolling: touch; }
+    .god-avatar { margin: 0 6px; }
   }
-
-/* Final Responsive Polish */
-@media (max-width: 640px) {
-  .valhalla-card {
-    padding-top: 48px;
-    margin-bottom: 48px;
-    max-width: 96vw;
-  }
-  .god-selector-bar {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    padding: 8px;
-  }
-  .god-avatar {
-    margin: 0 6px;
-  }
-  #ruin-token-display, #ritual-checklist, #thor-game-btn, #buy-tokens-btn {
-    margin-top: 18px;
-    margin-bottom: 18px;
-  }
-}
-body {
-  padding-bottom: 64px;
-}
-#thor-game-btn:hover {
-  background: #ff6666;
-  transform: scale(1.05);
-  transition: all 0.2s;
-}
-
-.music-slider::-webkit-slider-thumb {
-  background: #ffe18d;
-  border: none;
-  height: 14px;
-  width: 14px;
-  border-radius: 50%;
-  cursor: pointer;
-  margin-top: -4px;
-}
-.music-slider::-webkit-slider-runnable-track {
-  background: #444;
-  height: 6px;
-  border-radius: 3px;
-}
-</style>
+  </style>
 </head>
+
 <body>
-<!-- 🛡 Rituals Explanation Block -->
-<div class="god-selector-bar" id="god-selector"></div>
-<div class="valhalla-card" id="valhalla-card">
-<img alt="God Logo" id="god-logo" src=""/>
-<div class="god-title" id="god-title"></div>
-<div class="god-bio" id="god-bio"></div><!--== Ruin Token Display ==--><div id="ruin-token-display" style="color: #FFD700; font-weight: bold; margin-bottom: 10px;"><span style="font-size: 1.2em; margin-right: 6px;">🪙</span> Ruin Tokens Remaining: <span id="ruin-tokens">10</span></div>
-<div class="chat-history" id="chat-history"></div>
-<div class="loader-runic" id="loader-runic" style="display:none;">ᚨ ᛟ ᚱ ᛃ ᚺ ᚠ ᚾ ᛏ</div>
-<form autocomplete="off" class="chat-input-row" id="chat-form">
-<input class="chat-input" id="chat-input" placeholder="Ask your guide anything..."/>
-<button class="chat-send-btn" type="submit">Send</button>
-</form>
-<div class="music-player-row" id="music-player">
-<button class="music-play-btn" id="musicPlayBtn">🎵</button>
-<input class="music-slider" id="musicSlider" max="1" min="0" step="0.01" type="range" value="0.25"/>
-</div><!--== Daily Ritual Checklist ==--><!--== Thor Game Button ==--><button id="thor-game-btn" style="margin: 12px auto; background: #e14b3d; color: #fff; padding: 10px 18px; font-weight: bold; border: none; border-radius: 12px; cursor: pointer; display: block;">⚔️ Play Thor's Game</button><!--== Buy More Tokens Button ==--><button id="buy-tokens-btn" onclick="window.location.href='/products/ruin-tokens-pack'" style="margin: 10px auto; background: #1a1a1a; color: #FFD700; padding: 10px 16px; border: 2px solid #FFD700; border-radius: 10px; font-weight: bold; display: block;">💰 Buy More Tokens</button></div>
-<audio id="musicAudio" loop="" preload="auto"></audio>
-<script>
-    const GODS = [
-  {
-    key: 'odin',
-    name: 'Odin',
-    assistantId: 'asst_D0BXH8CTZycU0ku9PjkUmW3T',
-    avatar: 'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/mimir-icon.jpg?v=1752795592',
-    color: '#1c64ff',
-    music: 'https://cdn.pixabay.com/audio/2022/12/19/audio_12b0e71fa2.mp3',
-    bio: 'Wisdom, vision, and strategy—the Allfather.'
-  },
-  {
-    key: 'thor',
-    name: 'Thor',
-    assistantId: 'asst_JNie4vDtknbropUsbuXF4OpG',
-    avatar: 'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/Thor_-God-of-Thunder_-Icon.jpg?v=1752622811',
-    color: '#e14b3d',
-    music: 'https://cdn.pixabay.com/audio/2022/11/16/audio_125b5cfb62.mp3',
-    bio: 'Strength, action, and resilience—the thunder god.'
-  },
-  {
-    key: 'loki',
-    name: 'Loki',
-    assistantId: 'asst_hKdLlIlE66bKCjuuDzhwknFM',
-    avatar: 'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/Loki_-God-of-Mischief_-Icon.jpg?v=1752622811',
-    color: '#0db18a',
-    music: 'https://cdn.pixabay.com/audio/2022/11/16/audio_125b5cfb62.mp3',
-    bio: 'Creativity, wit, and transformation—the trickster.'
-  },
-  {
-    key: 'freya',
-    name: 'Freya',
-    assistantId: 'asst_A0oRwWmYijWwmRJuA2iO9JlR',
-    avatar: 'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/Freya_-Icon.jpg?v=1752622811',
-    color: '#c5277e',
-    music: 'https://cdn.pixabay.com/audio/2022/10/16/audio_125b985df9.mp3',
-    bio: 'Healing, beauty, and abundance—the goddess of love.'
-  },
-  {
-    key: 'oz',
-    name: 'Oz',
-    assistantId: 'asst_Hk4WoxgaWQr5wbagpEtmQbuY',
-    avatar: 'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/Oz_-Icon.jpg?v=1752623378',
-    color: '#ff9200',
-    music: 'https://cdn.pixabay.com/audio/2022/07/26/audio_124b01b0b2.mp3',
-    bio: 'Transformation, wisdom, and mastery—the digital wizard.'
-  },
-  {
-    key: 'tyr',
-    name: 'Tyr',
-    assistantId: 'asst_5RBZdhN1br4dkpDB6g1cRBCg',
-    avatar: 'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/tyr---icon.jpg?v=1752803717',
-    color: '#946140',
-    music: 'https://cdn.pixabay.com/audio/2023/03/27/audio_1285ba08f4.mp3',
-    bio: 'Justice, discipline, and sacrifice—the steadfast champion.'
-  },
-  {
-    key: 'heimdall',
-    name: 'Heimdall',
-    assistantId: 'asst_5BTp4L16s3LSFZWyOwHL2Qow',
-    avatar: 'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/heimdall_-icon.jpg?v=1752622811',
-    color: '#8653eb',
-    music: 'https://cdn.pixabay.com/audio/2022/12/19/audio_12b0e71fa2.mp3',
-    bio: 'Clarity, vigilance, and protection—the ever-watchful guardian.'
-  },
-  {
-    key: 'skald',
-    name: 'Skald',
-    assistantId: 'asst_mDsnxmXYWK6VVR2TGlWgr0Db',
-    avatar: 'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/Skald_-Icon.jpg?v=1752623003',
-    color: '#2b55e2',
-    music: 'https://cdn.pixabay.com/audio/2022/10/16/audio_125b985df9.mp3',
-    bio: 'Story, poetry, and inspiration—the bard of legend.'
-  },
-  {
-    key: 'coach',
-    name: 'Valhalla Coach',
-    assistantId: 'asst_0b7Qdwscxs168I4YFX2gKSUd',
-    avatar: 'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/Valhalla-Coach-Icon.jpg?v=1752623891',
-    color: '#ffe18d',
-    music: 'https://cdn.pixabay.com/audio/2023/01/31/audio_12dbfc3fa1.mp3',
-    bio: 'Motivation, discipline, and action—your ultimate Viking coach.'
+  <!-- Sticky rail with paddles -->
+  <div class="god-rail-wrap">
+    <div class="god-nav">
+      <button id="railLeft" aria-label="Scroll gods left">⟵</button>
+      <button id="railRight" aria-label="Scroll gods right">⟶</button>
+    </div>
+    <div class="god-selector-bar" id="god-selector" role="tablist" aria-label="Choose your guide"></div>
+  </div>
+
+  <div class="valhalla-card" id="valhalla-card">
+    <img alt="God Logo" id="god-logo" src=""/>
+    <div class="god-title" id="god-title"></div>
+    <div class="god-bio" id="god-bio"></div>
+
+    <!-- Ruin Tokens Display (kept as-is) -->
+    <div id="ruin-token-display" style="color:#FFD700; font-weight:bold; margin-bottom:10px;">
+      <span style="font-size:1.2em; margin-right:6px;">🪙</span>
+      Ruin Tokens Remaining: <span id="ruin-tokens">10</span>
+    </div>
+
+    <!-- Chat -->
+    <div class="chat-history" id="chat-history" aria-live="polite"></div>
+    <div class="loader-runic" id="loader-runic" style="display:none;">ᚨ ᛟ ᚱ ᛃ ᚺ ᚠ ᚾ ᛏ</div>
+
+    <form autocomplete="off" class="chat-input-row" id="chat-form">
+      <input class="chat-input" id="chat-input" placeholder="Ask your guide anything..." aria-label="Type your question"/>
+      <button class="chat-send-btn" type="submit">Send</button>
+    </form>
+
+    <!-- Music -->
+    <div class="music-player-row" id="music-player">
+      <button class="music-play-btn" id="musicPlayBtn" aria-label="Play or pause theme music">🎵</button>
+      <input class="music-slider" id="musicSlider" max="1" min="0" step="0.01" type="range" value="0.25" aria-label="Music volume"/>
+    </div>
+
+    <!-- Buy Tokens (kept) -->
+    <button id="buy-tokens-btn"
+            onclick="window.location.href='/products/ruin-tokens-pack'"
+            style="margin: 14px auto; background:#1a1a1a; color:#FFD700; padding:10px 16px; border:2px solid #FFD700; border-radius:10px; font-weight:bold; display:block;">
+      💰 Buy More Tokens
+    </button>
+  </div>
+
+  <audio id="musicAudio" loop preload="auto"></audio>
+
+  <script>
+  /* ============ DATA (unchanged assistant IDs & remote endpoints preserved) ============ */
+  const GODS = [
+    {
+      key: 'odin',
+      name: 'Odin',
+      assistantId: 'asst_D0BXH8CTZycU0ku9PjkUmW3T',
+      avatar: 'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/mimir-icon.jpg?v=1752795592',
+      color: '#1c64ff',
+      music: 'https://cdn.pixabay.com/audio/2022/12/19/audio_12b0e71fa2.mp3',
+      bio: 'Wisdom, vision, and strategy—the Allfather.'
+    },
+    {
+      key: 'thor',
+      name: 'Thor',
+      assistantId: 'asst_JNie4vDtknbropUsbuXF4OpG',
+      avatar: 'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/Thor_-God-of-Thunder_-Icon.jpg?v=1752622811',
+      color: '#e14b3d',
+      music: 'https://cdn.pixabay.com/audio/2022/11/16/audio_125b5cfb62.mp3',
+      bio: 'Strength, action, and resilience—the thunder god.'
+    },
+    {
+      key: 'loki',
+      name: 'Loki',
+      assistantId: 'asst_hKdLlIlE66bKCjuuDzhwknFM',
+      avatar: 'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/Loki_-God-of-Mischief_-Icon.jpg?v=1752622811',
+      color: '#0db18a',
+      music: 'https://cdn.pixabay.com/audio/2022/11/16/audio_125b5cfb62.mp3',
+      bio: 'Creativity, wit, and transformation—the trickster.'
+    },
+    {
+      key: 'freya',
+      name: 'Freya',
+      assistantId: 'asst_A0oRwWmYijWwmRJuA2iO9JlR',
+      avatar: 'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/Freya_-Icon.jpg?v=1752622811',
+      color: '#c5277e',
+      music: 'https://cdn.pixabay.com/audio/2022/10/16/audio_125b985df9.mp3',
+      bio: 'Healing, beauty, and abundance—the goddess of love.'
+    },
+    {
+      key: 'oz',
+      name: 'Oz',
+      assistantId: 'asst_Hk4WoxgaWQr5wbagpEtmQbuY',
+      avatar: 'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/Oz_-Icon.jpg?v=1752623378',
+      color: '#ff9200',
+      music: 'https://cdn.pixabay.com/audio/2022/07/26/audio_124b01b0b2.mp3',
+      bio: 'Transformation, wisdom, and mastery—the digital wizard.'
+    },
+    {
+      key: 'tyr',
+      name: 'Tyr',
+      assistantId: 'asst_5RBZdhN1br4dkpDB6g1cRBCg',
+      avatar: 'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/tyr---icon.jpg?v=1752803717',
+      color: '#946140',
+      music: 'https://cdn.pixabay.com/audio/2023/03/27/audio_1285ba08f4.mp3',
+      bio: 'Justice, discipline, and sacrifice—the steadfast champion.'
+    },
+    {
+      key: 'heimdall',
+      name: 'Heimdall',
+      assistantId: 'asst_5BTp4L16s3LSFZWyOwHL2Qow',
+      avatar: 'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/heimdall_-icon.jpg?v=1752622811',
+      color: '#8653eb',
+      music: 'https://cdn.pixabay.com/audio/2022/12/19/audio_12b0e71fa2.mp3',
+      bio: 'Clarity, vigilance, and protection—the ever-watchful guardian.'
+    },
+    {
+      key: 'skald',
+      name: 'Skald',
+      assistantId: 'asst_mDsnxmXYWK6VVR2TGlWgr0Db',
+      avatar: 'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/Skald_-Icon.jpg?v=1752623003',
+      color: '#2b55e2',
+      music: 'https://cdn.pixabay.com/audio/2022/10/16/audio_125b985df9.mp3',
+      bio: 'Story, poetry, and inspiration—the bard of legend.'
+    },
+    {
+      key: 'coach',
+      name: 'Valhalla Coach',
+      assistantId: 'asst_0b7Qdwscxs168I4YFX2gKSUd',
+      avatar: 'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/Valhalla-Coach-Icon.jpg?v=1752623891',
+      color: '#ffe18d',
+      music: 'https://cdn.pixabay.com/audio/2023/01/31/audio_12dbfc3fa1.mp3',
+      bio: 'Motivation, discipline, and action—your ultimate Viking coach.'
+    }
+  ];
+
+  /* ============ STATE & ELEMENTS ============ */
+  const godSelector = document.getElementById('god-selector');
+  const railLeft = document.getElementById('railLeft');
+  const railRight = document.getElementById('railRight');
+
+  const godLogo = document.getElementById('god-logo');
+  const godTitle = document.getElementById('god-title');
+  const godBio = document.getElementById('god-bio');
+  const chatHistoryDiv = document.getElementById('chat-history');
+  const chatForm = document.getElementById('chat-form');
+  const chatInput = document.getElementById('chat-input');
+  const loaderRunic = document.getElementById('loader-runic');
+
+  const musicAudio = document.getElementById('musicAudio');
+  const musicPlayer = document.getElementById('music-player');
+  const musicPlayBtn = document.getElementById('musicPlayBtn');
+  const musicSlider = document.getElementById('musicSlider');
+
+  function setThemeColor(hex) {
+    document.documentElement.style.setProperty('--default-color', hex || '#ffe18d');
   }
-];
 
-    // ✅ NEW LOGIC: Select god from query string (?god=odin)
-    const urlParams = new URLSearchParams(window.location.search);
-    const godParam = urlParams.get('god');
-    const matchedKey = GODS.find(g => g.key === godParam)?.key;
-    let selectedGod = GODS.find(g => g.key === matchedKey) || GODS[8]; // fallback to Coach
+  // Case-insensitive ?god= selection, fallback to Coach
+  const urlParams = new URLSearchParams(window.location.search);
+  const godParam = (urlParams.get('god') || '').toLowerCase();
+  const matched = GODS.find(g => g.key.toLowerCase() === godParam);
+  let selectedGod = matched || GODS.find(g => g.key === 'coach') || GODS[0];
 
-let chatHistory = [];
+  let chatHistory = [];
 
-const godSelector = document.getElementById('god-selector');
-const godLogo = document.getElementById('god-logo');
-const godTitle = document.getElementById('god-title');
-const godBio = document.getElementById('god-bio');
-const chatHistoryDiv = document.getElementById('chat-history');
-const chatForm = document.getElementById('chat-form');
-const chatInput = document.getElementById('chat-input');
-const valhallaCard = document.getElementById('valhalla-card');
-const loaderRunic = document.getElementById('loader-runic');
-const musicAudio = document.getElementById('musicAudio');
-const musicPlayer = document.getElementById('music-player');
-const musicPlayBtn = document.getElementById('musicPlayBtn');
-const musicSlider = document.getElementById('musicSlider');
+  /* ============ RENDERERS ============ */
+  function renderGodSelector(list = GODS) {
+    godSelector.innerHTML = '';
+    list.forEach((god, idx) => {
+      const avatarDiv = document.createElement('div');
+      avatarDiv.className = 'god-avatar' + (selectedGod.key === god.key ? ' selected' : '');
+      avatarDiv.title = god.name;
+      avatarDiv.style.borderColor = (selectedGod.key === god.key) ? god.color : '#333';
+      avatarDiv.setAttribute('role','tab');
+      avatarDiv.setAttribute('aria-selected', selectedGod.key === god.key ? 'true' : 'false');
+      avatarDiv.setAttribute('tabindex','0');
+      avatarDiv.setAttribute('aria-label', `Select ${god.name}`);
 
-function setThemeColor(hex) {
-  document.documentElement.style.setProperty('--default-color', hex || '#ffe18d');
-}
+      avatarDiv.onclick = () => selectGod(god);
+      avatarDiv.onkeydown = (ev) => {
+        if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); selectGod(god); }
+        // arrow key nav
+        if (ev.key === 'ArrowRight') { godSelector.scrollBy({left:240, behavior:'smooth'}); }
+        if (ev.key === 'ArrowLeft') { godSelector.scrollBy({left:-240, behavior:'smooth'}); }
+      };
 
-function renderGodSelector() {
-  godSelector.innerHTML = '';
-  GODS.forEach((god) => {
-    const avatarDiv = document.createElement('div');
-    avatarDiv.className = 'god-avatar' + (selectedGod.key === god.key ? ' selected' : '');
-    avatarDiv.title = god.name;
-    avatarDiv.style.borderColor = (selectedGod.key === god.key) ? god.color : '#333';
-    avatarDiv.onclick = () => {
-      selectedGod = god;
-      setThemeColor(god.color);
-      renderGodSelector();
-      renderGod();
-      chatHistory = [];
-      renderChat();
-      setupMusic();
-    };
-    const img = document.createElement('img');
-    img.src = god.avatar;
-    img.alt = god.name;
-    avatarDiv.appendChild(img);
-    godSelector.appendChild(avatarDiv);
-  });
-}
+      const img = document.createElement('img');
+      img.src = god.avatar; img.alt = god.name; img.loading = 'lazy';
+      avatarDiv.appendChild(img);
+      godSelector.appendChild(avatarDiv);
+    });
+  }
 
-function renderGod() {
-  godLogo.src = selectedGod.avatar;
-  godTitle.innerText = selectedGod.name;
-  godBio.innerText = selectedGod.bio;
-  chatInput.placeholder = `Ask ${selectedGod.name} anything...`;
-  setThemeColor(selectedGod.color);
-}
+  function selectGod(god){
+    selectedGod = god;
+    setThemeColor(god.color);
+    renderGodSelector();
+    renderGod();
+    chatHistory = [];
+    renderChat();
+    setupMusic();
+  }
 
-function renderChat() {
-  chatHistoryDiv.innerHTML = '';
-  chatHistory.forEach(msg => {
-    const msgDiv = document.createElement('div');
-    msgDiv.className = 'chat-msg ' + (msg.from === 'user' ? 'user' : 'god');
-    msgDiv.innerHTML = marked.parse(msg.text);
-    chatHistoryDiv.appendChild(msgDiv);
-  });
-  chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight;
-}
+  function renderGod() {
+    godLogo.src = selectedGod.avatar;
+    godTitle.innerText = selectedGod.name;
+    godBio.innerText = selectedGod.bio;
+    chatInput.placeholder = `Ask ${selectedGod.name} anything...`;
+    setThemeColor(selectedGod.color);
+  }
 
-const runes = ['ᚨ','ᛟ','ᚱ','ᛃ','ᚺ','ᚠ','ᚾ','ᛏ'];
-let runeIdx = 0, loaderInterval = null;
-function showLoader() {
-  loaderRunic.style.display = '';
-  loaderRunic.textContent = runes[runeIdx];
-  loaderInterval = setInterval(() => {
-    runeIdx = (runeIdx + 1) % runes.length;
+  function renderChat() {
+    chatHistoryDiv.innerHTML = '';
+    chatHistory.forEach(msg => {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'chat-msg ' + (msg.from === 'user' ? 'user' : 'god');
+
+      // Keep Marked (as you have it) but avoid header anchors/mangle
+      const html = marked.parse(msg.text || '', { mangle:false, headerIds:false });
+      msgDiv.innerHTML = html;
+      chatHistoryDiv.appendChild(msgDiv);
+    });
+    chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight;
+  }
+
+  /* ============ LOADER ============ */
+  const runes = ['ᚨ','ᛟ','ᚱ','ᛃ','ᚺ','ᚠ','ᚾ','ᛏ'];
+  let runeIdx = 0, loaderInterval = null;
+  function showLoader() {
+    loaderRunic.style.display = '';
     loaderRunic.textContent = runes[runeIdx];
-  }, 170);
-}
-function hideLoader() {
-  loaderRunic.style.display = 'none';
-  clearInterval(loaderInterval);
-}
-
-function setupMusic() {
-  if (!selectedGod.music) {
-    musicPlayer.style.display = 'none';
-    musicAudio.pause();
-    return;
+    loaderInterval = setInterval(() => {
+      runeIdx = (runeIdx + 1) % runes.length;
+      loaderRunic.textContent = runes[runeIdx];
+    }, 170);
   }
-  musicPlayer.style.display = '';
-  musicAudio.src = selectedGod.music;
-  musicAudio.volume = musicSlider.value;
-  musicAudio.pause();
-  musicPlayBtn.classList.remove('active');
-}
-let musicPlaying = false;
-musicPlayBtn.onclick = () => {
-  if (!musicPlaying) {
-    musicAudio.muted = false;
-    musicAudio.play();
-    musicPlayBtn.classList.add('active');
-    musicPlaying = true;
-  } else {
+  function hideLoader() {
+    loaderRunic.style.display = 'none';
+    clearInterval(loaderInterval);
+  }
+
+  /* ============ MUSIC ============ */
+  function setupMusic() {
+    if (!selectedGod.music) {
+      musicPlayer.style.display = 'none';
+      musicAudio.pause();
+      return;
+    }
+    musicPlayer.style.display = '';
+    musicAudio.src = selectedGod.music;
+    musicAudio.volume = parseFloat(musicSlider.value || '0.25');
     musicAudio.pause();
     musicPlayBtn.classList.remove('active');
     musicPlaying = false;
   }
-};
-musicSlider.oninput = (e) => {
-  musicAudio.volume = e.target.value;
-};
 
-function getThreadId(godKey) {
-  const key = `valhalla_thread_${godKey}`;
-  let id = localStorage.getItem(key);
-  
-  // ✅ If a valid thread exists, reuse it
-  if (id && id.startsWith("thread_")) {
-    return Promise.resolve(id);
-  }
+  let musicPlaying = false;
+  musicPlayBtn.onclick = () => {
+    if (!musicPlaying) {
+      musicAudio.muted = false;
+      musicAudio.play().then(()=> {
+        musicPlayBtn.classList.add('active');
+        musicPlaying = true;
+      }).catch(()=>{ /* autoplay guards */ });
+    } else {
+      musicAudio.pause();
+      musicPlayBtn.classList.remove('active');
+      musicPlaying = false;
+    }
+  };
+  musicSlider.oninput = (e) => {
+    musicAudio.volume = parseFloat(e.target.value || '0.25');
+  };
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && musicPlaying) {
+      musicAudio.play().catch(()=>{});
+    }
+  });
 
-  // 🧼 Else create a new thread
-  return fetch('https://odin-assistant-starter.vercel.app/api/start-thread', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' }
-  })
+  /* ============ THREAD ID + CHAT (endpoints left EXACTLY as you had them) ============ */
+  function getThreadId(godKey) {
+    const key = `valhalla_thread_${godKey}`;
+    let id = localStorage.getItem(key);
+    if (id && id.startsWith("thread_")) return Promise.resolve(id);
+
+    return fetch('https://odin-assistant-starter.vercel.app/api/start-thread', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }
+    })
     .then(res => res.json())
     .then(data => {
       if (data.threadId && data.threadId.startsWith("thread_")) {
         localStorage.setItem(key, data.threadId);
         return data.threadId;
-      } else {
-        throw new Error('Invalid threadId');
-      }
+      } else { throw new Error('Invalid threadId'); }
     })
-    .catch(err => {
-      console.error('Thread ID error:', err);
-      return null;
-    });
-}
-
-
-chatForm.onsubmit = async (e) => {
-  e.preventDefault();
-  
-  const remaining = decrementToken();
-  if (remaining <= 0) {
-    showTokenModal();
-    return;
+    .catch(err => { console.error('Thread ID error:', err); return null; });
   }
-  const text = chatInput.value.trim();
-  if (!text) return;
-  chatHistory.push({from:'user', text});
-  renderChat();
-  chatInput.value = '';
-  showLoader();
-  try {
-    const threadId = await getThreadId(selectedGod.key);
-    if (!threadId) throw new Error('No thread ID');
-    const response = await fetch('https://odin-assistant-starter.vercel.app/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        assistantId: selectedGod.assistantId,
-        message: text,
-        threadId: threadId
-      })
-    });
-    const data = await response.json();
-    hideLoader();
-    chatHistory.push({ from: 'god', text: data.reply || 'No reply from the gods.' });
+
+  chatForm.onsubmit = async (e) => {
+    e.preventDefault();
+
+    const remaining = decrementToken();
+    if (remaining <= 0) { showTokenModal(); return; }
+
+    const text = chatInput.value.trim();
+    if (!text) return;
+
+    chatHistory.push({from:'user', text});
     renderChat();
-  } catch (err) {
-    hideLoader();
-    chatHistory.push({ from: 'god', text: '⚠️ Network error. Please try again.' });
-    renderChat();
+    chatInput.value = '';
+    showLoader();
+
+    try {
+      const threadId = await getThreadId(selectedGod.key);
+      if (!threadId) throw new Error('No thread ID');
+
+      const response = await fetch('https://odin-assistant-starter.vercel.app/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          assistantId: selectedGod.assistantId,
+          message: text,
+          threadId: threadId
+        })
+      });
+      const data = await response.json();
+      hideLoader();
+      chatHistory.push({ from: 'god', text: data.reply || 'No reply from the gods.' });
+      renderChat();
+    } catch (err) {
+      hideLoader();
+      chatHistory.push({ from: 'god', text: '⚠️ Network error. Please try again.' });
+      renderChat();
+    }
+  };
+
+  /* ============ RAIL PADDLES ============ */
+  railLeft.onclick  = () => godSelector.scrollBy({left:-240, behavior:'smooth'});
+  railRight.onclick = () => godSelector.scrollBy({left: 240, behavior:'smooth'});
+
+  /* ============ TOKENS (unchanged) ============ */
+  const DAILY_LIMIT = 10;
+  const TOKEN_KEY = "valhalla_tokens";
+  const DATE_KEY = "valhalla_last_date";
+  const RITUALS_KEY = "valhalla_rituals_done";
+
+  function getToday() { return new Date().toISOString().slice(0, 10); }
+  function resetDailyTokens() {
+    localStorage.setItem(TOKEN_KEY, DAILY_LIMIT);
+    localStorage.setItem(DATE_KEY, getToday());
+    localStorage.setItem(RITUALS_KEY, JSON.stringify({}));
+    updateTokenDisplay();
   }
-};
-
-// Init
-renderGodSelector();
-renderGod();
-renderChat();
-setupMusic();
-chatInput.focus();
-</script>
-<script>
-const DAILY_LIMIT = 10;
-const TOKEN_KEY = "valhalla_tokens";
-const DATE_KEY = "valhalla_last_date";
-const RITUALS_KEY = "valhalla_rituals_done";
-
-function getToday() {
-  return new Date().toISOString().slice(0, 10);
-}
-
-function resetDailyTokens() {
-  localStorage.setItem(TOKEN_KEY, DAILY_LIMIT);
-  localStorage.setItem(DATE_KEY, getToday());
-  localStorage.setItem(RITUALS_KEY, JSON.stringify({}));
-  updateTokenDisplay();
-}
-
-function updateTokenDisplay() {
-  const tokens = parseInt(localStorage.getItem(TOKEN_KEY)) || 0;
-  const el = document.getElementById("ruin-tokens");
-  if (el) el.textContent = tokens;
-}
-
-function decrementToken() {
-  let tokens = parseInt(localStorage.getItem(TOKEN_KEY)) || 0;
-  if (tokens > 0) {
-    tokens--;
+  function updateTokenDisplay() {
+    const tokens = parseInt(localStorage.getItem(TOKEN_KEY)) || 0;
+    const el = document.getElementById("ruin-tokens");
+    if (el) el.textContent = tokens;
+  }
+  function decrementToken() {
+    let tokens = parseInt(localStorage.getItem(TOKEN_KEY)) || 0;
+    if (tokens > 0) {
+      tokens--;
+      localStorage.setItem(TOKEN_KEY, tokens);
+      // subtle pulse
+      const el = document.getElementById("ruin-tokens");
+      if (el){ el.style.transition='transform .18s'; el.style.transform='scale(1.12)'; setTimeout(()=>{ el.style.transform=''; }, 180); }
+    }
+    updateTokenDisplay();
+    return tokens;
+  }
+  function addToken(amount = 1) {
+    let tokens = parseInt(localStorage.getItem(TOKEN_KEY)) || 0;
+    tokens += amount;
     localStorage.setItem(TOKEN_KEY, tokens);
+    updateTokenDisplay();
   }
-  updateTokenDisplay();
-  return tokens;
-}
-
-function addToken(amount = 1) {
-  let tokens = parseInt(localStorage.getItem(TOKEN_KEY)) || 0;
-  tokens += amount;
-  localStorage.setItem(TOKEN_KEY, tokens);
-  updateTokenDisplay();
-}
-
-function checkReset() {
-  const lastDate = localStorage.getItem(DATE_KEY);
-  if (lastDate !== getToday()) {
-    resetDailyTokens();
+  function checkReset() {
+    const lastDate = localStorage.getItem(DATE_KEY);
+    if (lastDate !== getToday()) resetDailyTokens();
   }
-}
+  function showTokenModal() {
+    alert("🛑 You’re out of Ruin Tokens. Come back tomorrow or earn more through gameplay.");
+  }
 
-function showTokenModal() {
-  alert("🛑 You’re out of Ruin Tokens. Come back tomorrow or earn more through gameplay.");
-}
+  // Ritual handling (kept)
+  document.addEventListener("DOMContentLoaded", () => {
+    checkReset();
+    updateTokenDisplay();
 
-// Ritual handling
-document.addEventListener("DOMContentLoaded", () => {
-  checkReset();
-  updateTokenDisplay();
+    const saved = JSON.parse(localStorage.getItem(RITUALS_KEY) || "{}");
+    document.querySelectorAll(".ritual-check").forEach(checkbox => {
+      const key = checkbox.value;
+      if (saved[key]) checkbox.checked = true;
 
-  const saved = JSON.parse(localStorage.getItem(RITUALS_KEY) || "{}");
-  document.querySelectorAll(".ritual-check").forEach(checkbox => {
-    const key = checkbox.value;
-    if (saved[key]) checkbox.checked = true;
-
-    checkbox.addEventListener("change", () => {
-      if (checkbox.checked && !saved[key]) {
-        addToken(1);
-        saved[key] = true;
-        localStorage.setItem(RITUALS_KEY, JSON.stringify(saved));
-      }
+      checkbox.addEventListener("change", () => {
+        if (checkbox.checked && !saved[key]) {
+          addToken(1);
+          saved[key] = true;
+          localStorage.setItem(RITUALS_KEY, JSON.stringify(saved));
+        }
+      });
     });
   });
-});
-</script><!--== Thor Game Modal ==--><div id="thor-game-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#0d0d0dcc; z-index:9999; display:flex; align-items:center; justify-content:center;; display: none;">
-<div style="background:#1a1a1a; border:3px solid #e14b3d; border-radius:20px; padding:20px; text-align:center; width:90%; max-width:400px; box-shadow:0 0 40px #e14b3d;">
-<h2 style="color:#ffe18d; margin-bottom:10px;">⚡️ Thor's Trial of Strength ⚡️</h2>
-<p style="color:#fff; margin-bottom:20px;">Stop the power meter in the ⚡ zone to earn Ruin Tokens!</p>
-<div id="power-bar-container" style="position:relative; background:#333; width:100%; height:30px; border-radius:15px; overflow:hidden; margin-bottom:20px;">
-<div id="power-target" style="position:absolute; left:40%; width:20%; height:100%; background:#ffd70066;"></div>
-<div id="power-meter" style="position:absolute; left:0; width:10%; height:100%; background:#e14b3d;"></div>
-</div>
-<button id="stop-btn" onclick="stopPowerMeter()" style="padding:10px 20px; font-weight:bold; font-size:1.1em; border:none; border-radius:10px; background:#e14b3d; color:#fff; cursor:pointer;">Strike!</button>
-<p id="thor-result" style="color:#FFD700; margin-top:15px;"></p>
-<button onclick="closeThorGame()" style="margin-top:20px; padding:6px 16px; background:#444; color:#fff; border:none; border-radius:8px; cursor:pointer;">Return to Pantheon</button>
-</div>
-</div>
-<script>
-let gamePlayedToday = localStorage.getItem("thor_game_date") === new Date().toISOString().slice(0, 10);
-let powerInterval, direction = 1;
 
-document.getElementById("thor-game-btn").onclick = () => {
-  if (gamePlayedToday) {
-    alert("Thor awaits new warriors tomorrow.");
-    return;
-  }
-  document.getElementById("thor-game-modal").style.display = "flex";
-  startPowerMeter();
-};
-
-function startPowerMeter() {
-  const meter = document.getElementById("power-meter");
-  let pos = 0;
-  direction = 1;
-  powerInterval = setInterval(() => {
-    pos += direction * 2;
-    if (pos >= 90 || pos <= 0) direction *= -1;
-    meter.style.left = pos + "%";
-  }, 16);
-}
-
-function stopPowerMeter() {
-  clearInterval(powerInterval);
-  const pos = parseFloat(document.getElementById("power-meter").style.left);
-  const result = document.getElementById("thor-result");
-  const targetStart = 40, targetEnd = 60;
-  let reward = 0;
-  if (pos >= targetStart && pos <= targetEnd) {
-    reward = 3;
-    result.innerText = "⚡ Perfect strike! Thor grants you 3 Ruin Tokens!";
-  } else if (Math.abs(pos - targetStart) <= 10 || Math.abs(pos - targetEnd) <= 10) {
-    reward = 1;
-    result.innerText = "⚔️ Close! You earn 1 token.";
-  } else {
-    result.innerText = "💨 Missed! No tokens earned.";
-  }
-  if (reward > 0) {
-    let tokens = parseInt(localStorage.getItem("valhalla_tokens")) || 0;
-    tokens += reward;
-    localStorage.setItem("valhalla_tokens", tokens);
-  }
-  localStorage.setItem("thor_game_date", new Date().toISOString().slice(0, 10));
-  gamePlayedToday = true;
-  updateTokenDisplay();
-  document.getElementById("stop-btn").disabled = true;
-}
-
-function closeThorGame() {
-  document.getElementById("thor-game-modal").style.display = "none";
-  document.getElementById("thor-result").innerText = "";
-  document.getElementById("stop-btn").disabled = false;
-}
-</script><script>
-function launchThorGame() {
-  const alreadyPlayed = localStorage.getItem("thor_game_date") === new Date().toISOString().slice(0, 10);
-  if (alreadyPlayed) {
-    alert("Thor awaits new warriors tomorrow.");
-    return;
-  }
-  document.getElementById("thor-game-modal").style.display = "flex";
-  startPowerMeter();
-}
-
-let powerInterval, direction = 1;
-
-function startPowerMeter() {
-  const meter = document.getElementById("power-meter");
-  let pos = 0;
-  direction = 1;
-  powerInterval = setInterval(() => {
-    pos += direction * 2;
-    if (pos >= 90 || pos <= 0) direction *= -1;
-    meter.style.left = pos + "%";
-  }, 16);
-}
-
-function stopPowerMeter() {
-  clearInterval(powerInterval);
-  const pos = parseFloat(document.getElementById("power-meter").style.left);
-  const result = document.getElementById("thor-result");
-  const targetStart = 40, targetEnd = 60;
-  let reward = 0;
-  if (pos >= targetStart && pos <= targetEnd) {
-    reward = 3;
-    result.innerHTML = "<span style='color:#00ff88;'>⚡ Perfect strike! Thor grants you 3 Ruin Tokens!</span>";
-  } else if (Math.abs(pos - targetStart) <= 10 || Math.abs(pos - targetEnd) <= 10) {
-    reward = 1;
-    result.innerHTML = "<span style='color:#ffe18d;'>⚔️ Close! You earn 1 token.</span>";
-  } else {
-    result.innerHTML = "<span style='color:#ff5555;'>💨 Missed! No tokens earned.</span>";
-  }
-  if (reward > 0) {
-    let tokens = parseInt(localStorage.getItem("valhalla_tokens")) || 0;
-    tokens += reward;
-    localStorage.setItem("valhalla_tokens", tokens);
-  }
-  localStorage.setItem("thor_game_date", new Date().toISOString().slice(0, 10));
-  updateTokenDisplay();
-  document.getElementById("stop-btn").disabled = true;
-}
-
-function closeThorGame() {
-  document.getElementById("thor-game-modal").style.display = "none";
-  document.getElementById("thor-result").innerText = "";
-  document.getElementById("stop-btn").disabled = false;
-}
-</script></body>
+  /* ============ INIT ============ */
+  renderGodSelector();
+  renderGod();
+  renderChat();
+  setupMusic();
+  chatInput.focus();
+  </script>
+</body>
 </html>
