@@ -9,7 +9,7 @@
 
 <style>
   :root{
-    --brand:#ffe18d;                 /* selected god accent */
+    --brand:#ffe18d;                 /* selected-god accent; updated on selection */
     --ink:#f8e6c3;
     --ring:#2a2a2a;
     --soft: rgba(255,225,141,.14);
@@ -17,6 +17,9 @@
     --card-w: min(96vw, 880px);
     --card-pad: 26px 18px 14px;
     --reply-min-h: clamp(100px, 16vh, 160px);
+
+    --idle-spin-s: 8s;               /* idle rune spin duration */
+    --think-spin-s: 2.4s;            /* thinking speed */
   }
 
   html,body{height:100%}
@@ -45,7 +48,6 @@
     -webkit-overflow-scrolling: touch;
     padding: 10px 18px;
     scroll-snap-type:x proximity;
-    /* soft edge fade only at the very ends */
     mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
     -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
   }
@@ -53,7 +55,7 @@
   .rail::-webkit-scrollbar-thumb{ background:#3b3422; border-radius:100px }
 
   .chip{
-    --hover:#ffe18d;                 /* set inline per-god */
+    --hover:#ffe18d;                 /* set inline per god */
     flex: 0 0 auto;
     width:92px; height:92px;
     border-radius:999px;
@@ -63,9 +65,10 @@
     cursor:pointer;
     scroll-snap-align:center;
     transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, filter .18s ease, opacity .18s ease;
-    /* tapered oval feel – JS sets vars below */
     transform: perspective(900px) rotateY(var(--rotY,0deg)) translateY(var(--dy,0px)) scale(var(--sc,1));
     opacity: var(--op,1);
+    will-change: transform, opacity;
+    backface-visibility: hidden;
   }
   .chip img{
     width:100%; height:100%; object-fit:cover; object-position: top center;
@@ -92,10 +95,34 @@
     border:2px solid var(--brand);
     background: linear-gradient(180deg, rgba(18,18,18,.82), rgba(16,16,16,.76));
     box-shadow: 0 16px 70px rgba(0,0,0,.55), 0 0 40px 2px rgba(255,225,141,.05);
-    z-index:10; /* always above the sticky rail */
+    z-index:10; /* above sticky rail */
+    overflow:hidden; /* contain drifting runes */
+  }
+
+  /* God-tinted starfield layer (very subtle) */
+  .space{
+    position:absolute; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(1px 1px at 20% 30%, color-mix(in srgb, var(--brand) 34%, transparent), transparent 60%),
+      radial-gradient(1px 1px at 70% 60%, color-mix(in srgb, var(--brand) 28%, transparent), transparent 60%),
+      radial-gradient(1px 1px at 40% 80%, color-mix(in srgb, var(--brand) 22%, transparent), transparent 60%),
+      radial-gradient(1px 1px at 85% 25%, color-mix(in srgb, var(--brand) 30%, transparent), transparent 60%),
+      radial-gradient(1px 1px at 10% 70%, color-mix(in srgb, var(--brand) 26%, transparent), transparent 60%);
+    opacity: .33;
+  }
+  .rune-sprite{
+    position:absolute; font-weight:800; color: color-mix(in srgb, var(--brand) 84%, transparent);
+    opacity:.10; user-select:none; filter: saturate(120%);
+    backface-visibility:hidden;
+    animation: drift linear infinite;
+  }
+  @keyframes drift{
+    0% { transform: translate3d(var(--x0), var(--y0), 0) rotate(var(--r0)); }
+    100% { transform: translate3d(var(--x1), var(--y1), 0) rotate(var(--r1)); }
   }
 
   #god-logo{
+    position:relative; z-index:1;
     width:132px; height:132px; border-radius:50%;
     object-fit:cover; object-position: top center;
     border:4px solid var(--brand);
@@ -103,6 +130,7 @@
     display:block; margin: 6px auto 8px;
   }
   #god-title{
+    position:relative; z-index:1;
     text-align:center; font-family:Montserrat,Inter,sans-serif; font-weight:700; letter-spacing:2px;
     font-size: clamp(1.35rem, 1.1rem + 1.2vw, 2.1rem);
     color: var(--brand);
@@ -110,33 +138,32 @@
     margin: 0 0 4px;
   }
   #god-bio{
+    position:relative; z-index:1;
     text-align:center; color:#f3ebd7;
     margin: 0 10px 10px; font-size: clamp(.98rem, .92rem + .4vw, 1.12rem);
   }
 
   /* ======= RUIN TOKENS ======= */
   .tokens{
+    position:relative; z-index:1;
     display:flex; gap:10px; align-items:center; justify-content:center;
     margin: 8px 0 10px;
     font-weight:700; color:#ffefae;
   }
-  /* crisp slow-flip rune (no fuzzy glow) */
-  .rune-coin{
-    width:26px; height:26px;
-    display:grid; place-items:center;
-    font-size:18px; font-weight:800; line-height:1;
-    color:#ffe18d;
-    -webkit-text-stroke: 1px #7a611f;  /* crisp edge */
-            text-stroke: 1px #7a611f;  /* fallback ignored where unsupported */
-    text-shadow: 0 0 6px rgba(255,225,141,.18); /* very subtle */
-    transform-style: preserve-3d; backface-visibility: hidden;
-    animation: slowFlip 6s linear infinite;
+
+  /* Gold coin (SVG) flips slowly; rune swaps per full turn */
+  .coin{
+    width:26px; height:26px; display:inline-grid; place-items:center;
+    animation: coinFlip 7.5s linear infinite;
+    transform-style:preserve-3d; backface-visibility:hidden;
   }
-  @keyframes slowFlip{ to{ transform: rotateY(1turn); } }
+  @keyframes coinFlip{ to{ transform: rotateY(1turn); } }
+  .coin svg{ display:block; width:100%; height:100% }
+  .coin .face{ filter: drop-shadow(0 0 3px rgba(255,225,141,.18)); }
 
   /* ======= CHAT ======= */
   .history{
-    position:relative;
+    position:relative; z-index:1;
     border:1px solid #29281e;
     border-radius:14px;
     padding: 12px 12px;
@@ -152,29 +179,37 @@
   .history .user{ color:#bfefff; text-align:right }
   .history .god{ color:var(--brand) }
 
-  /* loader: fast flipping SINGLE rune (no coin), appears only while waiting */
-  .loader{ display:flex; align-items:center; justify-content:center; height:32px; margin:8px 0 4px; }
-  .rune-loader{
+  /* Thinking rune (single glyph, no coin) */
+  .thinking{
+    position:relative; z-index:1;
+    display:flex; align-items:center; justify-content:center; height:32px; margin:8px 0 4px;
+  }
+  .thinking .rune{
     width:30px; height:30px; display:grid; place-items:center;
     font-size:20px; font-weight:900; line-height:1;
     color:#ffe18d;
     -webkit-text-stroke: 1px #7a611f;
-            text-stroke: 1px #7a611f;
+            text-stroke: 1px #7a611f; /* ignored where unsupported */
     text-shadow: 0 0 6px rgba(255,225,141,.18);
     transform-style:preserve-3d; backface-visibility:hidden;
-    animation: flipFast .8s linear infinite;
+    animation: runeSpin var(--idle-spin-s) linear infinite;
     user-select:none;
   }
-  @keyframes flipFast{ to{ transform: rotateY(1turn); } }
+  .thinking[data-state="thinking"] .rune{
+    animation-duration: var(--think-spin-s);
+  }
+  @keyframes runeSpin{ to{ transform: rotateY(1turn); } }
 
   /* ======= INPUT ======= */
   .input-row{
+    position:relative; z-index:1;
     display:grid; grid-template-columns: 1fr auto; gap:10px;
     margin: 12px 0 6px;
   }
   .input-row input{
     background:#1d1d1d; border:1px solid #2b2b2b; color:#fff;
     border-radius:14px; font-size:1.02rem; padding:12px 14px; min-width:0;
+    outline:none;
   }
   .input-row button{
     background: var(--brand); color:#231f15; border:0; border-radius:14px;
@@ -184,6 +219,12 @@
     transition: transform .12s ease, box-shadow .12s ease;
   }
   .input-row button:hover{ transform: translateY(-1px); box-shadow: 0 10px 22px rgba(255,225,141,.28) }
+
+  /* Focus rings */
+  .chip:focus-visible, .input-row input:focus-visible, .input-row button:focus-visible{
+    outline: 2px solid color-mix(in srgb, var(--brand) 80%, #fff);
+    outline-offset: 3px; border-radius:14px;
+  }
 
   /* ======= RESPONSIVE ======= */
   @media(max-width: 640px){
@@ -198,6 +239,14 @@
     .rail{ height: 116px }
     .chip{ width:96px; height:96px }
   }
+
+  /* Pause animations when container adds .paused (via IntersectionObserver) */
+  .paused .coin, .paused .rune, .paused .rune-sprite{ animation-play-state: paused !important; }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    .coin, .rune, .rune-sprite { animation: none !important }
+  }
 </style>
 </head>
 <body>
@@ -207,19 +256,39 @@
 </header>
 
 <main class="card" id="card">
+  <!-- subtle, god-tinted space background -->
+  <div class="space" id="space"></div>
+
   <img id="god-logo" alt="Guide portrait" src="" />
   <div id="god-title"></div>
   <div id="god-bio"></div>
 
   <div class="tokens" aria-live="polite">
-    <span id="ruinCoin" class="rune-coin" aria-hidden="true">ᚱ</span>
+    <span id="tokenCoin" class="coin" aria-hidden="true">
+      <!-- Gold coin with rune on face -->
+      <svg viewBox="0 0 64 64" role="img" aria-label="Ruin coin">
+        <defs>
+          <radialGradient id="goldGrad" cx="50%" cy="50%" r="60%">
+            <stop offset="0%" stop-color="#fff6d1"/>
+            <stop offset="45%" stop-color="#ffd86b"/>
+            <stop offset="100%" stop-color="#b58623"/>
+          </radialGradient>
+        </defs>
+        <circle class="face" cx="32" cy="32" r="28" fill="url(#goldGrad)" stroke="#8a651a" stroke-width="3"/>
+        <circle cx="32" cy="32" r="22" fill="none" stroke="#fff0b0" stroke-opacity=".5" stroke-width="2"/>
+        <text id="coinRune" x="32" y="39" text-anchor="middle" font-size="24" font-family="serif" fill="#7a4c00">ᚱ</text>
+      </svg>
+    </span>
     <span>Ruin Tokens Remaining:&nbsp;<span id="ruin-tokens">10</span></span>
   </div>
 
-  <section id="history" class="history" aria-live="polite"></section>
+  <section id="history" class="history" aria-live="polite" aria-busy="false">
+    <div class="msg god">Ask your guide anything…</div>
+  </section>
 
-  <div id="loader" class="loader" hidden>
-    <span id="runeLoader" class="rune-loader" aria-hidden="true">ᚠ</span>
+  <!-- Thinking rune (always shown: idle → fast on send → idle on reply) -->
+  <div id="thinking" class="thinking" data-state="idle">
+    <span id="thinkingRune" class="rune" aria-hidden="true">ᚠ</span>
   </div>
 
   <form id="chat-form" class="input-row" autocomplete="off">
@@ -231,31 +300,35 @@
 <script>
 /* ---------- Data ---------- */
 const GODS = [
-  { key:'odin', name:'Odin',     assistantId:'asst_D0BXH8CTZycU0ku9PjkUmW3T', avatar:'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/mimir-icon.jpg?v=1752795592', color:'#1c64ff', bio:'Wisdom, vision, and strategy—the Allfather.' },
-  { key:'thor', name:'Thor',     assistantId:'asst_JNie4vDtknbropUsbuXF4OpG', avatar:'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/Thor_-God-of-Thunder_-Icon.jpg?v=1752622811', color:'#e14b3d', bio:'Strength, action, and resilience—the thunder god.' },
-  { key:'loki', name:'Loki',     assistantId:'asst_hKdLlIlE66bKCjuuDzhwknFM', avatar:'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/Loki_-God-of-Mischief_-Icon.jpg?v=1752622811', color:'#0db18a', bio:'Creativity, wit, and transformation—the trickster.' },
-  { key:'freya',name:'Freya',    assistantId:'asst_A0oRwWmYijWwmRJuA2iO9JlR', avatar:'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/Freya_-Icon.jpg?v=1752622811',               color:'#c5277e', bio:'Healing, beauty, and abundance—the goddess of love.' },
-  { key:'oz',   name:'Oz',       assistantId:'asst_Hk4WoxgaWQr5wbagpEtmQbuY', avatar:'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/Oz_-Icon.jpg?v=1752623378',                 color:'#ff9200', bio:'Transformation, wisdom, and mastery—the digital wizard.' },
-  { key:'tyr',  name:'Tyr',      assistantId:'asst_5RBZdhN1br4dkpDB6g1cRBCg', avatar:'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/tyr---icon.jpg?v=1752803717',                 color:'#946140', bio:'Justice, discipline, and sacrifice—the steadfast champion.' },
-  { key:'heimdall', name:'Heimdall', assistantId:'asst_5BTp4L16s3LSFZWyOwHL2Qow', avatar:'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/heimdall_-icon.jpg?v=1752622811',       color:'#8653eb', bio:'Clarity, vigilance, and protection—the ever-watchful guardian.' },
-  { key:'skald',name:'Skald',    assistantId:'asst_mDsnxmXYWK6VVR2TGlWgr0Db', avatar:'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/Skald_-Icon.jpg?v=1752623003',               color:'#2b55e2', bio:'Story, poetry, and inspiration—the bard of legend.' },
-  { key:'coach',name:'Valhalla Coach', assistantId:'asst_0b7Qdwscxs168I4YFX2gKSUd', avatar:'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/Valhalla-Coach-Icon.jpg?v=1752623891',color:'#ffe18d', bio:'Motivation, discipline, and action—your ultimate Viking coach.' }
+  { key:'odin', name:'Odin',     assistantId:'asst_D0BXH8CTZycU0ku9PjkUmW3T', avatar:'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/mimir-icon.jpg?v=1752795592', color:'#1c64ff', bio:'Wisdom, vision, and strategy—the Allfather.', startRune:'ᚨ' },
+  { key:'thor', name:'Thor',     assistantId:'asst_JNie4vDtknbropUsbuXF4OpG', avatar:'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/Thor_-God-of-Thunder_-Icon.jpg?v=1752622811', color:'#e14b3d', bio:'Strength, action, and resilience—the thunder god.', startRune:'ᚦ' },
+  { key:'loki', name:'Loki',     assistantId:'asst_hKdLlIlE66bKCjuuDzhwknFM', avatar:'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/Loki_-God-of-Mischief_-Icon.jpg?v=1752622811', color:'#0db18a', bio:'Creativity, wit, and transformation—the trickster.', startRune:'ᛚ' },
+  { key:'freya',name:'Freya',    assistantId:'asst_A0oRwWmYijWwmRJuA2iO9JlR', avatar:'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/Freya_-Icon.jpg?v=1752622811',               color:'#c5277e', bio:'Healing, beauty, and abundance—the goddess of love.', startRune:'ᚠ' },
+  { key:'oz',   name:'Oz',       assistantId:'asst_Hk4WoxgaWQr5wbagpEtmQbuY', avatar:'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/Oz_-Icon.jpg?v=1752623378',                 color:'#ff9200', bio:'Transformation, wisdom, and mastery—the digital wizard.', startRune:'ᚷ' },
+  { key:'tyr',  name:'Tyr',      assistantId:'asst_5RBZdhN1br4dkpDB6g1cRBCg', avatar:'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/tyr---icon.jpg?v=1752803717',                 color:'#946140', bio:'Justice, discipline, and sacrifice—the steadfast champion.', startRune:'ᛏ' },
+  { key:'heimdall', name:'Heimdall', assistantId:'asst_5BTp4L16s3LSFZWyOwHL2Qow', avatar:'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/heimdall_-icon.jpg?v=1752622811',       color:'#8653eb', bio:'Clarity, vigilance, and protection—the ever-watchful guardian.', startRune:'ᚺ' },
+  { key:'skald',name:'Skald',    assistantId:'asst_mDsnxmXYWK6VVR2TGlWgr0Db', avatar:'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/Skald_-Icon.jpg?v=1752623003',               color:'#2b55e2', bio:'Story, poetry, and inspiration—the bard of legend.', startRune:'ᛃ' },
+  { key:'coach',name:'Valhalla Coach', assistantId:'asst_0b7Qdwscxs168I4YFX2gKSUd', avatar:'https://cdn.shopify.com/s/files/1/0620/9958/7203/files/Valhalla-Coach-Icon.jpg?v=1752623891',color:'#ffe18d', bio:'Motivation, discipline, and action—your ultimate Viking coach.', startRune:'ᛁ' }
 ];
+
+const RUNE_SET = ['ᚠ','ᚢ','ᚦ','ᚨ','ᚱ','ᚷ','ᚹ','ᚺ','ᚾ','ᛁ','ᛃ','ᛇ','ᛉ'];
 
 /* ---------- Elements ---------- */
 const rail = document.getElementById('rail');
 const card = document.getElementById('card');
+const space = document.getElementById('space');
 const logo = document.getElementById('god-logo');
 const titleEl = document.getElementById('god-title');
 const bioEl = document.getElementById('god-bio');
 const hist = document.getElementById('history');
-const loader = document.getElementById('loader');
-const runeLoader = document.getElementById('runeLoader');
 const form = document.getElementById('chat-form');
 const input = document.getElementById('chat-input');
 const sendBtn = document.getElementById('sendBtn');
+const thinking = document.getElementById('thinking');
+const thinkingRune = document.getElementById('thinkingRune');
 
-const ruinCoin = document.getElementById('ruinCoin');
+const tokenCoin = document.getElementById('tokenCoin');
+const coinRune = document.getElementById('coinRune');
 const tokenEl = document.getElementById('ruin-tokens');
 
 const params = new URLSearchParams(location.search);
@@ -264,22 +337,47 @@ let selected = GODS.find(g=>g.key.toLowerCase()===fromURL) || GODS.find(g=>g.key
 let chatHistory = [];
 
 /* ---------- Helpers ---------- */
+const isDesktop = matchMedia('(hover: hover) and (pointer: fine)').matches;
 function setTheme(color){ document.documentElement.style.setProperty('--brand', color || '#ffe18d'); }
 function hexToSoft(hex){ try{ const c=hex.replace('#',''); const r=parseInt(c.slice(0,2),16),g=parseInt(c.slice(2,4),16),b=parseInt(c.slice(4,6),16); return `rgba(${r},${g},${b},0.38)`; }catch{ return 'rgba(255,225,141,.38)'; }}
+function safeHTML(md){
+  // Render markdown then sanitize a tiny allowlist
+  const raw = marked.parse(md || '');
+  const tmp = document.createElement('div'); tmp.innerHTML = raw;
+  const ALLOW_TAGS = new Set(['P','EM','STRONG','UL','OL','LI','A','BR','CODE','PRE','BLOCKQUOTE']);
+  const ALLOW_ATTR = { 'A': new Set(['href','title','target','rel']) };
+  const walker = (node)=>{
+    [...node.children].forEach(el=>{
+      if(!ALLOW_TAGS.has(el.tagName)){ el.replaceWith(document.createTextNode(el.textContent)); return; }
+      // strip event handlers & unknown attrs
+      [...el.attributes].forEach(a=>{
+        if(el.tagName==='A' && ALLOW_ATTR['A'].has(a.name)){
+          if(a.name==='href' && !/^https?:/i.test(a.value)) el.removeAttribute('href');
+          if(a.name==='target'){ el.setAttribute('rel','noopener'); }
+        }else{
+          el.removeAttribute(a.name);
+        }
+      });
+      walker(el);
+    });
+  };
+  walker(tmp);
+  return tmp.innerHTML;
+}
 
 /* ---------- Build rail ---------- */
-const isDesktop = matchMedia('(hover: hover) and (pointer: fine)').matches;
-
 function buildRail(){
   rail.innerHTML='';
-  const list = isDesktop ? [...GODS, ...GODS] : [...GODS]; // “infinite” feel on desktop only
+  const list = isDesktop ? [...GODS, ...GODS] : [...GODS]; // “infinite” feelDesktop only
   list.forEach(g=>{
-    const chip = document.createElement('div');
+    const chip = document.createElement('button');
+    chip.type='button';
     chip.className='chip';
     chip.title = g.name;
     chip.dataset.key = g.key;
     chip.dataset.selected = (g.key===selected.key);
     chip.style.setProperty('--hover', g.color);
+    chip.setAttribute('aria-label', g.name);
 
     const img = document.createElement('img');
     img.alt = g.name; img.src = g.avatar; img.loading = 'lazy';
@@ -298,19 +396,20 @@ function buildRail(){
 function applyTaper(){
   const center = rail.scrollLeft + rail.clientWidth/2;
   const maxDist = rail.clientWidth * .62; // influence range
-  const edgeStart = 0.75;                 // only last ~25% starts to fade/tilt
+  const edgeStart = 0.78;                 // only last ~22% starts to fade/tilt
+  const minOpacity = 0.85;
 
   [...rail.children].forEach(ch=>{
     const mid = ch.offsetLeft + ch.clientWidth/2;
     const dist = Math.abs(mid - center);
     const t = Math.min(dist / maxDist, 1);         // 0 center .. 1 edge
 
-    const scale = 1 - 0.10 * t;                     // <=10% smaller at far edge
+    const scale = 1 - 0.08 * t;                     // <=8% smaller at far edge
     let opacity = 1; let tilt = 0; let dy = 0;
 
     if (t > edgeStart){
       const f = (t - edgeStart) / (1 - edgeStart);  // 0..1 only at the ends
-      opacity = 1 - 0.30 * f;                       // gentle fade just at edges
+      opacity = Math.max(minOpacity, 1 - 0.20 * f); // gentle fade only at ends
       tilt = (mid < center ? -1 : 1) * (10 + 8*f);  // 10°→18°
       dy = 6 * f;                                   // slight dip
     }
@@ -323,9 +422,9 @@ function applyTaper(){
 }
 
 /* ---------- Desktop auto-glide; Mobile = native scroll (no jitter) ---------- */
-let rafId=null;
+let rafId=null, inView=true;
 function startDesktopAuto(){
-  if(!isDesktop) return;
+  if(!isDesktop || !inView) return;
   function tick(){
     rail.scrollLeft += 0.25; // slow, smooth
     if(rail.scrollLeft > rail.scrollWidth/2){ rail.scrollLeft = 0; } // seamless
@@ -334,13 +433,15 @@ function startDesktopAuto(){
   }
   rafId = requestAnimationFrame(tick);
 }
+function stopDesktopAuto(){ if(rafId){ cancelAnimationFrame(rafId); rafId=null; } }
+
 // Pause auto on interaction (desktop)
 if(isDesktop){
   ['mouseenter','mousedown','focusin','touchstart'].forEach(ev=>{
-    rail.addEventListener(ev, ()=> { if(rafId){ cancelAnimationFrame(rafId); rafId=null; } }, {passive:true});
+    rail.addEventListener(ev, ()=> stopDesktopAuto(), {passive:true});
   });
   ['mouseleave','mouseup','blur','touchend'].forEach(ev=>{
-    rail.addEventListener(ev, ()=> { if(!rafId) startDesktopAuto(); }, {passive:true});
+    rail.addEventListener(ev, ()=> startDesktopAuto(), {passive:true});
   });
 }
 // Update taper on scroll (both)
@@ -356,6 +457,36 @@ function centerOnSelected(){
   }
 }
 
+/* ---------- Space background drifting runes ---------- */
+function buildSpaceRunes(){
+  // clear existing
+  space.querySelectorAll('.rune-sprite').forEach(n=>n.remove());
+  const count = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 6;
+  for(let i=0;i<count;i++){
+    const s = document.createElement('div');
+    s.className='rune-sprite';
+    s.textContent = RUNE_SET[(i*3 + 2) % RUNE_SET.length];
+    // random positions & travel
+    const x0 = Math.round(Math.random()*90)+'%';
+    const y0 = Math.round(Math.random()*90)+'%';
+    const x1 = Math.round(Math.random()*90)+'%';
+    const y1 = Math.round(Math.random()*90)+'%';
+    const r0 = Math.round(Math.random()*360)+'deg';
+    const r1 = Math.round(Math.random()*360)+'deg';
+    const size = (Math.random()*18 + 10); // 10–28px
+    const dur = (Math.random()*20 + 22);  // 22–42s
+    s.style.fontSize = size+'px';
+    s.style.setProperty('--x0', x0);
+    s.style.setProperty('--y0', y0);
+    s.style.setProperty('--x1', x1);
+    s.style.setProperty('--y1', y1);
+    s.style.setProperty('--r0', r0);
+    s.style.setProperty('--r1', r1);
+    s.style.animationDuration = dur+'s';
+    space.appendChild(s);
+  }
+}
+
 /* ---------- Select & render ---------- */
 function renderCard(){
   logo.src = selected.avatar;
@@ -363,21 +494,12 @@ function renderCard(){
   bioEl.textContent = selected.bio;
   setTheme(selected.color);
   input.placeholder = `Ask ${selected.name} anything…`;
+  thinkingRune.textContent = selected.startRune || 'ᚠ';
+  thinking.dataset.state = 'idle';
+  document.documentElement.style.setProperty('--idle-spin-s','8s');
+  document.documentElement.style.setProperty('--think-spin-s','2.4s');
   [...rail.children].forEach(ch=> ch.dataset.selected = (ch.dataset.key===selected.key));
-}
-function renderHistory(){
-  hist.innerHTML = chatHistory.map(m=>(
-    `<div class="msg ${m.from==='user'?'user':'god'}">${marked.parse(m.text || '')}</div>`
-  )).join('');
-  hist.scrollTop = hist.scrollHeight;
-}
-function selectGod(key){
-  const g = GODS.find(x=>x.key===key) || selected;
-  selected = g;
-  renderCard();
-  chatHistory = [];
-  renderHistory();
-  getOrCreateThread(g.key);
+  buildSpaceRunes();
 }
 
 /* ---------- Threads & chat ---------- */
@@ -394,26 +516,23 @@ async function getOrCreateThread(g){
   return null;
 }
 
-/* ---------- Loader rune (fast flip + fast rune change) ---------- */
-const RUNE_SET = ['ᚠ','ᚢ','ᚦ','ᚨ','ᚱ','ᚷ','ᚹ','ᚺ','ᚾ','ᛁ','ᛃ','ᛇ','ᛉ'];
-let runeTimer = null;
-function showLoader(show){
-  loader.hidden = !show;
-  if(show){
-    // fast rune shuffle while flipping
-    let i = 0;
-    runeLoader.textContent = RUNE_SET[i];
-    if(runeTimer) clearInterval(runeTimer);
-    runeTimer = setInterval(()=>{
-      i = (i+1) % RUNE_SET.length;
-      runeLoader.textContent = RUNE_SET[i];
-    }, 160);
-  }else{
-    if(runeTimer){ clearInterval(runeTimer); runeTimer = null; }
-  }
+function renderHistory(){
+  hist.innerHTML = chatHistory.length
+    ? chatHistory.map(m=>`<div class="msg ${m.from==='user'?'user':'god'}">${safeHTML(m.text || '')}</div>`).join('')
+    : `<div class="msg god">Ask your guide anything…</div>`;
+  hist.scrollTop = hist.scrollHeight;
 }
 
-/* ---------- Form submit ---------- */
+function selectGod(key){
+  const g = GODS.find(x=>x.key===key) || selected;
+  selected = g;
+  renderCard();
+  chatHistory = [];
+  renderHistory();
+  getOrCreateThread(g.key);
+}
+
+/* ---------- Form submit & loader behavior ---------- */
 form.addEventListener('submit', async (e)=>{
   e.preventDefault();
   const t = (input.value||'').trim();
@@ -425,7 +544,10 @@ form.addEventListener('submit', async (e)=>{
   renderHistory();
   input.value='';
 
-  showLoader(true);
+  // Loader: accelerate (but readable), mark busy
+  thinking.dataset.state = 'thinking';
+  hist.setAttribute('aria-busy','true');
+
   try{
     const threadId = await getOrCreateThread(selected.key);
     if(!threadId) throw new Error('no-thread');
@@ -435,39 +557,61 @@ form.addEventListener('submit', async (e)=>{
       body: JSON.stringify({ assistantId: selected.assistantId, message: t, threadId })
     });
     const data = await res.json();
-    showLoader(false);
+
     chatHistory.push({from:'god', text: data.reply || 'No reply from the gods.'});
     renderHistory();
   }catch(err){
     console.error(err);
-    showLoader(false);
     chatHistory.push({from:'god', text:'⚠️ Network error. Please try again.'});
     renderHistory();
+  }finally{
+    // Return loader to idle speed
+    thinking.dataset.state = 'idle';
+    hist.setAttribute('aria-busy','false');
   }
+});
+
+/* ---------- Token coin: change rune each full flip ---------- */
+let coinIdx = 4; // start ᚱ
+tokenCoin.addEventListener('animationiteration', ()=>{
+  coinIdx = (coinIdx + 1) % RUNE_SET.length;
+  coinRune.textContent = RUNE_SET[coinIdx];
+});
+
+/* ---------- Keyboard niceties ---------- */
+document.addEventListener('keydown', (e)=>{
+  if(e.key==='ArrowRight'){ rail.scrollBy({left:110, behavior:'smooth'}); }
+  if(e.key==='ArrowLeft'){ rail.scrollBy({left:-110, behavior:'smooth'}); }
+  if(e.key==='Escape'){ input.blur(); }
 });
 
 /* ---------- Ruin tokens (daily) ---------- */
 const DAILY_LIMIT=10, TOKEN_KEY="valhalla_tokens", DATE_KEY="valhalla_last_date";
 function today(){ return new Date().toISOString().slice(0,10); }
 function resetDaily(){ localStorage.setItem(TOKEN_KEY, DAILY_LIMIT); localStorage.setItem(DATE_KEY, today()); updateTokens(); }
-function updateTokens(){ tokenEl.textContent = parseInt(localStorage.getItem(TOKEN_KEY)||'0'); }
+function updateTokens(){ tokenEl.textContent = Number.parseInt(localStorage.getItem(TOKEN_KEY)||'0'); }
 function checkReset(){ const last = localStorage.getItem(DATE_KEY); if(last !== today()) resetDaily(); updateTokens(); }
-function decrementToken(){ let t=parseInt(localStorage.getItem(TOKEN_KEY)||'0'); if(t>0){ t--; localStorage.setItem(TOKEN_KEY,t); } updateTokens(); return t; }
+function decrementToken(){ let t=Number.parseInt(localStorage.getItem(TOKEN_KEY)||'0'); if(t>0){ t--; localStorage.setItem(TOKEN_KEY,t); } updateTokens(); return t; }
 
-/* ---------- Slow-flip rune next to tokens cycles glyph softly ---------- */
-let coinIdx = 4; // start ᚱ
-ruinCoin.addEventListener('animationiteration', ()=>{
-  coinIdx = (coinIdx + 1) % RUNE_SET.length;
-  ruinCoin.textContent = RUNE_SET[coinIdx];
-});
+/* ---------- IntersectionObserver: pause when off-screen ---------- */
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    inView = entry.isIntersecting;
+    card.classList.toggle('paused', !inView);
+    if(inView) startDesktopAuto(); else stopDesktopAuto();
+  });
+},{threshold: 0.15});
+io.observe(card);
 
 /* ---------- Init ---------- */
 (function init(){
   buildRail();
+  setTheme(selected.color);
   renderCard();
   renderHistory();
   checkReset();
   if(isDesktop) startDesktopAuto();
+  // Center on selected after rendering
   setTimeout(()=> input.focus(), 150);
 })();
 </script>
