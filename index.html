@@ -18,9 +18,13 @@
     --card-pad: 26px 18px 16px;
     --reply-min-h: clamp(120px, 18vh, 180px);
 
-    /* thinking rune speeds (in seconds per full turn) */
-    --idle-spin-s: 6s;               /* slightly faster idle than before */
-    --think-spin-s: 2.2s;            /* initial thinking speed (will ramp down dynamically) */
+    /* thinking rune speeds (seconds per full turn) – will be set per-god */
+    --idle-spin-s: 6s;
+    --think-spin-s: 2.6s;
+
+    /* slight tilt so flips never go fully edge-on (prevents “vanish”) */
+    --coinTiltX: 12deg;
+    --runeTiltX: 10deg;
   }
 
   html,body{height:100%}
@@ -100,36 +104,38 @@
     overflow:hidden; /* contain background sprites */
   }
 
-  /* God-tinted space: tiny stars + faint runes fading in/out (no drift) */
+  /* God-tinted space: brighter tiny stars + faint runes pulsing (no drift) */
   .space{
     position:absolute; inset:0; z-index:0; pointer-events:none;
-    /* base speckle via subtle gradients */
+    /* base speckle via subtle gradients (brightened) */
     background:
-      radial-gradient(1px 1px at 20% 30%, color-mix(in srgb, var(--brand) 28%, transparent), transparent 60%),
-      radial-gradient(1px 1px at 70% 60%, color-mix(in srgb, var(--brand) 24%, transparent), transparent 60%),
-      radial-gradient(1px 1px at 40% 80%, color-mix(in srgb, var(--brand) 22%, transparent), transparent 60%),
-      radial-gradient(1px 1px at 85% 25%, color-mix(in srgb, var(--brand) 26%, transparent), transparent 60%),
-      radial-gradient(1px 1px at 10% 70%, color-mix(in srgb, var(--brand) 22%, transparent), transparent 60%);
-    opacity: .30;
+      radial-gradient(1px 1px at 18% 28%, color-mix(in srgb, var(--brand) 40%, transparent), transparent 60%),
+      radial-gradient(1px 1px at 72% 62%, color-mix(in srgb, var(--brand) 36%, transparent), transparent 60%),
+      radial-gradient(1px 1px at 42% 78%, color-mix(in srgb, var(--brand) 34%, transparent), transparent 60%),
+      radial-gradient(1px 1px at 86% 24%, color-mix(in srgb, var(--brand) 38%, transparent), transparent 60%),
+      radial-gradient(1px 1px at 12% 68%, color-mix(in srgb, var(--brand) 34%, transparent), transparent 60%);
+    opacity: .45;
   }
   .star{
     position:absolute; width:2px; height:2px; border-radius:50%;
-    background: color-mix(in srgb, var(--brand) 85%, white);
+    background: color-mix(in srgb, var(--brand) 92%, white);
     opacity:.0; animation: twinkle linear infinite;
+    box-shadow: 0 0 6px color-mix(in srgb, var(--brand) 45%, transparent);
   }
   @keyframes twinkle{
-    0%,100%{ opacity: .0 }
-    50%{ opacity: .55 }
+    0%,100%{ opacity: .05 }
+    50%{ opacity: .82 }
   }
   .rune-sprite{
-    position:absolute; font-weight:800; color: color-mix(in srgb, var(--brand) 92%, transparent);
+    position:absolute; font-weight:800; color: color-mix(in srgb, var(--brand) 94%, white);
     opacity:.0; user-select:none;
     backface-visibility:hidden;
     animation: pulse ease-in-out infinite;
+    filter: drop-shadow(0 0 6px color-mix(in srgb, var(--brand) 35%, transparent));
   }
   @keyframes pulse{
-    0%,100%{ opacity: .0; transform: scale(0.98) }
-    50%{ opacity: .14; transform: scale(1.02) }
+    0%,100%{ opacity: .06; transform: scale(0.98) }
+    50%{ opacity: .26; transform: scale(1.04) }
   }
 
   #god-logo{
@@ -162,13 +168,17 @@
     font-weight:700; color:#ffefae;
   }
   .coin{
-    width:26px; height:26px; display:inline-grid; place-items:center;
-    animation: coinFlip 7.5s linear infinite;
+    width:28px; height:28px; display:inline-grid; place-items:center;
+    animation: coinFlip 8s linear infinite;
     transform-style:preserve-3d; backface-visibility:hidden;
   }
-  @keyframes coinFlip{ to{ transform: rotateY(1turn); } }
+  /* keep tilt in both keyframes so we never go fully edge-on */
+  @keyframes coinFlip{
+    0%   { transform: rotateX(var(--coinTiltX)) rotateY(0); }
+    100% { transform: rotateX(var(--coinTiltX)) rotateY(1turn); }
+  }
   .coin svg{ display:block; width:100%; height:100% }
-  .coin .face{ filter: drop-shadow(0 0 3px rgba(255,225,141,.18)); }
+  .coin .face{ filter: drop-shadow(0 0 4px rgba(255,225,141,.25)); }
 
   /* ======= CHAT ======= */
   .history{
@@ -188,19 +198,19 @@
   .history .user{ color:#bfefff; text-align:right }
   .history .god{ color:var(--brand) }
 
-  /* ======= THINKING RUNE (bigger + ramping acceleration) ======= */
+  /* ======= THINKING RUNE (bigger + per-god speeds + gentle ramp) ======= */
   .thinking{
     position:relative; z-index:1;
     display:flex; align-items:center; justify-content:center;
-    height:54px; margin:14px 0 10px;
+    height:60px; margin:14px 0 10px;
   }
   .thinking .rune{
-    width:48px; height:48px; display:grid; place-items:center;
-    font-size:30px; font-weight:900; line-height:1;
+    width:52px; height:52px; display:grid; place-items:center;
+    font-size:34px; font-weight:900; line-height:1;
     color:#ffe18d;
     -webkit-text-stroke: 1px #7a611f;
             text-stroke: 1px #7a611f;
-    text-shadow: 0 0 6px rgba(255,225,141,.18);
+    text-shadow: 0 0 7px rgba(255,225,141,.22);
     transform-style:preserve-3d; backface-visibility:hidden;
     animation: runeSpin var(--idle-spin-s) linear infinite;
     user-select:none;
@@ -208,7 +218,10 @@
   .thinking[data-state="thinking"] .rune{
     animation-duration: var(--think-spin-s);
   }
-  @keyframes runeSpin{ to{ transform: rotateY(1turn); } }
+  @keyframes runeSpin{
+    0%   { transform: rotateX(var(--runeTiltX)) rotateY(0); }
+    100% { transform: rotateX(var(--runeTiltX)) rotateY(1turn); }
+  }
 
   /* ======= INPUT ======= */
   .input-row{
@@ -266,7 +279,7 @@
 </header>
 
 <main class="card" id="card">
-  <!-- god-tinted space background (stars + faint runes) -->
+  <!-- god-tinted space background (brighter stars + faint pulsing runes) -->
   <div class="space" id="space"></div>
 
   <img id="god-logo" alt="Guide portrait" src="" />
@@ -285,7 +298,7 @@
           </radialGradient>
         </defs>
         <circle class="face" cx="32" cy="32" r="28" fill="url(#goldGrad)" stroke="#8a651a" stroke-width="3"/>
-        <circle cx="32" cy="32" r="22" fill="none" stroke="#fff0b0" stroke-opacity=".5" stroke-width="2"/>
+        <circle cx="32" cy="32" r="22" fill="none" stroke="#fff0b0" stroke-opacity=".6" stroke-width="2"/>
         <text id="coinRune" x="32" y="39" text-anchor="middle" font-size="24" font-family="serif" fill="#7a4c00">ᚱ</text>
       </svg>
     </span>
@@ -296,7 +309,7 @@
     <div class="msg god">Ask your guide anything…</div>
   </section>
 
-  <!-- Thinking rune (bigger; ramps speed & rune-change rate on Send) -->
+  <!-- Thinking rune (bigger; per-god behavior; ramps on Send) -->
   <div id="thinking" class="thinking" data-state="idle">
     <span id="thinkingRune" class="rune" aria-hidden="true">ᚠ</span>
   </div>
@@ -322,6 +335,19 @@ const GODS = [
 ];
 
 const RUNE_SET = ['ᚠ','ᚢ','ᚦ','ᚨ','ᚱ','ᚷ','ᚹ','ᚺ','ᚾ','ᛁ','ᛃ','ᛇ','ᛉ'];
+
+/* Per-god behavior for the bottom rune */
+const GOD_BEHAVIOR = {
+  odin:     { idle:5.5, thinkStart:2.8, thinkMin:1.8, glyphStart:240, glyphMin:160, tiltX:'10deg' },
+  thor:     { idle:5.0, thinkStart:2.6, thinkMin:1.7, glyphStart:230, glyphMin:150, tiltX:'12deg' },
+  loki:     { idle:5.2, thinkStart:2.7, thinkMin:1.75,glyphStart:220, glyphMin:150, tiltX:'14deg' },
+  freya:    { idle:5.8, thinkStart:2.9, thinkMin:1.9, glyphStart:260, glyphMin:170, tiltX:'10deg' },
+  tyr:      { idle:5.2, thinkStart:2.6, thinkMin:1.75,glyphStart:230, glyphMin:155, tiltX:'11deg' },
+  heimdall: { idle:5.6, thinkStart:2.8, thinkMin:1.8, glyphStart:240, glyphMin:160, tiltX:'11deg' },
+  skald:    { idle:5.4, thinkStart:2.7, thinkMin:1.8, glyphStart:250, glyphMin:165, tiltX:'10deg' },
+  oz:       { idle:5.3, thinkStart:2.6, thinkMin:1.7, glyphStart:230, glyphMin:150, tiltX:'12deg' },
+  coach:    { idle:5.6, thinkStart:2.8, thinkMin:1.9, glyphStart:260, glyphMin:170, tiltX:'10deg' },
+};
 
 /* ---------- Elements ---------- */
 const rail = document.getElementById('rail');
@@ -349,7 +375,7 @@ let chatHistory = [];
 /* ---------- Helpers ---------- */
 const isDesktop = matchMedia('(hover: hover) and (pointer: fine)').matches;
 function setTheme(color){ document.documentElement.style.setProperty('--brand', color || '#ffe18d'); }
-function hexToSoft(hex){ try{ const c=hex.replace('#',''); const r=parseInt(c.slice(0,2),16),g=parseInt(c.slice(2,4),16),b=parseInt(c.slice(4,6),16); return `rgba(${r},${g},${b},0.38)`; }catch{ return 'rgba(255,225,141,.38)'; }}
+function hexToSoft(hex){ try{ const c=hex.replace('#',''); const r=parseInt(c.slice(0,2),16),g=parseInt(c.slice(2,4),16),b=parseInt(c.slice(4,6),16); return `rgba(${r},${g},${b},0.40)`; }catch{ return 'rgba(255,225,141,.40)'; }}
 function safeHTML(md){
   const raw = marked.parse(md || '');
   const tmp = document.createElement('div'); tmp.innerHTML = raw;
@@ -457,12 +483,10 @@ function centerOnSelected(){
   if(chip){ rail.scrollLeft = chip.offsetLeft - (rail.clientWidth - chip.clientWidth)/2; }
 }
 
-/* ---------- Space background: tiny stars + faint pulsing runes ---------- */
+/* ---------- Space background: brighter stars + faint pulsing runes ---------- */
 function buildSpace(){
-  // clear
   space.innerHTML = '';
-  // stars
-  const starCount = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 28;
+  const starCount = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 40;
   for(let i=0;i<starCount;i++){
     const s=document.createElement('i');
     s.className='star';
@@ -472,15 +496,14 @@ function buildSpace(){
     s.style.animationDelay = (Math.random()*5)+'s';
     space.appendChild(s);
   }
-  // faint runes pulsing in/out
-  const runeCount = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 6;
+  const runeCount = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 8;
   for(let i=0;i<runeCount;i++){
     const r=document.createElement('div');
     r.className='rune-sprite';
     r.textContent = RUNE_SET[(i*3 + 2) % RUNE_SET.length];
     r.style.left = Math.round(Math.random()*86 + 7)+'%';
     r.style.top  = Math.round(Math.random()*70 + 10)+'%';
-    r.style.fontSize = (10 + Math.random()*22)+'px';
+    r.style.fontSize = (12 + Math.random()*24)+'px';
     r.style.animationDuration = (8 + Math.random()*16)+'s'; // 8–24s
     r.style.animationDelay = (Math.random()*8)+'s';
     space.appendChild(r);
@@ -495,13 +518,18 @@ function renderCard(){
   setTheme(selected.color);
   input.placeholder = `Ask ${selected.name} anything…`;
   thinkingRune.textContent = selected.startRune || 'ᚠ';
+
+  const bh = GOD_BEHAVIOR[selected.key] || GOD_BEHAVIOR.coach;
+  document.documentElement.style.setProperty('--idle-spin-s',  (bh.idle||5.6)+'s');
+  document.documentElement.style.setProperty('--think-spin-s', (bh.thinkStart||2.8)+'s');
+  document.documentElement.style.setProperty('--runeTiltX',    bh.tiltX || '10deg');
+
   thinking.dataset.state = 'idle';
-  document.documentElement.style.setProperty('--idle-spin-s','6s');
-  document.documentElement.style.setProperty('--think-spin-s','2.2s');
   [...rail.children].forEach(ch=> ch.dataset.selected = (ch.dataset.key===selected.key));
   buildSpace();
 }
 
+/* ---------- Threads & chat ---------- */
 function storageKey(g){ return `valhalla_thread_${g}`; }
 async function getOrCreateThread(g){
   const k = storageKey(g);
@@ -530,13 +558,12 @@ function selectGod(key){
   getOrCreateThread(g.key);
 }
 
-/* ---------- Thinking rune: acceleration ramp (spin + glyph rate) ---------- */
+/* ---------- Thinking rune: gentle acceleration (per-god) ---------- */
 let runeCycleTimer=null;
 let accelTimer=null;
-let currentSpinS = 2.2;        // starts at 2.2s per turn when thinking
-const minSpinS = 1.2;         // do not get unreadably fast
-let currentGlyphInterval = 260; // ms between rune changes when thinking
-const minGlyphInterval = 120;
+let currentSpinS = 2.6;        // current think speed (s/turn)
+let currentGlyphInterval = 240; // ms between rune changes
+let spinFloor = 1.8, glyphFloor = 150;
 
 function setRuneCycleInterval(ms){
   if(runeCycleTimer) clearInterval(runeCycleTimer);
@@ -549,37 +576,39 @@ function setRuneCycleInterval(ms){
 
 function startAcceleration(){
   stopAcceleration(); // clean slate
-  // set initial fast-but-readable cadence
-  currentSpinS = 2.2;
-  currentGlyphInterval = 260;
+
+  const bh = GOD_BEHAVIOR[selected.key] || GOD_BEHAVIOR.coach;
+  currentSpinS = bh.thinkStart || 2.8;
+  spinFloor    = bh.thinkMin   || 1.8;
+  currentGlyphInterval = bh.glyphStart || 240;
+  glyphFloor           = bh.glyphMin   || 160;
+
   document.documentElement.style.setProperty('--think-spin-s', currentSpinS+'s');
   setRuneCycleInterval(currentGlyphInterval);
   thinking.dataset.state = 'thinking';
   hist.setAttribute('aria-busy','true');
 
-  // every 600ms, nudge faster until floor values
+  // every 700ms, nudge a bit faster until floors (gentle)
   accelTimer = setInterval(()=>{
-    // spin faster (reduce seconds per rotation)
-    currentSpinS = Math.max(minSpinS, +(currentSpinS - 0.18).toFixed(2));
+    currentSpinS = Math.max(spinFloor, +(currentSpinS - 0.12).toFixed(2));
     document.documentElement.style.setProperty('--think-spin-s', currentSpinS+'s');
 
-    // glyph swap faster
-    currentGlyphInterval = Math.max(minGlyphInterval, currentGlyphInterval - 18);
+    currentGlyphInterval = Math.max(glyphFloor, currentGlyphInterval - 12);
     setRuneCycleInterval(currentGlyphInterval);
 
-    // if both floors reached, stop ramp but keep running until reply
-    if(currentSpinS === minSpinS && currentGlyphInterval === minGlyphInterval){
+    if(currentSpinS === spinFloor && currentGlyphInterval === glyphFloor){
       clearInterval(accelTimer); accelTimer=null;
     }
-  }, 600);
+  }, 700);
 }
 function stopAcceleration(){
   if(accelTimer){ clearInterval(accelTimer); accelTimer=null; }
   if(runeCycleTimer){ clearInterval(runeCycleTimer); runeCycleTimer=null; }
-  // return to idle
   thinking.dataset.state = 'idle';
   hist.setAttribute('aria-busy','false');
-  document.documentElement.style.setProperty('--idle-spin-s','6s');
+
+  const bh = GOD_BEHAVIOR[selected.key] || GOD_BEHAVIOR.coach;
+  document.documentElement.style.setProperty('--idle-spin-s', (bh.idle||5.6)+'s');
 }
 
 /* ---------- Form submit ---------- */
